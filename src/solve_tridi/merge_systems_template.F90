@@ -131,7 +131,7 @@
 
       
       real(kind=REAL_DATATYPE)                    :: beta, sig, s, c, t, tau, rho, eps, tol, &
-                                                     qtrans(2,2), dmax, zmax, d1new, d2new
+                                                     qtrans(2,2), dmax, zmax, d1new, d2new, ONE_real
       real(kind=REAL_DATATYPE)                    :: z(na), d1(na), d2(na), z1(na), delta(na),  &
                                                      dbase(na), ddiff(na), ev_scale(na), tmp(na)
       real(kind=REAL_DATATYPE)                    :: d1u(na), zu(na), d1l(na), zl(na)
@@ -149,7 +149,7 @@
                                                      l_cols_qreorg, np, l_idx, nqcols1 !, nqcols2
       integer(kind=ik)                            :: nnzu_save, nnzl_save
       integer(kind=ik)                            :: my_proc, n_procs, my_prow, my_pcol, np_rows, &
-                                                     np_cols
+                                                     np_cols, myid
       integer(kind=MPI_KIND)                      :: mpierr
       integer(kind=MPI_KIND)                      :: my_prowMPI, np_rowsMPI, my_pcolMPI, np_colsMPI
       integer(kind=ik)                            :: np_next, np_prev, np_rem
@@ -289,6 +289,7 @@
       n_procs = np_rows*npc_n
       my_proc = my_prow*npc_n + (my_pcol-npc_0) ! Row major
 
+      myid    = obj%mpi_setup%myRank_comm_parent
 
       ! Local limits of the rows of Q
 
@@ -390,9 +391,11 @@
         check_alloc_gpu("merge_systems: zl_dev", successGPU)
 
         num = (l_rows) * size_of_datatype
-        successGPU = gpu_malloc(tmp_dev, num)
-        check_alloc_gpu("merge_systems: tmp_dev", successGPU)
-
+        if (l_rows>0) then
+          successGPU = gpu_malloc(tmp_dev, num)
+          check_alloc_gpu("merge_systems: tmp_dev", successGPU)
+        endif
+        
         num = 1 * size_of_datatype
         successGPU = gpu_malloc(zero_dev, num)
         check_alloc_gpu("merge_systems: zero_dev", successGPU)
@@ -422,23 +425,21 @@
         check_memcpy_gpu("merge_systems: l_col_dev", successGPU)
 
         num = 1 * size_of_datatype
-        beta = 0.0_rk
 #ifdef WITH_GPU_STREAMS
-        successGPU = gpu_memcpy_async(zero_dev, int(loc(beta),kind=c_intptr_t), num, gpuMemcpyHostToDevice, my_stream)
+        successGPU = gpu_memset_async(zero_dev, 0, num, my_stream)
 #else
-        successGPU = gpu_memcpy(zero_dev, int(loc(beta),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
+        successGPU = gpu_memset      (zero_dev, 0, num)
 #endif
-        check_memcpy_gpu("merge_systems: zero_dev", successGPU)
+        check_memcpy_gpu("merge_systems: memset zero_dev", successGPU)
 
         num = 1 * size_of_datatype
-        beta = 1.0_rk
+        ONE_real = 1.0_rk
 #ifdef WITH_GPU_STREAMS
-        successGPU = gpu_memcpy_async(one_dev, int(loc(beta),kind=c_intptr_t), num, gpuMemcpyHostToDevice, my_stream)
+        successGPU = gpu_memcpy_async(one_dev, int(loc(ONE_real),kind=c_intptr_t), num, gpuMemcpyHostToDevice, my_stream)
 #else
-        successGPU = gpu_memcpy(one_dev, int(loc(beta),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
+        successGPU = gpu_memcpy      (one_dev, int(loc(ONE_real),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
 #endif
-        check_memcpy_gpu("merge_systems: one_dev", successGPU)
-
+        check_memcpy_gpu("merge_systems: one_dev", successGPU)     
       endif ! useGPU
 
       ! Calculations start here
@@ -500,13 +501,15 @@
         num = na * size_of_datatype
 #ifdef WITH_GPU_STREAMS
         successGPU = gpu_memcpy_async(int(loc(z(1)),kind=c_intptr_t), z_dev, num, gpuMemcpyDeviceToHost, my_stream)
+
+        successGPU = gpu_stream_synchronize(my_stream)
+        check_stream_synchronize_gpu("merge_systems: z_dev -> z", successGPU)
 #else
-        successGPU = gpu_memcpy(int(loc(z(1)),kind=c_intptr_t), z_dev, num, gpuMemcpyDeviceToHost)
+        successGPU = gpu_memcpy      (int(loc(z(1)),kind=c_intptr_t), z_dev, num, gpuMemcpyDeviceToHost)
 #endif
         check_memcpy_gpu("merge_systems: z_dev", successGPU)
       endif
 
-      
       call global_gather_&
       &PRECISION&
       &(obj, z, na, mpi_comm_rows, mpi_comm_cols_self, npc_n, np_prev, np_next, success)
@@ -565,9 +568,12 @@
 
         call obj%timer%stop("merge_systems" // PRECISION_SUFFIX)
 
-        if (wantDebug) write(error_unit,*) "Returing early from merge_systems (RHO*zmax <= TOL): matrix is block-diagonal"
+        if (wantDebug) then
+          write(error_unit,*) "Returing early from merge_systems (RHO*zmax <= TOL): matrix is block-diagonal"
+          ! write(error_unit,*) "myid=", myid, "RHO=", RHO, "zmax=", zmax ! for debugging
         ! tested by validate_real_double_solve_tridiagonal_1stage_blocktridi
- 
+        endif
+
         return
       ENDIF
 
@@ -746,8 +752,8 @@
             check_memcpy_gpu("transform_columns: q_dev", successGPU)
 
             call transform_columns_gpu_&
-                                        &PRECISION &
-                                      (obj, idx1(1), idx1(2), na, tmp, l_rqs, l_rqe, &
+                                       &PRECISION &
+                                       (obj, idx1(1), idx1(2), na, tmp, l_rqs, l_rqe, &
                                         q_dev, matrixRows, matrixCols, l_rows, mpi_comm_cols_self, &
                                         p_col, l_col, qtrans_dev, &
                                         tmp_dev, zero_dev, one_dev, debug, my_stream)
@@ -815,6 +821,7 @@
           call gpu_fill_array(PRECISION_CHAR, ztmp_extended_dev, one_dev, na1*SM_count, SM_count, debug, my_stream)
 
           call gpu_fill_array(PRECISION_CHAR, z_dev, one_dev, na1, SM_count, debug, my_stream)
+          
 
           num = na1 * size_of_datatype
 #ifdef WITH_GPU_STREAMS
@@ -873,11 +880,13 @@
           successGPU = gpu_malloc(delta_dev, num)
           check_alloc_gpu("merge_systems: delta_dev", successGPU)
 
+          if (wantDebug) call obj%timer%start("gpu_solve_secular_equation_loop")
           call gpu_solve_secular_equation_loop (PRECISION_CHAR, d1_dev, z1_dev, delta_dev, rho_dev, &
                   ztmp_extended_dev, dbase_dev, ddiff_dev, my_proc, na1, n_procs, SM_count, debug, my_stream)
-
+          if (wantDebug) call obj%timer%stop("gpu_solve_secular_equation_loop")
+          
           call gpu_local_product(PRECISION_CHAR, z_dev, ztmp_extended_dev, na1, SM_count, debug, my_stream)
-
+          
           successGPU = gpu_free(delta_dev)
           check_dealloc_gpu("merge_systems: delta_dev", successGPU)
 
@@ -902,6 +911,9 @@
           num = 1 * size_of_datatype
           successGPU = gpu_memcpy_async(int(loc(rho),kind=c_intptr_t), rho_dev, num, gpuMemcpyDeviceToHost, my_stream)
           check_memcpy_gpu("merge_systems: rho_dev", successGPU)
+
+          successGPU = gpu_stream_synchronize(my_stream)
+          check_stream_synchronize_gpu("solve_tridi_single: rho_dev -> rho", successGPU)
 #else
           num = na * size_of_datatype
           successGPU = gpu_memcpy(int(loc(d1(1)),kind=c_intptr_t), d1_dev, num, gpuMemcpyDeviceToHost)
@@ -1091,6 +1103,9 @@
 
           successGPU = gpu_memcpy_async(int(loc(ev_scale(1)),kind=c_intptr_t), ev_scale_dev, num, gpuMemcpyDeviceToHost, my_stream)
           check_memcpy_gpu("merge_systems: ev_scale_dev", successGPU)
+
+          successGPU = gpu_stream_synchronize(my_stream)
+          check_stream_synchronize_gpu("solve_tridi_single: ev_scale_dev -> ev_scale", successGPU)
 #else
           successGPU = gpu_memcpy(int(loc(d1(1)),kind=c_intptr_t), d1_dev, num, gpuMemcpyDeviceToHost)
           check_memcpy_gpu("merge_systems: d1_dev", successGPU)
@@ -1106,7 +1121,7 @@
 
           successGPU = gpu_memcpy(int(loc(ev_scale(1)),kind=c_intptr_t), ev_scale_dev, num, gpuMemcpyDeviceToHost)
           check_memcpy_gpu("merge_systems: ev_scale_dev", successGPU)
-#endif    
+#endif
         else
 #ifdef WITH_OPENMP_TRADITIONAL
           call obj%timer%start("OpenMP parallel" // PRECISION_SUFFIX)
@@ -1175,7 +1190,8 @@
         if (.not.(success)) then
           call obj%timer%stop("merge_systems" // PRECISION_SUFFIX)
           write(error_unit,*) "Error in check_monotony. Aborting..."
-          return
+          stop 1
+          !return ! THIS HANGS
         endif
         ! Eigenvector calculations
         if (useGPU) then
@@ -1367,8 +1383,11 @@
           num = 2 * size_of_int
 #ifdef WITH_GPU_STREAMS
           successGPU = gpu_memcpy_async(int(loc(nnzul(1)),kind=c_intptr_t), nnzul_dev, num, gpuMemcpyDeviceToHost, my_stream)
+
+          successGPU = gpu_stream_synchronize(my_stream)
+          check_stream_synchronize_gpu("solve_tridi_single: nnzul_dev -> nnzul", successGPU)
 #else
-          successGPU = gpu_memcpy(int(loc(nnzul(1)),kind=c_intptr_t), nnzul_dev, num, gpuMemcpyDeviceToHost)
+          successGPU = gpu_memcpy      (int(loc(nnzul(1)),kind=c_intptr_t), nnzul_dev, num, gpuMemcpyDeviceToHost)
 #endif
           check_memcpy_gpu("merge_systems: nnzul_dev", successGPU)
 
@@ -1406,7 +1425,7 @@
           successGPU = gpu_memcpy_async(l_col_dev, int(loc(l_col(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice, my_stream)
           check_memcpy_gpu("merge_systems: ", successGPU)
 #else
-          successGPU = gpu_memcpy(l_col_dev, int(loc(l_col(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
+          successGPU = gpu_memcpy      (l_col_dev, int(loc(l_col(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
           check_memcpy_gpu("merge_systems: l_col_dev", successGPU)
 #endif
           call obj%timer%stop("gpu_memcpy")
@@ -1426,10 +1445,10 @@
           successGPU = gpu_memcpy_async(p_col_dev, int(loc(p_col(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice, my_stream)
           check_memcpy_gpu("merge_systems: ", successGPU)
 #else
-          successGPU = gpu_memcpy(idx2_dev, int(loc(idx2(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
+          successGPU = gpu_memcpy      (idx2_dev, int(loc(idx2(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
           check_memcpy_gpu("merge_systems: idx2_dev", successGPU)
 
-          successGPU = gpu_memcpy(p_col_dev, int(loc(p_col(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
+          successGPU = gpu_memcpy      (p_col_dev, int(loc(p_col(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
           check_memcpy_gpu("merge_systems: p_col_dev", successGPU)
 #endif
         endif
@@ -1443,7 +1462,7 @@
           successGPU = gpu_memcpy_async(ndef_c_dev, int(loc(ndef_c(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice, my_stream)
           check_memcpy_gpu("merge_systems: ndef_c_dev 4", successGPU) 
 #else
-          successGPU = gpu_memcpy(ndef_c_dev, int(loc(ndef_c(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
+          successGPU = gpu_memcpy      (ndef_c_dev, int(loc(ndef_c(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
           check_memcpy_gpu("merge_systems: ndef_c_dev", successGPU)
 #endif
 
@@ -1494,59 +1513,59 @@
 
        ! check memory copies
 
-       if (useGPU) then
+        if (useGPU) then
 #ifdef WITH_GPU_STREAMS
-        num = na * size_of_int
-        successGPU = gpu_memcpy_async(idx1_dev, int(loc(idx1(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice, my_stream)
-        check_memcpy_gpu("merge_systems: idx1_dev", successGPU)
+          num = na * size_of_int
+          successGPU = gpu_memcpy_async(idx1_dev, int(loc(idx1(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice, my_stream)
+          check_memcpy_gpu("merge_systems: idx1_dev", successGPU)
 
-        successGPU = gpu_memcpy_async(p_col_dev, int(loc(p_col(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice, my_stream)
-        check_memcpy_gpu("merge_systems: p_col_dev", successGPU)
+          successGPU = gpu_memcpy_async(p_col_dev, int(loc(p_col(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice, my_stream)
+          check_memcpy_gpu("merge_systems: p_col_dev", successGPU)
 
-        successGPU = gpu_memcpy_async(coltyp_dev, int(loc(coltyp(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice, my_stream)
-        check_memcpy_gpu("merge_systems: coltyp_dev", successGPU)
+          successGPU = gpu_memcpy_async(coltyp_dev, int(loc(coltyp(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice, my_stream)
+          check_memcpy_gpu("merge_systems: coltyp_dev", successGPU)
 
-        num = na * size_of_datatype
-        successGPU = gpu_memcpy_async(ev_scale_dev, int(loc(ev_scale(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice, my_stream)
-        check_memcpy_gpu("merge_systems: ev_scale_dev", successGPU)
+          num = na * size_of_datatype
+          successGPU = gpu_memcpy_async(ev_scale_dev, int(loc(ev_scale(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice, my_stream)
+          check_memcpy_gpu("merge_systems: ev_scale_dev", successGPU)
 
-        successGPU = gpu_memcpy_async(z_dev, int(loc(z(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice, my_stream)
-        check_memcpy_gpu("merge_systems: z_dev", successGPU)
+          successGPU = gpu_memcpy_async(z_dev, int(loc(z(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice, my_stream)
+          check_memcpy_gpu("merge_systems: z_dev", successGPU)
 
-        successGPU = gpu_memcpy_async(d1_dev, int(loc(d1(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice, my_stream)
-        check_memcpy_gpu("merge_systems: d1_dev", successGPU)
+          successGPU = gpu_memcpy_async(d1_dev, int(loc(d1(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice, my_stream)
+          check_memcpy_gpu("merge_systems: d1_dev", successGPU)
 
-        successGPU = gpu_memcpy_async(dbase_dev, int(loc(dbase(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice, my_stream)
-        check_memcpy_gpu("merge_systems: dbase_dev", successGPU)
+          successGPU = gpu_memcpy_async(dbase_dev, int(loc(dbase(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice, my_stream)
+          check_memcpy_gpu("merge_systems: dbase_dev", successGPU)
 
-        successGPU = gpu_memcpy_async(ddiff_dev, int(loc(ddiff(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice, my_stream)
-        check_memcpy_gpu("merge_systems: ddiff_dev", successGPU)
+          successGPU = gpu_memcpy_async(ddiff_dev, int(loc(ddiff(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice, my_stream)
+          check_memcpy_gpu("merge_systems: ddiff_dev", successGPU)
 #else
-        num = na * size_of_int
-        successGPU = gpu_memcpy(idx1_dev, int(loc(idx1(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
-        check_memcpy_gpu("merge_systems: idx1_dev", successGPU)
+          num = na * size_of_int
+          successGPU = gpu_memcpy(idx1_dev, int(loc(idx1(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
+          check_memcpy_gpu("merge_systems: idx1_dev", successGPU)
 
-        successGPU = gpu_memcpy(p_col_dev, int(loc(p_col(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
-        check_memcpy_gpu("merge_systems: p_col_dev", successGPU)
+          successGPU = gpu_memcpy(p_col_dev, int(loc(p_col(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
+          check_memcpy_gpu("merge_systems: p_col_dev", successGPU)
 
-        successGPU = gpu_memcpy(coltyp_dev, int(loc(coltyp(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
-        check_memcpy_gpu("merge_systems: coltyp_dev", successGPU)
+          successGPU = gpu_memcpy(coltyp_dev, int(loc(coltyp(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
+          check_memcpy_gpu("merge_systems: coltyp_dev", successGPU)
 
-        num = na * size_of_datatype
-        successGPU = gpu_memcpy(ev_scale_dev, int(loc(ev_scale(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
-        check_memcpy_gpu("merge_systems: ev_scale_dev", successGPU)
+          num = na * size_of_datatype
+          successGPU = gpu_memcpy(ev_scale_dev, int(loc(ev_scale(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
+          check_memcpy_gpu("merge_systems: ev_scale_dev", successGPU)
 
-        successGPU = gpu_memcpy(z_dev, int(loc(z(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
-        check_memcpy_gpu("merge_systems: z_dev", successGPU)
+          successGPU = gpu_memcpy(z_dev, int(loc(z(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
+          check_memcpy_gpu("merge_systems: z_dev", successGPU)
 
-        successGPU = gpu_memcpy(d1_dev, int(loc(d1(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
-        check_memcpy_gpu("merge_systems: d1_dev", successGPU)
+          successGPU = gpu_memcpy(d1_dev, int(loc(d1(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
+          check_memcpy_gpu("merge_systems: d1_dev", successGPU)
 
-        successGPU = gpu_memcpy(dbase_dev, int(loc(dbase(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
-        check_memcpy_gpu("merge_systems: dbase_dev", successGPU)
+          successGPU = gpu_memcpy(dbase_dev, int(loc(dbase(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
+          check_memcpy_gpu("merge_systems: dbase_dev", successGPU)
 
-        successGPU = gpu_memcpy(ddiff_dev, int(loc(ddiff(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
-        check_memcpy_gpu("merge_systems: ddiff_dev", successGPU)
+          successGPU = gpu_memcpy(ddiff_dev, int(loc(ddiff(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
+          check_memcpy_gpu("merge_systems: ddiff_dev", successGPU)
 #endif      
         endif
 
@@ -1685,7 +1704,6 @@
                      gemm_dim_k * gemm_dim_l  * size_of_datatype, gpuMemcpyDeviceToHost, my_stream)
                 check_memcpy_gpu("merge_systems: qtmp1_dev", successGPU)
 
-                my_stream = obj%gpu_setup%my_stream
                 successGPU = gpu_stream_synchronize(my_stream)
                 check_stream_synchronize_gpu("merge_systems: qtmp1_dev", successGPU)
                 ! synchronize streamsPerThread; maybe not neccessary
@@ -1754,12 +1772,16 @@
             if (wantDebug) successGPU = gpu_DeviceSynchronize()
             NVTX_RANGE_POP("gpu_fill_tmp_arrays")
 
+
             num = 2* size_of_int
 #ifdef WITH_GPU_STREAMS
             successGPU = gpu_memcpy_async(int(loc(nnzul(1)),kind=c_intptr_t), nnzul_dev, num, gpuMemcpyDeviceToHost, my_stream)
             check_memcpy_gpu("merge_systems: nnzul_dev", successGPU)
+
+            successGPU = gpu_stream_synchronize(my_stream)
+            check_stream_synchronize_gpu("merge_systems: nnzul_dev", successGPU)
 #else
-            successGPU = gpu_memcpy(int(loc(nnzul(1)),kind=c_intptr_t), nnzul_dev, num, gpuMemcpyDeviceToHost)
+            successGPU = gpu_memcpy      (int(loc(nnzul(1)),kind=c_intptr_t), nnzul_dev, num, gpuMemcpyDeviceToHost)
             check_memcpy_gpu("merge_systems: nnzl_val", successGPU)
 #endif
             nnzu = nnzul(1)
@@ -1840,10 +1862,12 @@
             ! Parts for multiplying with upper half of Q:
             if (useGPU) then
               if (nnzu .ge. 1) then
+
                 ! Calculate the j-th eigenvector of the deflated system
                 ! See above why we are doing it this way!
                 call gpu_fill_ev (PRECISION_CHAR, ev_dev, d1u_dev, dbase_dev, ddiff_dev, zu_dev, ev_scale_dev, idxq1_dev, idx_dev,&
-                                  na, gemm_dim_l, gemm_dim_m, nnzu, ns, ncnt, debug, my_stream) 
+                                  na, gemm_dim_l, gemm_dim_m, nnzu, ns, ncnt, debug, my_stream)
+                                
               endif ! nnzu
 
             else ! useGPU
@@ -1871,6 +1895,10 @@
 
             if (l_rnm>0 .and. ncnt>0 .and. nnzu>0) then
               if (useGPU) then
+#if defined (WITH_SYCL_GPU_VERSION) && defined(WITH_GPU_STREAMS)
+                successGPU = gpu_stream_synchronize(my_stream) ! needed since gpuHandle is decoupled from my_stream
+#endif
+
                 call obj%timer%start("gpublas_gemm")
                 NVTX_RANGE_PUSH("gpublas_gemm_upper")
                 gpuHandle = obj%gpu_setup%gpublasHandleArray(0)
@@ -1899,7 +1927,7 @@
             if (useGPU) then
               if (nnzl .ge. 1) then
                 call gpu_fill_ev (PRECISION_CHAR, ev_dev, d1l_dev, dbase_dev, ddiff_dev, zl_dev, ev_scale_dev, idxq1_dev, idx_dev, &
-                                            na, gemm_dim_l, gemm_dim_m, nnzl, ns, ncnt, debug, my_stream) 
+                                            na, gemm_dim_l, gemm_dim_m, nnzl, ns, ncnt, debug, my_stream)
               endif
             else ! useGPU
 !$omp PARALLEL DO &
@@ -1922,6 +1950,10 @@
 
             if (l_rows-l_rnm>0 .and. ncnt>0 .and. nnzl>0) then
               if (useGPU) then
+#if defined (WITH_SYCL_GPU_VERSION) && defined(WITH_GPU_STREAMS)
+                successGPU = gpu_stream_synchronize(my_stream) ! needed since gpuHandle is decoupled from my_stream
+#endif
+
                 call obj%timer%start("gpublas_gemm")
                 NVTX_RANGE_PUSH("gpublas_gemm_lower")
                 gpuHandle = obj%gpu_setup%gpublasHandleArray(0)
@@ -1966,9 +1998,7 @@
         enddo    ! do np = 1, npc_n
         NVTX_RANGE_POP("main_loop")
         
-
         deallocate(nnzu_val, nnzl_val)
-
 
         if (useGPU) then
           deallocate(ndef_c, stat=istat, errmsg=errorMessage)
@@ -2060,8 +2090,10 @@
           successGPU = gpu_free(ev_dev)
           check_dealloc_gpu("merge_systems: ev_dev", successGPU)
 
-          successGPU = gpu_free(tmp_dev)
-          check_dealloc_gpu("merge_systems: tmp_dev", successGPU)
+          if (l_rows>0) then
+            successGPU = gpu_free(tmp_dev)
+            check_dealloc_gpu("merge_systems: tmp_dev", successGPU)
+          endif
 
           successGPU = gpu_free(zero_dev)
           check_dealloc_gpu("merge_systems: zero_dev", successGPU)

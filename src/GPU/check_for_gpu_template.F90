@@ -752,7 +752,7 @@
         write(error_unit,*) "gpuDevMaxGridDimZ : ",   OBJECT%gpu_setup%gpuDevMaxGridDimZ
         write(error_unit,*) "gpuSMcount: ",           OBJECT%gpu_setup%gpuSMcount   
       endif
-#endif /* WITH_NVIDIA_GPU_VERSION || WITH_AMD_GPU_VERSION */
+#endif /* defined(WITH_NVIDIA_GPU_VERSION) || defined(WITH_AMD_GPU_VERSION) || defined(WITH_SYCL_GPU_VERSION) */
 
       if (gpuAvailable) then
         ! print warning if NVIDIA or AMD or SYCL without streams
