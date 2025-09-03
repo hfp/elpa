@@ -911,7 +911,12 @@ if test x"$cuda_compute_capability" = x"sm_80" ; then
   nvidia_a100_support=yes
   AC_DEFINE([WITH_NVIDIA_GPU_SM80_COMPUTE_CAPABILITY],[1],[the NVIDIA GPU kernels for A100 can be used])
 fi
+if test x"$cuda_compute_capability" = x"sm_90" ; then
+  nvidia_a100_support=yes
+  AC_DEFINE([WITH_NVIDIA_GPU_SM80_COMPUTE_CAPABILITY],[1],[the NVIDIA GPU kernels for A100 can be used])
+fi
 AM_CONDITIONAL([WITH_NVIDIA_GPU_SM80_COMPUTE_CAPABILITY],[test x"${nvidia_a100_support}" = x"yes"])
+
 
 AC_LANG_PUSH([Fortran])
 dnl Test possibility of 'use mpi', if requested
