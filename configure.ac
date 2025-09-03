@@ -919,7 +919,7 @@ for capability in $(echo "$cuda_compute_capabilities" | tr "," " "); do
 done
 
 nvidia_a100_support=no
-if test "${min_capability}" -ge 80; then
+if test "${max_capability}" -ge 80; then
   nvidia_a100_support=yes
   AC_DEFINE([WITH_NVIDIA_GPU_SM80_COMPUTE_CAPABILITY],[1],[the NVIDIA GPU kernels for A100 can be used])
 fi
