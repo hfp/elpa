@@ -904,17 +904,17 @@ min_capability=999
 max_capability=0
 for capability in $(echo "$cuda_compute_capabilities" | tr "," " "); do
   dnl The user must set values which start with "sm_"
-  prefix=$(echo $capability | cut -c1-3)
-  if test x"${prefix}" != x"sm_" ; then
+  sm_prefix=$(echo $capability | cut -c1-3)
+  if test x"${sm_prefix}" != x"sm_" ; then
     AC_MSG_ERROR([Unknown Nvidia GPU compute capability set: ${capability}])
   fi
 
-  value=$(echo $capability | cut -c4-)
-  if test "${value}" -lt "${min_capability}"; then
-    min_capability=$value
+  sm_value=$(echo $capability | cut -c4-)
+  if test "${sm_value}" -lt "${min_capability}"; then
+    min_capability=$sm_value
   fi
-  if test "${value}" -gt "${max_capability}"; then
-    max_capability=$value
+  if test "${sm_value}" -gt "${max_capability}"; then
+    max_capability=$sm_value
   fi
 done
 
@@ -938,11 +938,11 @@ else
 
   dnl Convert the comma-separated list to NVCC-compatible format
   for capability in $(echo "$cuda_compute_capabilities" | tr "," " "); do
-    value=$(echo $capability | cut -c4-)
-    CUDA_CFLAGS="$CUDA_CFLAGS --generate-code arch=compute_$value,code=sm_$value"
+    sm_value=$(echo $capability | cut -c4-)
+    CUDA_CFLAGS="$CUDA_CFLAGS --generate-code arch=compute_${sm_value},code=sm_${sm_value}"
   done
   dnl Add PTX generation for the highest compute capability
-  CUDA_CFLAGS="$CUDA_CFLAGS --generate-code arch=compute_$max_capability,code=compute_$max_capability"
+  CUDA_CFLAGS="$CUDA_CFLAGS --generate-code arch=compute_${max_capability},code=compute_${max_capability}"
 fi
 
 AC_LANG_PUSH([Fortran])
