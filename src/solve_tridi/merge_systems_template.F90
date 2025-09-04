@@ -317,23 +317,23 @@
         successGPU = gpu_malloc(ndef_c_dev, num)
         check_alloc_gpu("merge_systems: ndef_c_dev", successGPU)
 
-        num = na * size_of_int     
+        num = na * size_of_int
         successGPU = gpu_malloc(idx1_dev, num)
         check_alloc_gpu("merge_systems: idx1_dev", successGPU)
 
-        num = na * size_of_int     
+        num = na * size_of_int
         successGPU = gpu_malloc(p_col_dev, num)
         check_alloc_gpu("merge_systems: p_col_dev", successGPU)
 
-        num = na * size_of_int     
+        num = na * size_of_int
         successGPU = gpu_malloc(p_col_out_dev, num)
         check_alloc_gpu("merge_systems: p_col_out_dev", successGPU)
 
-        num = na * size_of_int     
+        num = na * size_of_int
         successGPU = gpu_malloc(coltyp_dev, num)
         check_alloc_gpu("merge_systems: coltyp_dev", successGPU)
 
-        num = na * size_of_int     
+        num = na * size_of_int
         successGPU = gpu_malloc(idx2_dev, num)
         check_alloc_gpu("merge_systems: idx2_dev", successGPU)
         
@@ -341,7 +341,7 @@
         successGPU = gpu_malloc(l_col_dev, num)
         check_alloc_gpu("merge_systems: l_col_dev", successGPU)
 
-        num = na * size_of_int     
+        num = na * size_of_int
         successGPU = gpu_malloc(l_col_out_dev, num)
         check_alloc_gpu("merge_systems: l_col_out_dev", successGPU)
 
@@ -1635,6 +1635,7 @@
         NVTX_RANGE_PUSH("main_loop")
         do np = 1, npc_n
           NVTX_RANGE_PUSH("np=1,npc_n")
+
           ! Do a ring send of qtmp1
           if (np > 1) then
 
@@ -1651,7 +1652,7 @@
 
                 call obj%timer%start("ccl_send_recv")
                 successGPU = ccl_group_start()
-                if (.not.successGPU) then
+                if (.not. successGPU) then
                   print *,"Error in setting up ccl_group_start!"
                   stop 1
                 endif
@@ -1751,7 +1752,6 @@
           nnzu = 0
           nnzl = 0
           if (useGPU) then
-
             NVTX_RANGE_PUSH("gpu_fill_tmp_arrays") 
             call gpu_fill_tmp_arrays (PRECISION_CHAR, d1u_dev, d1_dev, zu_dev, z_dev, d1l_dev, zl_dev, &
                                       idx1_dev, p_col_dev, coltyp_dev, nnzu_val_dev, nnzl_val_dev, nnzul_dev, &
@@ -1763,6 +1763,9 @@
 #ifdef WITH_GPU_STREAMS
             successGPU = gpu_memcpy_async(int(loc(nnzul(1)),kind=c_intptr_t), nnzul_dev, num, gpuMemcpyDeviceToHost, my_stream)
             check_memcpy_gpu("merge_systems: nnzul_dev", successGPU)
+
+            successGPU = gpu_stream_synchronize(my_stream)
+            check_stream_synchronize_gpu("solve_tridi_single: nnzul_dev -> nnzul", successGPU)
 #else
             successGPU = gpu_memcpy(int(loc(nnzul(1)),kind=c_intptr_t), nnzul_dev, num, gpuMemcpyDeviceToHost)
             check_memcpy_gpu("merge_systems: nnzl_val", successGPU)
@@ -1771,6 +1774,7 @@
             nnzl = nnzul(2)
 
           else ! useGPU
+
             do i=1,na1
               if (p_col(idx1(i)) == np_rem) then
                 if (coltyp(idx1(i)) == 1 .or. coltyp(idx1(i)) == 2) then
@@ -1785,10 +1789,11 @@
                 endif
               endif
             enddo
+
           endif ! useGPU
 
-          ! Set the deflated eigenvectors in Q (comming from proc np_rem)
 
+          ! Set the deflated eigenvectors in Q (comming from proc np_rem)
 
           ndef = MAX(nnzu,nnzl) ! Remote counter in input matrix
           if (useGPU) then
@@ -1879,11 +1884,13 @@
                 call obj%timer%start("gpublas_gemm")
                 NVTX_RANGE_PUSH("gpublas_gemm_upper")
                 gpuHandle = obj%gpu_setup%gpublasHandleArray(0)
+
                 call gpublas_PRECISION_GEMM('N', 'N', l_rnm, ncnt, nnzu, 1.0_rk, &
                                             qtmp1_dev, gemm_dim_k,    &
                                             ev_dev,    gemm_dim_l, 1.0_rk, &
                                             qtmp2_dev, gemm_dim_k, gpuHandle)
                 if (wantDebug) successGPU = gpu_DeviceSynchronize()
+
                 NVTX_RANGE_POP("gpublas_gemm_upper")
                 call obj%timer%stop("gpublas_gemm")
               else ! useGPU
@@ -1896,7 +1903,6 @@
                 call obj%timer%stop("blas_gemm")
               endif ! useGPU
             endif ! (l_rnm>0 .and. ncnt>0 .and. nnzu>0) then
-
 
             ! Compute eigenvectors of the rank-1 modified matrix.
             ! Parts for multiplying with lower half of Q:
@@ -1930,11 +1936,13 @@
                 call obj%timer%start("gpublas_gemm")
                 NVTX_RANGE_PUSH("gpublas_gemm_lower")
                 gpuHandle = obj%gpu_setup%gpublasHandleArray(0)
+
                 call gpublas_PRECISION_GEMM('N', 'N', l_rows-l_rnm, ncnt, nnzl, 1.0_rk, &
                                             qtmp1_dev + l_rnm*size_of_datatype, gemm_dim_k,   &
                                             ev_dev,                             gemm_dim_l, 1.0_rk, &
                                             qtmp2_dev + l_rnm*size_of_datatype, gemm_dim_k, gpuHandle)
                 if (wantDebug) successGPU = gpu_DeviceSynchronize()
+
                 NVTX_RANGE_POP("gpublas_gemm_lower")
                 call obj%timer%stop("gpublas_gemm")
               else ! useGPU
