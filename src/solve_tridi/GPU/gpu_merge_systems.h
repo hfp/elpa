@@ -48,7 +48,7 @@
 
 //________________________________________________________________
 
-__global__ void gpu_update_ndef_c_kernel_1 (int *ndef_c, int *idx, int *p_col, int *idx2, 
+__global__ void gpu_update_ndef_c_kernel_1 (int *ndef_c, int *idx, int *p_col, int *idx2,
                                           const int na, const int na1, const int np_rem, const int ndef_start) {
   int ii = blockIdx.x * blockDim.x + threadIdx.x; // na
 
@@ -66,7 +66,7 @@ __global__ void gpu_update_ndef_c_kernel_1 (int *ndef_c, int *idx, int *p_col, i
     
 }
 
-__global__ void gpu_update_ndef_c_kernel_2 (int *ndef_c, int *idx, int *p_col, int *idx2, 
+__global__ void gpu_update_ndef_c_kernel_2 (int *ndef_c, int *idx, int *p_col, int *idx2,
                                           const int na, const int na1, const int np_rem, const int ndef_start) {
   int ii = blockIdx.x * blockDim.x + threadIdx.x; // na
 

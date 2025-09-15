@@ -63,11 +63,10 @@ using namespace sycl_be;
 
 extern "C" int syclDeviceSynchronizeFromC();
 
-void gpu_update_ndef_c_kernel(int *ndef_c, int *idx, int *p_col, int *idx2, 
+void gpu_update_ndef_c_kernel_1(int *ndef_c, int *idx, int *p_col, int *idx2,
                               const int na, const int na1, const int np_rem, const int ndef_start,
                               const sycl::nd_item<1> &it) {
-  int ii = it.get_group(0) * it.get_local_range(0) +
-           it.get_local_id(0); // na
+  int ii = it.get_group(0) * it.get_local_range(0) + it.get_local_id(0); // na
 
   //for (int ii=0;ii<na;ii++) {
     if (ii>=0 && ii<na) {
@@ -80,8 +79,13 @@ void gpu_update_ndef_c_kernel(int *ndef_c, int *idx, int *p_col, int *idx2,
         }
       }
   //}
+    
+}
 
-  it.barrier();
+void gpu_update_ndef_c_kernel_2(int *ndef_c, int *idx, int *p_col, int *idx2,
+                              const int na, const int na1, const int np_rem, const int ndef_start,
+                              const sycl::nd_item<1> &it) {
+  int ii = it.get_group(0) * it.get_local_range(0) + it.get_local_id(0); // na
 
   int counter = 0;
   if (ii == 0) {
@@ -106,10 +110,17 @@ void gpu_update_ndef_c (int *ndef_c_dev, int *idx_dev, int *p_col_dev, int *idx2
   sycl::range<1> blocks((na + threadsPerBlock.get(0) - 1) / threadsPerBlock.get(0));
 
   q.parallel_for(sycl::nd_range<1>(blocks * threadsPerBlock, threadsPerBlock), [=](sycl::nd_item<1> it) {
-        gpu_update_ndef_c_kernel (ndef_c_dev, idx_dev, p_col_dev, idx2_dev, 
+        gpu_update_ndef_c_kernel_1 (ndef_c_dev, idx_dev, p_col_dev, idx2_dev, 
                                   na, na1, np_rem, ndef_start, it);
   });
   if (debug) syclDeviceSynchronizeFromC();
+
+  q.parallel_for(sycl::nd_range<1>(blocks * threadsPerBlock, threadsPerBlock), [=](sycl::nd_item<1> it) {
+        gpu_update_ndef_c_kernel_2 (ndef_c_dev, idx_dev, p_col_dev, idx2_dev, 
+                                  na, na1, np_rem, ndef_start, it);
+  });
+  if (debug) syclDeviceSynchronizeFromC();
+
 }
 
 extern "C" void CONCATENATE(ELPA_GPU,  _update_ndef_c_FromC) (intptr_t ndef_c_dev, intptr_t idx_dev, intptr_t p_col_dev, intptr_t idx2_dev, 
@@ -492,7 +503,7 @@ void gpu_fill_tmp_arrays_kernel(T *d1u, T *d1, T *zu, T *z, T *d1l, T *zl,
                                 const sycl::nd_item<1> &it) {
   int i = it.get_group(0) * it.get_local_range(0) + it.get_local_id(0);
 
-  if (i>=0 && i < na1) 
+  if (i < na1) 
     {
     int index = idx1[i] - 1;
     if (p_col[index] == np_rem)
@@ -511,8 +522,6 @@ void gpu_fill_tmp_arrays_kernel(T *d1u, T *d1, T *zu, T *z, T *d1l, T *zl,
         }
       }
     }
-
-  it.barrier();
 
   if (i == 0) 
     {
