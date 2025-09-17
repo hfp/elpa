@@ -48,7 +48,7 @@
 
 //________________________________________________________________
 
-__global__ void gpu_update_ndef_c_kernel (int *ndef_c, int *idx, int *p_col, int *idx2, 
+__global__ void gpu_update_ndef_c_kernel_1 (int *ndef_c, int *idx, int *p_col, int *idx2,
                                           const int na, const int na1, const int np_rem, const int ndef_start) {
   int ii = blockIdx.x * blockDim.x + threadIdx.x; // na
 
@@ -63,8 +63,12 @@ __global__ void gpu_update_ndef_c_kernel (int *ndef_c, int *idx, int *p_col, int
         }
       }
   //}
+    
+}
 
-  __syncthreads();
+__global__ void gpu_update_ndef_c_kernel_2 (int *ndef_c, int *idx, int *p_col, int *idx2,
+                                          const int na, const int na1, const int np_rem, const int ndef_start) {
+  int ii = blockIdx.x * blockDim.x + threadIdx.x; // na
 
   int counter = 0;
   if (ii == 0) {
@@ -77,7 +81,6 @@ __global__ void gpu_update_ndef_c_kernel (int *ndef_c, int *idx, int *p_col, int
       }
     }
   }
-    
 }
 
 void gpu_update_ndef_c (int *ndef_c_dev, int *idx_dev, int *p_col_dev, int *idx2_dev, 
@@ -89,19 +92,34 @@ void gpu_update_ndef_c (int *ndef_c_dev, int *idx_dev, int *p_col_dev, int *idx2
   if (blocks.x==0) return;
 
 #ifdef WITH_GPU_STREAMS
-    gpu_update_ndef_c_kernel<<<blocks,threadsPerBlock,0,my_stream>>> (ndef_c_dev, idx_dev, p_col_dev, idx2_dev, 
+    gpu_update_ndef_c_kernel_1<<<blocks,threadsPerBlock,0,my_stream>>> (ndef_c_dev, idx_dev, p_col_dev, idx2_dev, 
                                                                       na, na1, np_rem, ndef_start);
 #else
-    gpu_update_ndef_c_kernel<<<blocks,threadsPerBlock>>>             (ndef_c_dev, idx_dev, p_col_dev, idx2_dev, 
+    gpu_update_ndef_c_kernel_1<<<blocks,threadsPerBlock>>>             (ndef_c_dev, idx_dev, p_col_dev, idx2_dev, 
                                                                       na, na1, np_rem, ndef_start);
 #endif
-    
+
   if (debug)
     {
     gpuDeviceSynchronize();
     gpuError_t gpuerr = gpuGetLastError();
     if (gpuerr != gpuSuccess)
-      printf("Error in executing gpu_update_ndef_c_kernel: %s\n",gpuGetErrorString(gpuerr));
+      printf("Error in executing gpu_update_ndef_c_kernel_1: %s\n",gpuGetErrorString(gpuerr));
+    }
+
+#ifdef WITH_GPU_STREAMS
+    gpu_update_ndef_c_kernel_2<<<blocks,threadsPerBlock,0,my_stream>>> (ndef_c_dev, idx_dev, p_col_dev, idx2_dev, 
+                                                                      na, na1, np_rem, ndef_start);
+#else
+    gpu_update_ndef_c_kernel_2<<<blocks,threadsPerBlock>>>             (ndef_c_dev, idx_dev, p_col_dev, idx2_dev, 
+                                                                      na, na1, np_rem, ndef_start);
+#endif
+  if (debug)
+    {
+    gpuDeviceSynchronize();
+    gpuError_t gpuerr = gpuGetLastError();
+    if (gpuerr != gpuSuccess)
+      printf("Error in executing gpu_update_ndef_c_kernel_2: %s\n",gpuGetErrorString(gpuerr));
     }
 }
 
@@ -325,7 +343,7 @@ template <typename T>
 __global__ void gpu_copy_q_slice_to_qtmp2_kernel(T *q, T *qtmp2, int *idxq1, int *l_col_out, 
                                                 const int l_rows, const int l_rqs, const int l_rqe, const int matrixRows, const int matrixCols, 
                                                 const int gemm_dim_k, const int gemm_dim_m, const int ns, const int ncnt, const int indx, const int indx2, const int na) {
-  int j = blockIdx.x * blockDim.x + threadIdx.x; // 1.._l_rows
+  int j  = blockIdx.x * blockDim.x + threadIdx.x; // 1.._l_rows
   int ii = blockIdx.y * blockDim.y + threadIdx.y + 1; // 1.._l_rows
 
   if (ii >=1 && ii < ncnt+1) {
@@ -523,7 +541,7 @@ __global__ void gpu_fill_tmp_arrays_kernel (T *d1u, T *d1, T *zu, T *z, T *d1l, 
                                             const int na, const int np, const int na1, const int np_rem) {
   int i = blockIdx.x * blockDim.x + threadIdx.x;
 
-  if (i>=0 && i < na1) 
+  if (i < na1)
     {
     int index = idx1[i] - 1;
     if (p_col[index] == np_rem)
@@ -543,7 +561,6 @@ __global__ void gpu_fill_tmp_arrays_kernel (T *d1u, T *d1, T *zu, T *z, T *d1l, 
       }
     }
 
-  __syncthreads();
   if (i == 0) 
     {
     nnzul[0]=0;
@@ -1280,8 +1297,8 @@ __global__ void gpu_copy_qtmp1_q_compute_nnzu_nnzl_kernel(T *qtmp1_dev, T *q_dev
 
 template <typename T>
 void gpu_copy_qtmp1_q_compute_nnzu_nnzl(T *qtmp1_dev, T *q_dev, int *p_col_dev, int *l_col_dev, int *idx1_dev, int *coltyp_dev, int *nnzul_dev,
-                                        int na1, int l_rnm, int l_rqs, int l_rqm, int l_rows, int my_pcol, int ldq_tmp1, int ldq, int SM_count,
-                                        int debug, gpuStream_t my_stream){
+                                        int na1, int l_rnm, int l_rqs, int l_rqm, int l_rows, int my_pcol, int ldq_tmp1, int ldq, 
+                                        int SM_count, int debug, gpuStream_t my_stream){
 
   dim3 blocks = dim3(SM_count,1,1);
   dim3 threadsPerBlock = dim3(MAX_THREADS_PER_BLOCK,1,1);
