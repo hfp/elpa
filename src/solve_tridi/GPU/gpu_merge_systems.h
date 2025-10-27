@@ -1,4 +1,4 @@
-//    Copyright 2025, P. Karpov
+//    Copyright 2025, A. Marek, P. Karpov
 //
 //    This file is part of ELPA.
 //
@@ -44,9 +44,11 @@
 //    any derivatives of ELPA under the same license that we chose for
 //    the original distribution, the GNU Lesser General Public License.
 //
-//    This file was written by P. Karpov, MPCDF
+//    This file was written by A. Marek, P. Karpov, MPCDF
 
 //________________________________________________________________
+
+int const THREADS_PER_BLOCK_SECULAR_EQ_KERNEL = MAX_THREADS_PER_BLOCK/2;
 
 __global__ void gpu_update_ndef_c_kernel_1 (int *ndef_c, int *idx, int *p_col, int *idx2,
                                           const int na, const int na1, const int np_rem, const int ndef_start) {
@@ -698,18 +700,28 @@ extern "C" void CONCATENATE(ELPA_GPU,  _zero_q_FromC) (char dataType, intptr_t q
 
 //________________________________________________________________
 
+// PETERDEBUG: na is unused. clean it up
+
 template <typename T>
 __global__ void gpu_copy_q_slice_to_qtmp1_kernel (T *qtmp1, T *q, int *ndef_c,int *l_col, int *idx2, int *p_col, 
                                                   const int na2, const int na, const int my_pcol, const int l_rows, const int l_rqs, const int l_rqe, 
                                                   const int matrixRows, const int gemm_dim_k) {
+  // do i = 1, na2
+  //   l_idx = l_col(idx2(i))
+  //   if (p_col(idx2(i))==my_pcol) then
+  //     ndef = ndef+1
+  //     qtmp1(1:l_rows,ndef) = q(l_rqs:l_rqe,l_idx)
+  //   endif
+  // enddo
+
   int j = blockIdx.x * blockDim.x + threadIdx.x; // l_rows
 
   if (j>=0 && j<l_rows) {
     for (int i=1; i<na2+1; i++){
-      int l_idx = l_col[idx2[i-1]-1];
+      int l_idx = l_col[idx2[i-1]-1]; // PETERDEBUG: can be moved inside "if", here and in Fortran 
       if (p_col[idx2[i-1]-1] == my_pcol) {
-        ndef_c[j] = ndef_c[j]+1;
-        qtmp1[j+gemm_dim_k*(ndef_c[j]-1)] = q[j+l_rqs-1 + matrixRows*(l_idx-1)];      
+        ndef_c[j] = ndef_c[j]+1; // PETERDEBUG: no need for a global array here. We can copy ndef to a local variable and increment it
+        qtmp1[j+gemm_dim_k*(ndef_c[j]-1)] = q[j+l_rqs-1 + matrixRows*(l_idx-1)]; // PETERDEBUG: lose coalescing here
       }
     }
   }
@@ -727,10 +739,10 @@ void gpu_copy_q_slice_to_qtmp1(T *qtmp1_dev, T *q_dev, int *ndef_c_dev, int *l_c
 
 #ifdef WITH_GPU_STREAMS
     gpu_copy_q_slice_to_qtmp1_kernel<T><<<blocks,threadsPerBlock,0,my_stream>>>(qtmp1_dev, q_dev, ndef_c_dev, l_col_out_dev, idx2_dev, p_col_dev, 
-                                                                                na2, na2, my_pcol, l_rows, l_rqs, l_rqe, matrixRows, gemm_dim_k); 
+                                                                                na2, na, my_pcol, l_rows, l_rqs, l_rqe, matrixRows, gemm_dim_k); 
 #else
     gpu_copy_q_slice_to_qtmp1_kernel<T><<<blocks,threadsPerBlock>>>            (qtmp1_dev, q_dev, ndef_c_dev, l_col_out_dev, idx2_dev, p_col_dev, 
-                                                                                na2, na2, my_pcol, l_rows, l_rqs, l_rqe, matrixRows, gemm_dim_k);
+                                                                                na2, na, my_pcol, l_rows, l_rqs, l_rqe, matrixRows, gemm_dim_k);
 #endif
     
   if (debug)
@@ -884,7 +896,6 @@ __forceinline__ __device__ void device_solve_secular_equation(int n, int i_f, T*
   if (i_f == n)
     {
     // Special case: last eigenvalue.
-    
     if (tid==0)
       {
       dshift_sh = d1[n-1];
@@ -895,7 +906,7 @@ __forceinline__ __device__ void device_solve_secular_equation(int n, int i_f, T*
       {
       delta[j] = d1[j] - dshift_sh;
       }
-    
+
     T sum_zsq = elpa_sum<T>(n, tid, threads_total, cache, [=] __device__ (int j) -> T {
       return z1[j]*z1[j];
     });
@@ -911,7 +922,6 @@ __forceinline__ __device__ void device_solve_secular_equation(int n, int i_f, T*
   else 
     {
     // Other eigenvalues: lower bound is d1[i] and upper bound is d1[i+1]
-
     if (tid==0)
       {
       x_sh = 0.5*(d1[i] + d1[i+1]);
@@ -950,6 +960,7 @@ __forceinline__ __device__ void device_solve_secular_equation(int n, int i_f, T*
   // Bisection
   for (int iter = 0; iter < maxIter; iter++) 
     {
+    __syncthreads(); // needed to prevent changing break_flag_sh for the previous iteration
     if (tid==0)
       {
       x_sh = 0.5*(a_sh + b_sh);
@@ -993,7 +1004,7 @@ template <typename T>
 __global__ void gpu_solve_secular_equation_loop_kernel(T *d1_dev, T *z1_dev, T *delta_extended_dev, T *rho_dev,
                                                        T *z_extended_dev, T *dbase_dev, T *ddiff_dev, 
                                                        int my_proc, int na1, int n_procs){
-  __shared__ T cache[MAX_THREADS_PER_BLOCK]; 
+  __shared__ T cache[THREADS_PER_BLOCK_SECULAR_EQ_KERNEL]; 
   int thread = threadIdx.x;
   int block  = blockIdx.x;
 
@@ -1032,7 +1043,7 @@ __global__ void gpu_solve_secular_equation_loop_kernel(T *d1_dev, T *z1_dev, T *
   for (int i=my_proc + n_procs*block; i<na1; i += n_procs*gridDim.x)
     {
     int i_f = i + 1; // i_f is the Fortran index (1-based)
-
+    
     device_solve_secular_equation(na1, i_f, d1_dev, z1_dev, delta_extended_dev+na1*block, rho_dev, cache, thread, blockDim.x);
     __syncthreads(); // so all threads agree on delta_dev
 
@@ -1077,7 +1088,7 @@ void gpu_solve_secular_equation_loop (T *d1_dev, T *z1_dev, T *delta_dev, T *rho
                                       int my_proc, int na1, int n_procs, int SM_count, int debug, gpuStream_t my_stream){
   
   dim3 blocks = dim3(SM_count,1,1);
-  dim3 threadsPerBlock = dim3(MAX_THREADS_PER_BLOCK/2,1,1);
+  dim3 threadsPerBlock = dim3(THREADS_PER_BLOCK_SECULAR_EQ_KERNEL,1,1);
 
 #ifdef WITH_GPU_STREAMS
   gpu_solve_secular_equation_loop_kernel<<<blocks,threadsPerBlock,0,my_stream>>> (d1_dev, z1_dev, delta_dev, rho_dev,
@@ -1245,7 +1256,8 @@ extern "C" void CONCATENATE(ELPA_GPU,  _add_tmp_loop_FromC)(char dataType, intpt
 template <typename T>
 __global__ void gpu_copy_qtmp1_q_compute_nnzu_nnzl_kernel(T *qtmp1_dev, T *q_dev, int *p_col_dev, int *l_col_dev, int *idx1_dev, int *coltyp_dev, int *nnzul_dev,
                                                int na1, int l_rnm, int l_rqs, int l_rqm, int l_rows, int my_pcol, int ldq_tmp1, int ldq){
-  
+  // nnzu = 0
+  // nnzl = 0
   // do i = 1, na1
   //   if (p_col(idx1(i))==my_pcol) then
   //     l_idx = l_col(idx1(i))
