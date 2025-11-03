@@ -182,11 +182,14 @@ subroutine transform_columns_cpu_&
 #ifdef WITH_GPU_STREAMS
         successGPU = gpu_memcpy_async(int(loc(q(l_rqs,lc1)),kind=c_intptr_t), q_dev + shift_dev, &
                                       l_rows*size_of_datatype, gpuMemcpyDeviceToHost, my_stream)
+
+        successGPU = gpu_stream_synchronize(my_stream)
+        check_stream_synchronize_gpu("transform_columns: q_dev -> q", successGPU)
 #else
         successGPU = gpu_memcpy      (int(loc(q(l_rqs,lc1)),kind=c_intptr_t), q_dev + shift_dev, &
                                       l_rows*size_of_datatype, gpuMemcpyDeviceToHost)
-#endif
         check_memcpy_gpu("transform_columns: q_dev, lc1", successGPU)
+#endif
       endif
 
       if (useCCL) then
@@ -207,7 +210,7 @@ subroutine transform_columns_cpu_&
         endif
 
         successGPU = gpu_stream_synchronize(my_stream)
-        check_stream_synchronize_gpu("transform_columns", successGPU)
+        check_stream_synchronize_gpu("transform_columns ccl_send/ccl_recv", successGPU)
         call obj%timer%stop("ccl_send_recv")
       else  ! useCCL
         call obj%timer%start("mpi_communication")
@@ -247,11 +250,14 @@ subroutine transform_columns_cpu_&
 #ifdef WITH_GPU_STREAMS
       successGPU = gpu_memcpy_async(int(loc(q(l_rqs,lc2)),kind=c_intptr_t), q_dev + shift_dev, &
                                     l_rows*size_of_datatype, gpuMemcpyDeviceToHost, my_stream)
+      
+      successGPU = gpu_stream_synchronize(my_stream)
+      check_stream_synchronize_gpu("transform_columns: q_dev -> q", successGPU)
 #else
       successGPU = gpu_memcpy      (int(loc(q(l_rqs,lc2)),kind=c_intptr_t), q_dev + shift_dev, &
                                     l_rows*size_of_datatype, gpuMemcpyDeviceToHost)
-#endif
       check_memcpy_gpu("transform_columns: q_dev, lc2", successGPU)
+#endif
     endif
 
     if (useCCL) then
@@ -271,7 +277,7 @@ subroutine transform_columns_cpu_&
       endif
     
       successGPU = gpu_stream_synchronize(my_stream)
-      check_stream_synchronize_gpu("transform_columns", successGPU)
+      check_stream_synchronize_gpu("transform_columns ccl_send/ccl_recv", successGPU)
       call obj%timer%stop("ccl_send_recv")
     else ! useCCL
       call obj%timer%start("mpi_communication")

@@ -87,10 +87,12 @@
       allocate(work(lwork), iwork(liwork), stat=istat, errmsg=errorMessage)
       check_allocate("solve_tridi_single: work, iwork", istat, errorMessage)
       call obj%timer%start("lapack_stedc")
+
       call PRECISION_STEDC('I', int(nlen,kind=BLAS_KIND), d, e, q, int(ldq,kind=BLAS_KIND),    &
                           work, int(lwork,kind=BLAS_KIND), int(iwork,kind=BLAS_KIND), int(liwork,kind=BLAS_KIND), &
                           infoBLAS)
       info = int(infoBLAS,kind=ik)
+      
       call obj%timer%stop("lapack_stedc")
 
       ! STEDC can affect the input arrays d and e, so we need to copy them if we want to use STEQR

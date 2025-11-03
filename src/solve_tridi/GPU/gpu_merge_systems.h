@@ -700,7 +700,7 @@ extern "C" void CONCATENATE(ELPA_GPU,  _zero_q_FromC) (char dataType, intptr_t q
 
 //________________________________________________________________
 
-// PETERDEBUG: na is unused. clean it up
+// PETERDEBUG111: na is unused. clean it up
 
 template <typename T>
 __global__ void gpu_copy_q_slice_to_qtmp1_kernel (T *qtmp1, T *q, int *ndef_c,int *l_col, int *idx2, int *p_col, 
@@ -718,10 +718,10 @@ __global__ void gpu_copy_q_slice_to_qtmp1_kernel (T *qtmp1, T *q, int *ndef_c,in
 
   if (j>=0 && j<l_rows) {
     for (int i=1; i<na2+1; i++){
-      int l_idx = l_col[idx2[i-1]-1]; // PETERDEBUG: can be moved inside "if", here and in Fortran 
+      int l_idx = l_col[idx2[i-1]-1]; // PETERDEBUG111: can be moved inside "if", here and in Fortran 
       if (p_col[idx2[i-1]-1] == my_pcol) {
-        ndef_c[j] = ndef_c[j]+1; // PETERDEBUG: no need for a global array here. We can copy ndef to a local variable and increment it
-        qtmp1[j+gemm_dim_k*(ndef_c[j]-1)] = q[j+l_rqs-1 + matrixRows*(l_idx-1)]; // PETERDEBUG: lose coalescing here
+        ndef_c[j] = ndef_c[j]+1; // PETERDEBUG111: no need for a global array here. We can copy ndef to a local variable and increment it
+        qtmp1[j+gemm_dim_k*(ndef_c[j]-1)] = q[j+l_rqs-1 + matrixRows*(l_idx-1)]; // PETERDEBUG111: lose coalescing here
       }
     }
   }
