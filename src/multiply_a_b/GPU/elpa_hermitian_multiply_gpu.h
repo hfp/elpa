@@ -93,64 +93,6 @@ extern "C" void CONCATENATE(ELPA_GPU,  _copy_tmp2_c_FromC) (char dataType, intpt
 
 //________________________________________________________________
 
-// PETERDEBUG111: cleanup after testing
-template <typename T>
-__global__ void gpu_copy_a_aux_bc_kernel(T *a_dev, T *aux_bc_dev, 
-                                        const int n_aux_bc, const int nvals, const int lrs, const int lre, const int noff,
-                                        const int nblk, const int n, const int l_rows, const int lda, const int ldaCols){
-  // nvals = lre-lrs+1
-  // aux_bc(n_aux_bc+1:n_aux_bc+nvals) = a(lrs:lre,noff*nblk+n)
-
-  int tid = threadIdx.x + blockIdx.x*blockDim.x;
-
-  for (int i=tid; i<(lre-lrs+1); i+=blockDim.x*gridDim.x)
-    aux_bc_dev[(n_aux_bc+1-1)+i] = a_dev[(lrs-1)+i + lda*(noff*nblk+n-1)];
-}
-
-template <typename T>
-void gpu_copy_a_aux_bc(T *a_dev, T *aux_bc_dev, 
-                      int n_aux_bc, int nvals, int lrs, int lre, int noff,
-                      int nblk, int n, int l_rows, int lda, int ldaCols, int SM_count, int debug, gpuStream_t my_stream) {
-		
-  //dim3 blocks = dim3(lre-lrs+1,1,1);
-  //dim3 threadsPerBlock = dim3(1,1,1); // Peter: this and other kernels can be optimized by utilizing threads and coalesced memory access
-
-  dim3 blocks = dim3(SM_count,1,1);
-  dim3 threadsPerBlock = dim3(MIN_THREADS_PER_BLOCK,1,1); 
-
-#ifdef WITH_GPU_STREAMS
-  gpu_copy_a_aux_bc_kernel<<<blocks,threadsPerBlock,0,my_stream>>>(a_dev, aux_bc_dev, 
-                                                                   n_aux_bc, nvals, lrs, lre, noff, nblk, n, l_rows, lda, ldaCols);
-#else
-  gpu_copy_a_aux_bc_kernel<<<blocks,threadsPerBlock>>>             (a_dev, aux_bc_dev, 
-                                                                   n_aux_bc, nvals, lrs, lre, noff, nblk, n, l_rows, lda, ldaCols);
-#endif
-
-  if (debug) {
-    //gpuDeviceSynchronize(); // PETERDEBUG111: uncomment after testing
-    gpuError_t gpuerr = gpuGetLastError();
-    if (gpuerr != gpuSuccess){
-      printf("Error in executing gpu_copy_a_aux_bc_kernel: %s\n",gpuGetErrorString(gpuerr));
-    }
-  }
-}
-
-extern "C" void CONCATENATE(ELPA_GPU, _copy_a_aux_bc_FromC)(char dataType, intptr_t a_dev, intptr_t aux_bc_dev,
-                                                            int n_aux_bc, int nvals, int lrs, int lre, int noff, int nblk, int n, 
-                                                            int l_rows, int lda, int ldaCols, int SM_count, int debug, gpuStream_t my_stream) {
-  if      (dataType=='D') gpu_copy_a_aux_bc<double>((double *) a_dev, (double *) aux_bc_dev, 
-                                                   n_aux_bc, nvals, lrs, lre, noff, nblk, n, l_rows, lda, ldaCols, SM_count, debug, my_stream);
-  else if (dataType=='S') gpu_copy_a_aux_bc<float> ((float  *) a_dev, (float  *) aux_bc_dev,
-                                                   n_aux_bc, nvals, lrs, lre, noff, nblk, n, l_rows, lda, ldaCols, SM_count, debug, my_stream);
-  else if (dataType=='Z') gpu_copy_a_aux_bc<gpuDoubleComplex>((gpuDoubleComplex *) a_dev, (gpuDoubleComplex *) aux_bc_dev,
-                                                   n_aux_bc, nvals, lrs, lre, noff, nblk, n, l_rows, lda, ldaCols, SM_count, debug, my_stream);
-  else if (dataType=='C') gpu_copy_a_aux_bc<gpuFloatComplex> ((gpuFloatComplex  *) a_dev, (gpuFloatComplex  *) aux_bc_dev,
-                                                   n_aux_bc, nvals, lrs, lre, noff, nblk, n, l_rows, lda, ldaCols, SM_count, debug, my_stream);
-  else printf("Error in gpu_copy_a_aux_bc: Unsupported data type\n");
-}
-
-//________________________________________________________________
-
 template <typename T>
 __global__ void gpu_copy_a_aux_bc_loop_kernel(const T* a_dev, T* aux_bc_dev, int* lrs_save_dev, int* lre_save_dev, int* n_aux_bc_save_dev,
                                               const int noff, const int nblk, const int lda){
@@ -219,60 +161,6 @@ extern "C" void CONCATENATE(ELPA_GPU, _copy_a_aux_bc_loop_FromC) (char dataType,
 
 //________________________________________________________________
 
-// PETERDEBUG111: cleanup after testing
-template <typename T>
-__global__ void gpu_copy_aux_bc_aux_mat_kernel(T *aux_bc_dev, T *aux_mat_dev, 
-                                               const int lrs, const int lre, const int nstor, const int n_aux_bc, const int nvals, const int l_rows, const int nblk_mult, const int nblk) {
-	
-  //aux_mat(lrs:lre,nstor) = aux_bc(n_aux_bc+1:n_aux_bc+nvals)
-  
-  int tid = threadIdx.x + blockIdx.x*blockDim.x;
-  
-  for (int i=tid; i<(lre-lrs+1); i+=blockDim.x*gridDim.x)
-    aux_mat_dev[lrs-1+i + l_rows*(nstor-1)] = aux_bc_dev[n_aux_bc+i];
-
-}
-
-template <typename T>
-void gpu_copy_aux_bc_aux_mat(T *aux_bc_dev, T *aux_mat_dev, 
-                             int lrs, int lre, int nstor, int n_aux_bc, int nvals, int l_rows, int nblk, int nblk_mult, 
-                             int SM_count, int debug, gpuStream_t my_stream) {
-
-  dim3 blocks = dim3(SM_count,1,1);
-  dim3 threadsPerBlock = dim3(MIN_THREADS_PER_BLOCK,1,1); 
-
-#ifdef WITH_GPU_STREAMS
-  gpu_copy_aux_bc_aux_mat_kernel<<<blocks,threadsPerBlock,0,my_stream>>>(aux_bc_dev, aux_mat_dev, 
-                                                                         lrs, lre, nstor, n_aux_bc, nvals, l_rows, nblk, nblk_mult);
-#else
-  gpu_copy_aux_bc_aux_mat_kernel<<<blocks,threadsPerBlock>>>            (aux_bc_dev, aux_mat_dev,
-                                                                         lrs, lre, nstor, n_aux_bc, nvals, l_rows, nblk, nblk_mult);
-#endif
-
-  if (debug) {
-    //gpuDeviceSynchronize(); // PETERDEBUG111: uncomment after testing
-    gpuError_t gpuerr = gpuGetLastError();
-    if (gpuerr != gpuSuccess){
-      printf("Error in executing gpu_copy_aux_bc_aux_mat_kernel: %s\n",gpuGetErrorString(gpuerr));
-    }
-  }
-}
-
-extern "C" void CONCATENATE(ELPA_GPU,  _copy_aux_bc_aux_mat_FromC) (char dataType, intptr_t aux_bc_dev, intptr_t aux_mat_dev,
-                                        int lrs, int lre, int nstor, int n_aux_bc, int nvals, int l_rows, int nblk, int nblk_mult, int SM_count, int debug, gpuStream_t my_stream) {
-  if      (dataType=='D') gpu_copy_aux_bc_aux_mat<double>((double *) aux_bc_dev, (double *) aux_mat_dev, 
-                                                                   lrs, lre, nstor, n_aux_bc, nvals, l_rows, nblk, nblk_mult, SM_count, debug, my_stream);
-  else if (dataType=='S') gpu_copy_aux_bc_aux_mat<float> ((float  *) aux_bc_dev, (float  *) aux_mat_dev,
-                                                                   lrs, lre, nstor, n_aux_bc, nvals, l_rows, nblk, nblk_mult, SM_count, debug, my_stream);
-  else if (dataType=='Z') gpu_copy_aux_bc_aux_mat<gpuDoubleComplex>((gpuDoubleComplex *) aux_bc_dev, (gpuDoubleComplex *) aux_mat_dev,
-                                                                   lrs, lre, nstor, n_aux_bc, nvals, l_rows, nblk, nblk_mult, SM_count, debug, my_stream);
-  else if (dataType=='C') gpu_copy_aux_bc_aux_mat<gpuFloatComplex> ((gpuFloatComplex  *) aux_bc_dev, (gpuFloatComplex  *) aux_mat_dev,
-                                                                   lrs, lre, nstor, n_aux_bc, nvals, l_rows, nblk, nblk_mult, SM_count, debug, my_stream);
-  else printf("Error in gpu_copy_aux_bc_aux_mat: Unsupported data type\n");
-}
-
-//________________________________________________________________
-
 template <typename T>
 __global__ void gpu_copy_aux_bc_aux_mat_loop_kernel(const T* aux_bc_dev, T* aux_mat_dev, int* lrs_save_dev, int* lre_save_dev, int* n_aux_bc_save_dev,
                                                     const int nstor0, const int l_rows) {
@@ -307,7 +195,7 @@ void gpu_copy_aux_bc_aux_mat_loop(T *aux_bc_dev, T *aux_mat_dev, int* lrs_save_d
                                   int n_size, int debug, gpuStream_t my_stream) {
 
   dim3 blocks = dim3(n_size,1,1);
-  dim3 threadsPerBlock = dim3(MIN_THREADS_PER_BLOCK,1,1); 
+  dim3 threadsPerBlock = dim3(MIN_THREADS_PER_BLOCK,1,1);
 
   if (n_size<=0) return;
 

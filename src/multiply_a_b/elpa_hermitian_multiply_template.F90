@@ -228,11 +228,6 @@
   &PRECISION&
   &"//gpuString)
 
-  ! PETERDEBUG111: cleanup after testing
-  call obj%timer%start("mpi_barrier_world")
-  call MPI_Barrier(MPI_COMM_WORLD, mpierr)
-  call obj%timer%stop("mpi_barrier_world")
-
   na          = obj%na
   nblk        = obj%nblk
   matrixRows  = obj%local_nrows
@@ -274,7 +269,7 @@
     nblk_mult = (blocking/nblk+1) * nblk
   else ! is_set
     if (useGPU) then
-      ! PETERDEBUG111: original (new)
+      ! PETERDEBUG111: original (new). test on Raven.
       ! if (na/np_rows <= 256) then
       !   nblk_mult = (63/nblk+1)*nblk
       ! else
@@ -516,7 +511,6 @@
 
     ! Loop over the blocks on row np; nb is the 0-based local index of the block
     do nb = 0, (l_rows_np-1)/nblk
-
 #ifdef WITH_NVTX
       call nvtxRangePush("do nb = 0, (l_rows_np-1)/nblk")
 #endif
@@ -561,7 +555,8 @@
 #ifdef WITH_GPU_STREAMS
           successGPU = gpu_memcpy_async(lrs_save_dev, int(loc(lrs_save),kind=c_intptr_t), num, gpuMemcpyHostToDevice, my_stream)
           successGPU = gpu_memcpy_async(lre_save_dev, int(loc(lre_save),kind=c_intptr_t), num, gpuMemcpyHostToDevice, my_stream)
-          successGPU = gpu_memcpy_async(n_aux_bc_save_dev, int(loc(n_aux_bc_save),kind=c_intptr_t), num, gpuMemcpyHostToDevice, my_stream)
+          successGPU = gpu_memcpy_async(n_aux_bc_save_dev, int(loc(n_aux_bc_save),kind=c_intptr_t), &
+                                                                                          num, gpuMemcpyHostToDevice, my_stream)
           if (wantDebug) successGPU = gpu_stream_synchronize(my_stream)
 #else
           successGPU = gpu_memcpy      (lrs_save_dev, int(loc(lrs_save),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
@@ -602,7 +597,7 @@
         enddo ! n = 1, min(nblk, l_rows_np-nb*nblk)
         if (wantDebug) call obj%timer%stop("loop_copy_a_aux_bc")
       endif ! useGPU
-      
+
 #ifdef WITH_MPI
       ! copy data to host for bcast, if needed
       if (useGPU .and. .not. useCCL) then
@@ -660,6 +655,7 @@
         call obj%timer%stop("mpi_bcast")
       endif ! useCCL
 
+
       ! copy data back to device, if needed
       if (useGPU .and. .not. useCCL) then
         if (wantDebug) call obj%timer%start("gpu_memcpy")
@@ -687,7 +683,8 @@
 #ifdef WITH_GPU_STREAMS
         successGPU = gpu_memcpy_async(lrs_save_dev, int(loc(lrs_save),kind=c_intptr_t), num, gpuMemcpyHostToDevice, my_stream)
         successGPU = gpu_memcpy_async(lre_save_dev, int(loc(lre_save),kind=c_intptr_t), num, gpuMemcpyHostToDevice, my_stream)
-        successGPU = gpu_memcpy_async(n_aux_bc_save_dev, int(loc(n_aux_bc_save),kind=c_intptr_t), num, gpuMemcpyHostToDevice, my_stream)
+        successGPU = gpu_memcpy_async(n_aux_bc_save_dev, int(loc(n_aux_bc_save),kind=c_intptr_t), &
+                                                                                        num, gpuMemcpyHostToDevice, my_stream)
         if (wantDebug) successGPU = gpu_stream_synchronize(my_stream)
 #else
         successGPU = gpu_memcpy      (lrs_save_dev, int(loc(lrs_save),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
@@ -845,7 +842,7 @@
 
             if (wantDebug) then
               call obj%timer%start("mpi_barrier_before_reduce")
-              call MPI_Barrier(int(mpi_comm_cols,kind=MPI_KIND), mpierr)
+              call MPI_Barrier(int(mpi_comm_rows,kind=MPI_KIND), mpierr)
               call obj%timer%stop("mpi_barrier_before_reduce")
             endif
 
