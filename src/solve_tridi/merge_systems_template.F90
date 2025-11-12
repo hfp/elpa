@@ -142,7 +142,7 @@
 #endif
 
       integer(kind=ik)                            :: i, j, k, na1, na2, l_rows, l_cols, l_rqs, l_rqe, &
-                                                     l_rqm, ns, lc1, lc2, info
+                                                     l_rqm, ns, lc1, lc2, idx_i, info
       integer(kind=BLAS_KIND)                     :: infoBLAS
       integer(kind=ik)                            :: sig_int
       integer(kind=ik)                            :: l_rnm, nnzu, nnzl, ndef, ncnt, max_local_cols, &
@@ -166,7 +166,7 @@
       integer(kind=c_intptr_t)                    :: z1_dev, delta_dev, rho_dev
       integer(kind=c_intptr_t)                    :: d1u_dev, dbase_dev, ddiff_dev, zu_dev, ev_scale_dev
       integer(kind=c_intptr_t)                    :: d1l_dev, zl_dev, z_dev, d1_dev, ztmp_extended_dev
-      integer(kind=c_intptr_t)                    :: idx1_dev, p_col_dev, coltyp_dev, p_col_out_dev, ndef_c_dev
+      integer(kind=c_intptr_t)                    :: idx1_dev, p_col_dev, coltyp_dev, p_col_out_dev !, ndef_c_dev ! PETERDEBUG111 cleanup
       integer(kind=c_intptr_t)                    :: idxq1_dev, l_col_out_dev, idx_dev, idx2_dev, l_col_dev
       integer(kind=c_intptr_t)                    :: nnzul_dev
       integer(kind=c_intptr_t)                    :: tmp_dev, zero_dev, one_dev, qtrans_dev ! for transform_columns_gpu
@@ -185,7 +185,7 @@
 
       integer(kind=ik)                            :: nnzu_start, nnzl_start
 
-      integer(kind=ik), allocatable               :: ndef_c(:)
+      !integer(kind=ik), allocatable               :: ndef_c(:) ! PETERDEBUG111: cleanup
 
       integer(kind=ik) :: ii,jj, indx, ind_ex, ind_ex2, p_col_tmp, index2, counter1, counter2
 
@@ -316,9 +316,9 @@
 
 
       if (useGPU) then
-        num = na * size_of_int
-        successGPU = gpu_malloc(ndef_c_dev, num)
-        check_alloc_gpu("merge_systems: ndef_c_dev", successGPU)
+        ! num = na * size_of_int ! PETERDEBUG111: cleanup
+        ! successGPU = gpu_malloc(ndef_c_dev, num)
+        ! check_alloc_gpu("merge_systems: ndef_c_dev", successGPU)
 
         num = na * size_of_int
         successGPU = gpu_malloc(idx1_dev, num)
@@ -1275,10 +1275,10 @@
         endif
 
 
-        if (useGPU) then
-          allocate(ndef_c(na), stat=istat, errmsg=errorMessage)
-          check_allocate("merge_systems: ndef_c",istat, errorMessage)
-        endif
+        ! if (useGPU) then ! PETERDEBUG111 cleanup
+        !   allocate(ndef_c(na), stat=istat, errmsg=errorMessage)
+        !   check_allocate("merge_systems: ndef_c",istat, errorMessage)
+        ! endif
 
 
         gemm_dim_k = MAX(1,l_rows)
@@ -1466,19 +1466,19 @@
 
 
         if (useGPU) then
-          ndef_c(:) = ndef
+          ! ndef_c(:) = ndef ! PETERDEBUG111 cleanup
 
-          num = na * size_of_int
-#ifdef WITH_GPU_STREAMS
-          successGPU = gpu_memcpy_async(ndef_c_dev, int(loc(ndef_c(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice, my_stream)
-          check_memcpy_gpu("merge_systems: ndef_c_dev 4", successGPU)
-#else
-          successGPU = gpu_memcpy      (ndef_c_dev, int(loc(ndef_c(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
-          check_memcpy_gpu("merge_systems: ndef_c_dev", successGPU)
-#endif
+!           num = na * size_of_int  ! PETERDEBUG111 cleanup
+! #ifdef WITH_GPU_STREAMS
+!           successGPU = gpu_memcpy_async(ndef_c_dev, int(loc(ndef_c(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice, my_stream)
+!           check_memcpy_gpu("merge_systems: ndef_c_dev 4", successGPU)
+! #else
+!           successGPU = gpu_memcpy      (ndef_c_dev, int(loc(ndef_c(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
+!           check_memcpy_gpu("merge_systems: ndef_c_dev", successGPU)
+! #endif
 
-          call gpu_copy_q_slice_to_qtmp1 (PRECISION_CHAR, qtmp1_dev, q_dev, ndef_c_dev, l_col_dev, idx2_dev, p_col_dev, &
-                                          na2, na, my_pcol, l_rows, l_rqs, l_rqe, matrixRows, gemm_dim_k, debug, my_stream)
+          call gpu_copy_q_slice_to_qtmp1 (PRECISION_CHAR, qtmp1_dev, q_dev, l_col_dev, idx2_dev, p_col_dev, &
+                                          ndef, na2, my_pcol, l_rows, l_rqs, l_rqe, matrixRows, gemm_dim_k, debug, my_stream)
         else
           do i = 1, na2
             l_idx = l_col(idx2(i))
@@ -1489,7 +1489,6 @@
           enddo
         endif
 
-        l_cols_qreorg = ndef ! Number of columns in reorganized matrix
         if (useGPU) then
           num = na * size_of_int
 #ifdef WITH_GPU_STREAMS
@@ -1816,24 +1815,28 @@
 
           ! Set the deflated eigenvectors in Q (comming from proc np_rem)
 
+          ! ndef = MAX(nnzu,nnzl) ! Remote counter in input matrix ! PETERDEBUG111 cleanup
+          ! if (useGPU) then
+          !   call gpu_update_ndef_c(ndef_c_dev, idx_dev, p_col_dev, idx2_dev, na, na1, np_rem, ndef, debug, my_stream)
+
+          ! endif ! useGPU
+
           ndef = MAX(nnzu,nnzl) ! Remote counter in input matrix
           if (useGPU) then
-            call gpu_update_ndef_c(ndef_c_dev, idx_dev, p_col_dev, idx2_dev, na, na1, np_rem, ndef, debug, my_stream)
+            ! call gpu_copy_qtmp1_slice_to_q (PRECISION_CHAR, q_dev, qtmp1_dev, & ! PETERDEBUG111 cleanup
+            !                                 l_col_out_dev, p_col_out_dev, ndef_c_dev, p_col_dev, idx2_dev, idx_dev, &
+            !                                 l_rqs, l_rqe, l_rows, matrixRows, gemm_dim_k,  my_pcol, na1, np_rem,  na, &
+            !                                 debug, my_stream)
 
-          endif ! useGPU
-
-          ndef = MAX(nnzu,nnzl) ! Remote counter in input matrix
-          if (useGPU) then
             call gpu_copy_qtmp1_slice_to_q (PRECISION_CHAR, q_dev, qtmp1_dev, &
-                                            l_col_out_dev, p_col_out_dev, ndef_c_dev, p_col_dev, idx2_dev, idx_dev, &
-                                            l_rqs, l_rqe, l_rows, matrixRows, gemm_dim_k,  my_pcol, na1, np_rem,  na, &
+                                            l_col_out_dev, p_col_out_dev, p_col_dev, idx2_dev, idx_dev, &
+                                            ndef, l_rqs, l_rqe, l_rows, matrixRows, gemm_dim_k,  my_pcol, na1, np_rem,  na, &
                                             debug, my_stream)
           else ! ! useGPU
-            ndef = MAX(nnzu,nnzl) ! Remote counter in input matrix
             do i = 1, na
-              j = idx(i)
-              if (j>na1) then
-                if (p_col(idx2(j-na1)) == np_rem) then
+              idx_i = idx(i)
+              if (idx_i>na1) then
+                if (p_col(idx2(idx_i-na1)) == np_rem) then
                   ndef = ndef+1
                   if (p_col_out(i) == my_pcol) then
                     q(l_rqs:l_rqe,l_col_out(i)) = qtmp1(1:l_rows,ndef)
@@ -2004,10 +2007,10 @@
         deallocate(nnzu_val, nnzl_val)
 
 
-        if (useGPU) then
-          deallocate(ndef_c, stat=istat, errmsg=errorMessage)
-          check_deallocate("merge_systems: ndef_c",istat, errorMessage)
-        endif
+        ! if (useGPU) then ! PETERDEBUG111 cleanup
+        !   deallocate(ndef_c, stat=istat, errmsg=errorMessage)
+        !   check_deallocate("merge_systems: ndef_c",istat, errorMessage)
+        ! endif
 
         if (useGPU) then
           successGPU = gpu_free(nnzul_dev)
@@ -2016,8 +2019,8 @@
           successGPU = gpu_free(l_col_dev)
           check_dealloc_gpu("merge_systems: l_col_dev", successGPU)
 
-          successGPU = gpu_free(ndef_c_dev)
-          check_dealloc_gpu("merge_systems: ndef_c_dev", successGPU)
+          ! successGPU = gpu_free(ndef_c_dev) ! PETERDEBUG111 cleanup
+          ! check_dealloc_gpu("merge_systems: ndef_c_dev", successGPU)
 
           successGPU = gpu_free(nnzu_val_dev)
           check_dealloc_gpu("merge_systems: nnzu_val_dev", successGPU)

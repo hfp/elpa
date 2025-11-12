@@ -116,8 +116,8 @@ module merge_systems_gpu_new
 
   interface
     subroutine gpu_copy_qtmp1_slice_to_q_c (dataType, q_dev, qtmp1_dev, &
-                                            l_col_out_dev, p_col_out_dev, ndef_c_dev, p_col_dev, idx2_dev, idx_dev, &
-                                            l_rqs, l_rqe, l_rows, matrixRows, gemm_dim_k, my_pcol, na1, np_rem, na, &
+                                            l_col_out_dev, p_col_out_dev, p_col_dev, idx2_dev, idx_dev, &
+                                            ndef, l_rqs, l_rqe, l_rows, matrixRows, gemm_dim_k, my_pcol, na1, np_rem, na, &
                                             debug, my_stream) &
 #if   defined(WITH_NVIDIA_GPU_VERSION)
                                                   bind(C, name="cuda_copy_qtmp1_slice_to_q_FromC")
@@ -130,8 +130,8 @@ module merge_systems_gpu_new
       implicit none
       character(1, c_char), value        :: dataType
       integer(kind=c_intptr_t), value    :: q_dev, qtmp1_dev
-      integer(kind=c_intptr_t), value    :: l_col_out_dev, p_col_out_dev, ndef_c_dev, p_col_dev, idx2_dev, idx_dev
-      integer(kind=c_int), value         :: l_rqs, l_rqe, l_rows, matrixRows, gemm_dim_k, my_pcol, na1, np_rem, na, debug
+      integer(kind=c_intptr_t), value    :: l_col_out_dev, p_col_out_dev, p_col_dev, idx2_dev, idx_dev
+      integer(kind=c_int), value         :: ndef, l_rqs, l_rqe, l_rows, matrixRows, gemm_dim_k, my_pcol, na1, np_rem, na, debug
       integer(kind=c_intptr_t), value    :: my_stream
     end subroutine
   end interface
@@ -246,8 +246,8 @@ module merge_systems_gpu_new
 
 
   interface
-    subroutine gpu_copy_q_slice_to_qtmp1_c (dataType, qtmp1_dev, q_dev, ndef_c_dev, l_col_dev, idx2_dev, p_col_dev, &
-                                            na2, na, my_pcol, l_rows, l_rqs, l_rqe, &
+    subroutine gpu_copy_q_slice_to_qtmp1_c (dataType, qtmp1_dev, q_dev, l_col_dev, idx2_dev, p_col_dev, &
+                                            ndef, na2, my_pcol, l_rows, l_rqs, l_rqe, &
                                             matrixRows, gemm_dim_k, debug, my_stream) &
 #if   defined(WITH_NVIDIA_GPU_VERSION)
                                                   bind(C, name="cuda_copy_q_slice_to_qtmp1_FromC")
@@ -260,8 +260,8 @@ module merge_systems_gpu_new
       implicit none
       character(1, c_char), value        :: dataType
       integer(kind=c_intptr_t), value    :: qtmp1_dev, q_dev
-      integer(kind=c_intptr_t), value    :: ndef_c_dev, l_col_dev, idx2_dev, p_col_dev
-      integer(kind=c_int), value         :: na2, na, my_pcol, l_rows, l_rqs, l_rqe, matrixRows, gemm_dim_k, debug
+      integer(kind=c_intptr_t), value    :: l_col_dev, idx2_dev, p_col_dev
+      integer(kind=c_int), value         :: ndef, na2, my_pcol, l_rows, l_rqs, l_rqe, matrixRows, gemm_dim_k, debug
       integer(kind=c_intptr_t), value    :: my_stream
     end subroutine
   end interface
@@ -455,20 +455,22 @@ module merge_systems_gpu_new
 
 
     subroutine gpu_copy_qtmp1_slice_to_q (dataType, q_dev, qtmp1_dev, &
-                                          l_col_out_dev, p_col_out_dev, ndef_c_dev, p_col_dev, idx2_dev, idx_dev, &
-                                          l_rqs, l_rqe, l_rows, matrixRows, gemm_dim_k, my_pcol, na1, np_rem, na, debug, my_stream)
+                                          l_col_out_dev, p_col_out_dev, p_col_dev, idx2_dev, idx_dev, &
+                                          ndef, l_rqs, l_rqe, l_rows, matrixRows, gemm_dim_k, my_pcol, na1, np_rem, na, debug, &
+                                          my_stream)
       use, intrinsic :: iso_c_binding
       implicit none
       character(1, c_char), value        :: dataType
       integer(kind=c_intptr_t), value    :: q_dev, qtmp1_dev
-      integer(kind=c_intptr_t), value    :: l_col_out_dev, p_col_out_dev, ndef_c_dev, p_col_dev, idx2_dev, idx_dev
-      integer(kind=c_int), value         :: l_rqs, l_rqe, l_rows, matrixRows, gemm_dim_k, my_pcol, na1, np_rem, na, debug
+      integer(kind=c_intptr_t), value    :: l_col_out_dev, p_col_out_dev, p_col_dev, idx2_dev, idx_dev
+      integer(kind=c_int), value         :: ndef, l_rqs, l_rqe, l_rows, matrixRows, gemm_dim_k, my_pcol, na1, np_rem, na, debug
       integer(kind=c_intptr_t), value    :: my_stream
 
 #if defined(WITH_NVIDIA_GPU_VERSION) || defined(WITH_AMD_GPU_VERSION) || defined(WITH_SYCL_GPU_VERSION)
       call gpu_copy_qtmp1_slice_to_q_c (dataType, q_dev, qtmp1_dev, &
-                                        l_col_out_dev, p_col_out_dev, ndef_c_dev, p_col_dev, idx2_dev, idx_dev, &
-                                        l_rqs, l_rqe, l_rows, matrixRows, gemm_dim_k,  my_pcol, na1, np_rem, na, debug, my_stream)
+                                        l_col_out_dev, p_col_out_dev, p_col_dev, idx2_dev, idx_dev, &
+                                        ndef, l_rqs, l_rqe, l_rows, matrixRows, gemm_dim_k,  my_pcol, na1, np_rem, na, debug, &
+                                        my_stream)
 #endif
     end subroutine
 
@@ -563,20 +565,20 @@ module merge_systems_gpu_new
     end subroutine
 
 
-    subroutine gpu_copy_q_slice_to_qtmp1 (dataType, qtmp1_dev, q_dev, ndef_c_dev, l_col_dev, idx2_dev, p_col_dev, &
-                                          na2, na, my_pcol, l_rows, l_rqs, l_rqe, &
+    subroutine gpu_copy_q_slice_to_qtmp1 (dataType, qtmp1_dev, q_dev, l_col_dev, idx2_dev, p_col_dev, &
+                                          ndef, na2, my_pcol, l_rows, l_rqs, l_rqe, &
                                           matrixRows, gemm_dim_k, debug, my_stream)
       use, intrinsic :: iso_c_binding
       implicit none
       character(1, c_char), value        :: dataType
       integer(kind=c_intptr_t), value    :: qtmp1_dev, q_dev
-      integer(kind=c_intptr_t), value    :: ndef_c_dev, l_col_dev, idx2_dev, p_col_dev
-      integer(kind=c_int), value         :: na2, na, my_pcol, l_rows, l_rqs, l_rqe, matrixRows, gemm_dim_k, debug
+      integer(kind=c_intptr_t), value    :: l_col_dev, idx2_dev, p_col_dev
+      integer(kind=c_int), value         :: ndef, na2, my_pcol, l_rows, l_rqs, l_rqe, matrixRows, gemm_dim_k, debug
       integer(kind=c_intptr_t), value    :: my_stream
 
 #if defined(WITH_NVIDIA_GPU_VERSION) || defined(WITH_AMD_GPU_VERSION) || defined(WITH_SYCL_GPU_VERSION)
-      call gpu_copy_q_slice_to_qtmp1_c (dataType, qtmp1_dev, q_dev, ndef_c_dev, l_col_dev, idx2_dev, p_col_dev, &
-                                        na2, na, my_pcol, l_rows, l_rqs, l_rqe, &
+      call gpu_copy_q_slice_to_qtmp1_c (dataType, qtmp1_dev, q_dev, l_col_dev, idx2_dev, p_col_dev, &
+                                        ndef, na2, my_pcol, l_rows, l_rqs, l_rqe, &
                                         matrixRows, gemm_dim_k, debug, my_stream)
 #endif
     end subroutine
