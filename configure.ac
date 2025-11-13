@@ -888,7 +888,7 @@ AC_ARG_WITH([cuda-sdk-path],[AS_HELP_STRING([--with-cuda-sdk-path=PATH],[prefix 
 
 dnl setup nvcc flags and use them in later tests
 user_sets_nvidia_gpu_compute_capabilities="no"
-AC_MSG_CHECKING(whether a Nvidia GPU compute capabilities are specified)
+AC_MSG_CHECKING(whether Nvidia GPU compute capabilities are specified)
 AC_ARG_WITH([NVIDIA-GPU-compute-capability],
             [AS_HELP_STRING([--with-NVIDIA-GPU-compute-capability=LIST],
                             [use comma-separated list of compute capabilities for NVIDIA GPU version, default: "sm_60"])],
