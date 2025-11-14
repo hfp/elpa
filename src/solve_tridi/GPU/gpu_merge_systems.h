@@ -58,7 +58,7 @@ __global__ void gpu_compute_nnzl_nnzu_val_part1_kernel (int *p_col, int *idx1, i
 
     int np_c = np - 1;
     //for (int i=0;i<na1;i++) {
-      if (i>=0 && i<na1) {
+      if (i<na1) {
         if (np_c>=0 && np_c<npc_n+1) {
           nnzu_val[i + na1*(np_c)] = 0;
           nnzl_val[i + na1*(np_c)] = 0;
@@ -209,7 +209,7 @@ __global__ void gpu_copy_qtmp1_slice_to_q_kernel(T *q, T *qtmp1, int *l_col_out,
       int idx_i = idx[i-1];
       if (idx_i>na1) {
         if (p_col[idx2[idx_i-na1-1]-1] == np_rem) {
-         ndef  = ndef+1;
+         ndef = ndef+1;
           if (p_col_out[i-1] == my_pcol) {
             q[l_rqs -1 + j + matrixRows*(l_col_out[i-1]-1)] = qtmp1[j + gemm_dim_k * (ndef-1) ];
           }
@@ -690,7 +690,6 @@ extern "C" void CONCATENATE(ELPA_GPU,  _copy_q_slice_to_qtmp1_FromC) (char dataT
   }
 }
 
-
 //________________________________________________________________
 
 template <typename T>
@@ -698,8 +697,8 @@ __global__ void gpu_copy_qtmp1_to_qtmp1_tmp_kernel(T* qtmp1, T* qtmp1_tmp, const
   int i = blockIdx.x * blockDim.x + threadIdx.x;
   int j = blockIdx.y * blockDim.y + threadIdx.y;
 
-  if (i>=0 && i<gemm_dim_k) {
-    if (j>=0 && j<gemm_dim_l) {
+  if (i<gemm_dim_k) {
+    if (j<gemm_dim_l) {
       qtmp1_tmp[i+gemm_dim_k*j] = qtmp1[i+gemm_dim_k*j];
     }    
   }           
