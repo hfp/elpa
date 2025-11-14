@@ -50,90 +50,6 @@
 
 int const THREADS_PER_BLOCK_SECULAR_EQ_KERNEL = MAX_THREADS_PER_BLOCK/2;
 
-// PETERDEBUG111 cleanup  gpu_update_ndef_c
-// __global__ void gpu_update_ndef_c_kernel_1 (int *ndef_c, int *idx, int *p_col, int *idx2,
-//                                           const int na, const int na1, const int np_rem, const int ndef_start) {
-//   int ii = blockIdx.x * blockDim.x + threadIdx.x; // na
-
-//   //for (int ii=0;ii<na;ii++) {
-//     if (ii>=0 && ii<na) {
-//       ndef_c[ii] = ndef_start;
-//         int jj = idx[ii];
-//         if (jj > na1) {
-//           if (p_col[idx2[jj-1-na1]-1] == np_rem) {
-//             ndef_c[ii] = -1;
-//           }
-//         }
-//       }
-//   //}
-    
-// }
-
-// __global__ void gpu_update_ndef_c_kernel_2 (int *ndef_c, int *idx, int *p_col, int *idx2,
-//                                           const int na, const int na1, const int np_rem, const int ndef_start) {
-//   int ii = blockIdx.x * blockDim.x + threadIdx.x; // na
-
-//   int counter = 0;
-//   if (ii == 0) {
-//     for (int k=0;k<na;k++){
-//       if (ndef_c[k] == -1) {
-//         counter = counter + 1;
-//         ndef_c[k] = ndef_start + counter;
-//       } else {
-//         ndef_c[k] = ndef_start;
-//       }
-//     }
-//   }
-// }
-
-// PETERDEBUG111 cleanup  gpu_update_ndef_c
-void gpu_update_ndef_c (int *ndef_c_dev, int *idx_dev, int *p_col_dev, int *idx2_dev, 
-                        const int na, const int na1, const int np_rem, const int ndef_start, 
-                        const int debug, gpuStream_t my_stream) {
-  
-//   dim3 threadsPerBlock(MAX_THREADS_PER_BLOCK);
-//   dim3 blocks((na + threadsPerBlock.x - 1) / threadsPerBlock.x);
-//   if (blocks.x==0) return;
-
-// #ifdef WITH_GPU_STREAMS
-//     gpu_update_ndef_c_kernel_1<<<blocks,threadsPerBlock,0,my_stream>>> (ndef_c_dev, idx_dev, p_col_dev, idx2_dev, 
-//                                                                       na, na1, np_rem, ndef_start);
-// #else
-//     gpu_update_ndef_c_kernel_1<<<blocks,threadsPerBlock>>>             (ndef_c_dev, idx_dev, p_col_dev, idx2_dev, 
-//                                                                       na, na1, np_rem, ndef_start);
-// #endif
-
-//   if (debug)
-//     {
-//     gpuDeviceSynchronize();
-//     gpuError_t gpuerr = gpuGetLastError();
-//     if (gpuerr != gpuSuccess)
-//       printf("Error in executing gpu_update_ndef_c_kernel_1: %s\n",gpuGetErrorString(gpuerr));
-//     }
-
-// #ifdef WITH_GPU_STREAMS
-//     gpu_update_ndef_c_kernel_2<<<blocks,threadsPerBlock,0,my_stream>>> (ndef_c_dev, idx_dev, p_col_dev, idx2_dev, 
-//                                                                       na, na1, np_rem, ndef_start);
-// #else
-//     gpu_update_ndef_c_kernel_2<<<blocks,threadsPerBlock>>>             (ndef_c_dev, idx_dev, p_col_dev, idx2_dev, 
-//                                                                       na, na1, np_rem, ndef_start);
-// #endif
-//   if (debug)
-//     {
-//     gpuDeviceSynchronize();
-//     gpuError_t gpuerr = gpuGetLastError();
-//     if (gpuerr != gpuSuccess)
-//       printf("Error in executing gpu_update_ndef_c_kernel_2: %s\n",gpuGetErrorString(gpuerr));
-//     }
-}
-
-extern "C" void CONCATENATE(ELPA_GPU,  _update_ndef_c_FromC) (intptr_t ndef_c_dev, intptr_t idx_dev, intptr_t p_col_dev, intptr_t idx2_dev, 
-                                                              int na, int na1, int np_rem, int ndef_start, 
-                                                              int debug, gpuStream_t my_stream) {
-  gpu_update_ndef_c((int *) ndef_c_dev, (int *) idx_dev, (int *) p_col_dev, (int *) idx2_dev,
-                    na, na1, np_rem, ndef_start, debug, my_stream);
-}
-
 //________________________________________________________________
 
 __global__ void gpu_compute_nnzl_nnzu_val_part1_kernel (int *p_col, int *idx1, int *coltyp, int *nnzu_val, int *nnzl_val, 
@@ -295,39 +211,12 @@ __global__ void gpu_copy_qtmp1_slice_to_q_kernel(T *q, T *qtmp1, int *l_col_out,
         if (p_col[idx2[idx_i-na1-1]-1] == np_rem) {
          ndef  = ndef+1;
           if (p_col_out[i-1] == my_pcol) {
-            
-            // int index2 = j + gemm_dim_k * (ndef-1);
-            // int l_col = l_col_out[i-1];
-            // int index = l_rqs -1 + j + matrixRows * (l_col-1);
-            // q[index] = qtmp1[index2];
             q[l_rqs -1 + j + matrixRows*(l_col_out[i-1]-1)] = qtmp1[j + gemm_dim_k * (ndef-1) ];
           }
         }
       }
     }
   }
-
-  // int slice = blockIdx.x * blockDim.x + threadIdx.x;
-  // int i = blockIdx.y * blockDim.y + threadIdx.y;
-  // if (i>=0 && i < na) {
-  //   if (slice >=0 && slice < l_rows) {
-  //     int j = idx[i];
-  //     if (j> na1) {
-  //       int index3 = idx2[j-na1-1];
-  //       if (p_col[index3-1] == np_rem) {
-  //         if (p_col_out[i] == my_pcol) {
-  //           if (slice >= 0 && slice < l_rows) {
-  //             int ndef = ndef_c[i];
-  //             int index2 = slice + gemm_dim_k * (ndef-1);
-  //             int l_col = l_col_out[i];
-  //             int index = l_rqs -1 + slice + matrixRows * (l_col-1);
-  //             q[index] = qtmp1[index2];
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
 
 }
 
@@ -336,12 +225,7 @@ void gpu_copy_qtmp1_slice_to_q (T *q_dev, T *qtmp1_dev, int *l_col_out_dev, int 
                                 int ndef, const int l_rqs, const int l_rqe, const int l_rows, const int matrixRows, const int gemm_dim_k, 
                                 const int my_pcol, const int na1, const int np_rem, const int na, const int debug, gpuStream_t my_stream){
   
-  //dim3 threadsPerBlock(32, 32);
-  //dim3 blocks((l_rows + threadsPerBlock.x - 1) / threadsPerBlock.x,(na + threadsPerBlock.y - 1) / threadsPerBlock.y);
-  //if (blocks.x==0 || blocks.y==0) return;
-  
-  //dim3 threadsPerBlock(MAX_THREADS_PER_BLOCK);
-  dim3 threadsPerBlock(MIN_THREADS_PER_BLOCK);
+  dim3 threadsPerBlock(MAX_THREADS_PER_BLOCK);
   dim3 blocks((l_rows + threadsPerBlock.x - 1) / threadsPerBlock.x);
 
 #ifdef WITH_GPU_STREAMS
@@ -745,34 +629,26 @@ __global__ void gpu_copy_q_slice_to_qtmp1_kernel (T *qtmp1, T *q, int *l_col, in
                                                   int ndef, const int na2, const int my_pcol, const int l_rows, const int l_rqs, const int l_rqe, 
                                                   const int matrixRows, const int gemm_dim_k) {
   // do i = 1, na2
-  //   l_idx = l_col(idx2(i))
   //   if (p_col(idx2(i))==my_pcol) then
+  //     l_idx = l_col(idx2(i))
   //     ndef = ndef+1
   //     qtmp1(1:l_rows,ndef) = q(l_rqs:l_rqe,l_idx)
   //   endif
   // enddo
 
   int j = blockIdx.x * blockDim.x + threadIdx.x; // l_rows
-
-  // if (j>=0 && j<l_rows) {
-  //   for (int i=1; i<na2+1; i++){
-  //     int l_idx = l_col[idx2[i-1]-1]; // PETERDEBUG111: can be moved inside "if", here and in Fortran 
-  //     if (p_col[idx2[i-1]-1] == my_pcol) {
-  //       ndef_c[j] = ndef_c[j]+1; // PETERDEBUG111: no need for a global array here. We can copy ndef to a local variable and increment it
-  //       qtmp1[j+gemm_dim_k*(ndef_c[j]-1)] = q[j+l_rqs-1 + matrixRows*(l_idx-1)]; // non-coalesced access here. Can be optimized of becomes a bottleneck
-  //     }
-  //   }
-  // }
+  int l_idx;
 
   if (j<l_rows) {
     for (int i=1; i<na2+1; i++){
-      int l_idx = l_col[idx2[i-1]-1]; // PETERDEBUG111: can be moved inside "if", here and in Fortran 
       if (p_col[idx2[i-1]-1] == my_pcol) {
+        l_idx = l_col[idx2[i-1]-1];
         ndef = ndef+1;
         qtmp1[j+gemm_dim_k*(ndef-1)] = q[j+l_rqs-1 + matrixRows*(l_idx-1)];
       }
     }
   }
+
 }
 
 template <typename T>

@@ -601,8 +601,7 @@
           if (.not.(success)) then
             print *,"returning early from merge_systems"
             call obj%timer%stop("solve_tridi_col" // PRECISION_SUFFIX)
-            !return
-            stop 1 ! PETERDEBUG111: stop 1 instead of return.
+            return
           endif
         enddo ! i=0,ndiv-1,2*n
 

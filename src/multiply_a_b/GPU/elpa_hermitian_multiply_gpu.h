@@ -127,7 +127,7 @@ void gpu_copy_a_aux_bc_loop(T *a_dev, T *aux_bc_dev, int *lrs_save_dev, int *lre
                             int noff, int nblk, int lda, int n_size, int debug, gpuStream_t my_stream) {
 		
   dim3 blocks = dim3(n_size,1,1);
-  dim3 threadsPerBlock = dim3(MIN_THREADS_PER_BLOCK,1,1); 
+  dim3 threadsPerBlock = dim3(MAX_THREADS_PER_BLOCK,1,1); 
 
 #ifdef WITH_GPU_STREAMS
   gpu_copy_a_aux_bc_loop_kernel<<<blocks,threadsPerBlock,0,my_stream>>>(a_dev, aux_bc_dev, lrs_save_dev, lre_save_dev, n_aux_bc_save_dev,
@@ -195,7 +195,7 @@ void gpu_copy_aux_bc_aux_mat_loop(T *aux_bc_dev, T *aux_mat_dev, int* lrs_save_d
                                   int n_size, int debug, gpuStream_t my_stream) {
 
   dim3 blocks = dim3(n_size,1,1);
-  dim3 threadsPerBlock = dim3(MIN_THREADS_PER_BLOCK,1,1);
+  dim3 threadsPerBlock = dim3(MAX_THREADS_PER_BLOCK,1,1);
 
   if (n_size<=0) return;
 

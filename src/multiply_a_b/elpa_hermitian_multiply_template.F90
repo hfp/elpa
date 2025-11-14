@@ -268,19 +268,16 @@
     endif
     nblk_mult = (blocking/nblk+1) * nblk
   else ! is_set
-    if (useGPU) then
-      ! PETERDEBUG111: original (new). test on Raven.
-      ! if (na/np_rows <= 256) then
-      !   nblk_mult = (63/nblk+1)*nblk
-      ! else
-      !   nblk_mult = (351/nblk+1)*nblk
-      ! endif
-
-      ! PETERDEBUG111: OLD
+    ! different 'blocking' can be favorable for different problems (e.g. NCCL vs non-NCCL, FF vs FU vs UU)
+    ! performance difference can be up to 10%
+    ! (auto-) tuning might be recommended to the user
+    if (useGPU .and. useCCL) then
       if (na/np_rows <= 256) then
-        nblk_mult = (31/nblk+1)*nblk
+       nblk_mult = (63/nblk+1)*nblk
+       blocking = 63
       else
-        nblk_mult = (63/nblk+1)*nblk
+        nblk_mult = (351/nblk+1)*nblk
+        blocking = 351
       endif
     else ! useGPU
       if (na/np_rows <= 256) then
@@ -290,7 +287,9 @@
       endif
     endif ! useGPU
   endif ! is_set
-
+  
+  if (wantDebug .and. myid==0) print *, "blocking_in_multiply=", blocking, "nblk_mult=", nblk_mult
+  
   useCCL = .false.
   if (useGPU) then
     call obj%timer%start("check_for_gpu")
@@ -450,6 +449,8 @@
   endif
   if (uplo_c=='u' .or. uplo_c=='U') c_upper = .true.
   if (uplo_c=='l' .or. uplo_c=='L') c_lower = .true.
+
+  if (wantDebug .and. myid==0) print *, "elpa_hermitian_multiply: uplo_a=", uplo_a, ", uplo_c=", uplo_c
 
   if (useGPU) then
     if (wantDebug) call obj%timer%start("gpu_malloc")

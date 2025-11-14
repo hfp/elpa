@@ -58,25 +58,6 @@ module merge_systems_gpu_new
 #if defined(WITH_NVIDIA_GPU_VERSION) || defined(WITH_AMD_GPU_VERSION) || defined(WITH_SYCL_GPU_VERSION)
 
   interface
-    subroutine gpu_update_ndef_c_c (ndef_c_dev, idx_dev, p_col_dev, idx2_dev, &
-                                    na, na1, np_rem, ndef, debug, my_stream) &
-#if   defined(WITH_NVIDIA_GPU_VERSION)
-                                                  bind(C, name="cuda_update_ndef_c_FromC")
-#elif defined(WITH_AMD_GPU_VERSION)
-                                                  bind(C, name= "hip_update_ndef_c_FromC")
-#elif defined(WITH_SYCL_GPU_VERSION)
-                                                  bind(C, name="sycl_update_ndef_c_FromC")
-#endif
-      use, intrinsic :: iso_c_binding
-      implicit none
-      integer(kind=c_intptr_t), value    :: ndef_c_dev, idx_dev, p_col_dev, idx2_dev
-      integer(kind=c_int), value         :: na, na1, np_rem, ndef, debug
-      integer(kind=c_intptr_t), value    :: my_stream
-    end subroutine
-  end interface
-
-
-  interface
     subroutine gpu_compute_nnzl_nnzu_val_part1_c (p_col_dev, idx1_dev, coltyp_dev, nnzu_val_dev, nnzl_val_dev, &
                                                   na, na1, np_rem, npc_n, nnzu_start, nnzl_start, np, debug, my_stream) &
 #if   defined(WITH_NVIDIA_GPU_VERSION)
@@ -408,20 +389,6 @@ module merge_systems_gpu_new
 
 
   contains
-
-
-    subroutine gpu_update_ndef_c (ndef_c_dev, idx_dev, p_col_dev, idx2_dev, &
-                                  na, na1, np_rem, ndef, debug, my_stream)
-      use, intrinsic :: iso_c_binding
-      implicit none
-      integer(kind=c_intptr_t), value    :: ndef_c_dev, idx_dev, p_col_dev, idx2_dev
-      integer(kind=c_int), value         :: na, na1, np_rem, ndef, debug
-      integer(kind=c_intptr_t), value    :: my_stream
-#if defined(WITH_NVIDIA_GPU_VERSION) || defined(WITH_AMD_GPU_VERSION) || defined(WITH_SYCL_GPU_VERSION)
-      call gpu_update_ndef_c_c (ndef_c_dev, idx_dev, p_col_dev, idx2_dev, &
-                                na, na1, np_rem, ndef, debug, my_stream)
-#endif
-    end subroutine
 
 
     subroutine gpu_compute_nnzl_nnzu_val_part1 (p_col_dev, idx1_dev, coltyp_dev, nnzu_val_dev, nnzl_val_dev, &

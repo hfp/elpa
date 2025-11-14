@@ -63,73 +63,6 @@ using namespace sycl_be;
 
 extern "C" int syclDeviceSynchronizeFromC();
 
-void gpu_update_ndef_c_kernel_1(int *ndef_c, int *idx, int *p_col, int *idx2,
-                              const int na, const int na1, const int np_rem, const int ndef_start,
-                              const sycl::nd_item<1> &it) {
-  int ii = it.get_group(0) * it.get_local_range(0) + it.get_local_id(0); // na
-
-  //for (int ii=0;ii<na;ii++) {
-    if (ii>=0 && ii<na) {
-      ndef_c[ii] = ndef_start;
-        int jj = idx[ii];
-        if (jj > na1) {
-          if (p_col[idx2[jj-1-na1]-1] == np_rem) {
-            ndef_c[ii] = -1;
-          }
-        }
-      }
-  //}
-    
-}
-
-void gpu_update_ndef_c_kernel_2(int *ndef_c, int *idx, int *p_col, int *idx2,
-                              const int na, const int na1, const int np_rem, const int ndef_start,
-                              const sycl::nd_item<1> &it) {
-  int ii = it.get_group(0) * it.get_local_range(0) + it.get_local_id(0); // na
-
-  int counter = 0;
-  if (ii == 0) {
-    for (int k=0;k<na;k++){
-      if (ndef_c[k] == -1) {
-        counter = counter + 1;
-        ndef_c[k] = ndef_start + counter;
-      } else {
-        ndef_c[k] = ndef_start;
-      }
-    }
-  }
-    
-}
-
-void gpu_update_ndef_c (int *ndef_c_dev, int *idx_dev, int *p_col_dev, int *idx2_dev, 
-                        const int na, const int na1, const int np_rem, const int ndef_start, 
-                        const int debug, gpuStream_t my_stream) {
-  
-  sycl::queue q = getQueueOrDefault(my_stream);
-  sycl::range<1> threadsPerBlock = maxWorkgroupSize<1>(q);
-  sycl::range<1> blocks((na + threadsPerBlock.get(0) - 1) / threadsPerBlock.get(0));
-
-  q.parallel_for(sycl::nd_range<1>(blocks * threadsPerBlock, threadsPerBlock), [=](sycl::nd_item<1> it) {
-        gpu_update_ndef_c_kernel_1 (ndef_c_dev, idx_dev, p_col_dev, idx2_dev, 
-                                  na, na1, np_rem, ndef_start, it);
-  });
-  if (debug) syclDeviceSynchronizeFromC();
-
-  q.parallel_for(sycl::nd_range<1>(blocks * threadsPerBlock, threadsPerBlock), [=](sycl::nd_item<1> it) {
-        gpu_update_ndef_c_kernel_2 (ndef_c_dev, idx_dev, p_col_dev, idx2_dev, 
-                                  na, na1, np_rem, ndef_start, it);
-  });
-  if (debug) syclDeviceSynchronizeFromC();
-
-}
-
-extern "C" void CONCATENATE(ELPA_GPU,  _update_ndef_c_FromC) (intptr_t ndef_c_dev, intptr_t idx_dev, intptr_t p_col_dev, intptr_t idx2_dev, 
-                                                              int na, int na1, int np_rem, int ndef_start, 
-                                                              int debug, gpuStream_t my_stream) {
-  gpu_update_ndef_c((int *) ndef_c_dev, (int *) idx_dev, (int *) p_col_dev, (int *) idx2_dev,
-                    na, na1, np_rem, ndef_start, debug, my_stream);
-}
-
 //________________________________________________________________
 
 void gpu_compute_nnzl_nnzu_val_part1_kernel (int *p_col, int *idx1, int *coltyp, int *nnzu_val, int *nnzl_val, 
@@ -651,11 +584,12 @@ void gpu_copy_q_slice_to_qtmp1_kernel(T *qtmp1, T *q, int *ndef_c,int *l_col, in
                                       const int matrixRows, const int gemm_dim_k, 
                                       const sycl::nd_item<1> &it) {
   int j = it.get_group(0) * it.get_local_range(0) + it.get_local_id(0); // l_rows
+  int l_idx;
 
-  if (j>=0 && j<l_rows) {
+  if (j<l_rows) {
     for (int i=1; i<na2+1; i++){
-      int l_idx = l_col[idx2[i-1]-1];
       if (p_col[idx2[i-1]-1] == my_pcol) {
+        l_idx = l_col[idx2[i-1]-1];
         ndef_c[j] = ndef_c[j]+1;
         qtmp1[j+gemm_dim_k*(ndef_c[j]-1)] = q[j+l_rqs-1 + matrixRows*(l_idx-1)];      
       }

@@ -166,7 +166,7 @@
       integer(kind=c_intptr_t)                    :: z1_dev, delta_dev, rho_dev
       integer(kind=c_intptr_t)                    :: d1u_dev, dbase_dev, ddiff_dev, zu_dev, ev_scale_dev
       integer(kind=c_intptr_t)                    :: d1l_dev, zl_dev, z_dev, d1_dev, ztmp_extended_dev
-      integer(kind=c_intptr_t)                    :: idx1_dev, p_col_dev, coltyp_dev, p_col_out_dev !, ndef_c_dev ! PETERDEBUG111 cleanup
+      integer(kind=c_intptr_t)                    :: idx1_dev, p_col_dev, coltyp_dev, p_col_out_dev
       integer(kind=c_intptr_t)                    :: idxq1_dev, l_col_out_dev, idx_dev, idx2_dev, l_col_dev
       integer(kind=c_intptr_t)                    :: nnzul_dev
       integer(kind=c_intptr_t)                    :: tmp_dev, zero_dev, one_dev, qtrans_dev ! for transform_columns_gpu
@@ -184,8 +184,6 @@
       integer(kind=ik)                            :: nnzul(2)
 
       integer(kind=ik)                            :: nnzu_start, nnzl_start
-
-      !integer(kind=ik), allocatable               :: ndef_c(:) ! PETERDEBUG111: cleanup
 
       integer(kind=ik) :: ii,jj, indx, ind_ex, ind_ex2, p_col_tmp, index2, counter1, counter2
 
@@ -272,7 +270,7 @@
       &(obj, nm,d,'Input1',wantDebug, success)
       if (.not.(success)) then
         call obj%timer%stop("merge_systems" // PRECISION_SUFFIX)
-        return
+        stop 1
       endif
 
       call check_monotony_&
@@ -280,7 +278,7 @@
       &(obj,na-nm,d(nm+1),'Input2',wantDebug, success)
       if (.not.(success)) then
         call obj%timer%stop("merge_systems" // PRECISION_SUFFIX)
-        return
+        stop 1
       endif
 
       ! Get global number of processors and my processor number.
@@ -316,10 +314,6 @@
 
 
       if (useGPU) then
-        ! num = na * size_of_int ! PETERDEBUG111: cleanup
-        ! successGPU = gpu_malloc(ndef_c_dev, num)
-        ! check_alloc_gpu("merge_systems: ndef_c_dev", successGPU)
-
         num = na * size_of_int
         successGPU = gpu_malloc(idx1_dev, num)
         check_alloc_gpu("merge_systems: idx1_dev", successGPU)
@@ -521,7 +515,7 @@
       if (.not.(success)) then
         write(error_unit,*) "Error in global_gather. Aborting"
         success = .false.
-        return
+        stop 1
       endif
 
       ! Normalize z so that norm(z) = 1.  Since z is the concatenation of
@@ -719,14 +713,14 @@
       &(obj, na1,d1,'Sorted1', wantDebug, success)
       if (.not.(success)) then
         call obj%timer%stop("merge_systems" // PRECISION_SUFFIX)
-        return
+        stop 1
       endif
       call check_monotony_&
       &PRECISION&
       &(obj, na2,d2,'Sorted2', wantDebug, success)
       if (.not.(success)) then
         call obj%timer%stop("merge_systems" // PRECISION_SUFFIX)
-        return
+        stop 1
       endif
 
 
@@ -1013,7 +1007,7 @@
                   (obj, z, na1, mpi_comm_rows, mpi_comm_cols_self, npc_0, npc_n, success)
         if (.not.(success)) then
           write(error_unit,*) "Error in global_product. Aborting..."
-          return
+          stop 1
         endif
         NVTX_RANGE_POP("global_product")
 
@@ -1025,7 +1019,7 @@
         &(obj, dbase, na1, mpi_comm_rows, mpi_comm_cols_self, npc_n, np_prev, np_next, success)
         if (.not.(success)) then
           write(error_unit,*) "Error in global_gather. Aborting..."
-          return
+          stop 1
         endif
 
         call global_gather_&
@@ -1033,7 +1027,7 @@
         &(obj, ddiff, na1, mpi_comm_rows, mpi_comm_cols_self, npc_n, np_prev, np_next, success)
         if (.not.(success)) then
           write(error_unit,*) "Error in global_gather. Aborting..."
-          return
+          stop 1
         endif
         NVTX_RANGE_POP("global_gather_x2")
 
@@ -1173,7 +1167,7 @@
                   &(obj, ev_scale, na1, mpi_comm_rows, mpi_comm_cols_self, npc_n, np_prev, np_next, success)
         if (.not.(success)) then
           write(error_unit,*) "Error in global_gather. Aborting..."
-          return
+          stop 1
         endif
         NVTX_RANGE_POP("global_gather")
 
@@ -1204,11 +1198,10 @@
         &PRECISION&
         &(obj, na,d,'Output', wantDebug, success)
 
-        ! PETERDEBUG: MPI_Allreduce or "stop 1". Otherwise hangs if success==false only on some ranks
         if (.not.(success)) then
           call obj%timer%stop("merge_systems" // PRECISION_SUFFIX)
           write(error_unit,*) "Error in check_monotony. Aborting..."
-          return
+          stop 1
         endif
 
         ! Eigenvector calculations
@@ -1273,12 +1266,6 @@
           check_memcpy_gpu("merge_systems: idxq1_dev", successGPU)
 #endif
         endif
-
-
-        ! if (useGPU) then ! PETERDEBUG111 cleanup
-        !   allocate(ndef_c(na), stat=istat, errmsg=errorMessage)
-        !   check_allocate("merge_systems: ndef_c",istat, errorMessage)
-        ! endif
 
 
         gemm_dim_k = MAX(1,l_rows)
@@ -1466,23 +1453,12 @@
 
 
         if (useGPU) then
-          ! ndef_c(:) = ndef ! PETERDEBUG111 cleanup
-
-!           num = na * size_of_int  ! PETERDEBUG111 cleanup
-! #ifdef WITH_GPU_STREAMS
-!           successGPU = gpu_memcpy_async(ndef_c_dev, int(loc(ndef_c(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice, my_stream)
-!           check_memcpy_gpu("merge_systems: ndef_c_dev 4", successGPU)
-! #else
-!           successGPU = gpu_memcpy      (ndef_c_dev, int(loc(ndef_c(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
-!           check_memcpy_gpu("merge_systems: ndef_c_dev", successGPU)
-! #endif
-
           call gpu_copy_q_slice_to_qtmp1 (PRECISION_CHAR, qtmp1_dev, q_dev, l_col_dev, idx2_dev, p_col_dev, &
                                           ndef, na2, my_pcol, l_rows, l_rqs, l_rqe, matrixRows, gemm_dim_k, debug, my_stream)
         else
           do i = 1, na2
-            l_idx = l_col(idx2(i))
             if (p_col(idx2(i))==my_pcol) then
+              l_idx = l_col(idx2(i))
               ndef = ndef+1
               qtmp1(1:l_rows,ndef) = q(l_rqs:l_rqe,l_idx)
             endif
@@ -1725,25 +1701,18 @@
                 check_memcpy_gpu("merge_systems: qtmp1_dev", successGPU)
 #endif
 
-                ! PETERDEBUG111: buffer size can be inconsistent with l_rows*max_local_cols/gemm_dim_k*gemm_dim_l
-                !call MPI_Sendrecv_replace(qtmp1, int(l_rows*max_local_cols,kind=MPI_KIND), MPI_REAL_PRECISION,     &
-                call MPI_Sendrecv_replace(qtmp1, int(gemm_dim_k*gemm_dim_l,kind=MPI_KIND), MPI_REAL_PRECISION,     &
+                ! PETERDEBUG: buffer size can be inconsistent with l_rows*max_local_cols/gemm_dim_k*gemm_dim_l
+                !call MPI_Sendrecv_replace(qtmp1, int(gemm_dim_k*gemm_dim_l,kind=MPI_KIND), MPI_REAL_PRECISION,     &
+                call MPI_Sendrecv_replace(qtmp1, int(l_rows*max_local_cols,kind=MPI_KIND), MPI_REAL_PRECISION,     &
                                           int(np_next,kind=MPI_KIND), 1111_MPI_KIND, int(np_prev,kind=MPI_KIND), &
                                           1111_MPI_KIND, int(mpi_comm_cols_self,kind=MPI_KIND), MPI_STATUS_IGNORE, mpierr)
 #ifdef WITH_GPU_STREAMS
-                successGPU = gpu_stream_synchronize(my_stream)
-                check_stream_synchronize_gpu("merge_systems qtmp1_dev", successGPU)
-
                 successGPU = gpu_memcpy_async(qtmp1_dev, int(loc(qtmp1(1,1)),kind=c_intptr_t), &
                      gemm_dim_k * gemm_dim_l  * size_of_datatype, gpuMemcpyHostToDevice, my_stream)
                 check_memcpy_gpu("merge_systems: qtmp1_dev", successGPU)
 
                 successGPU = gpu_stream_synchronize(my_stream)
                 check_stream_synchronize_gpu("merge_systems: qtmp1_dev", successGPU)
-                ! synchronize streamsPerThread; maybe not neccessary
-                successGPU = gpu_stream_synchronize()
-                check_stream_synchronize_gpu("merge_systems: qtmp1_dev", successGPU)
-
 #else
                 successGPU = gpu_memcpy(qtmp1_dev, int(loc(qtmp1(1,1)),kind=c_intptr_t), &
                      gemm_dim_k * gemm_dim_l  * size_of_datatype, gpuMemcpyHostToDevice)
@@ -1756,6 +1725,7 @@
             else ! useGPU
 
 #ifdef WITH_MPI
+              ! PETERDEBUG: refactor, eliminate code duplication with MPI_Sendrecv_replace above
               call obj%timer%start("mpi_communication")
               call MPI_Sendrecv_replace(qtmp1, int(l_rows*max_local_cols,kind=MPI_KIND), MPI_REAL_PRECISION,     &
                                           int(np_next,kind=MPI_KIND), 1111_MPI_KIND, int(np_prev,kind=MPI_KIND), &
@@ -1815,24 +1785,13 @@
 
           ! Set the deflated eigenvectors in Q (comming from proc np_rem)
 
-          ! ndef = MAX(nnzu,nnzl) ! Remote counter in input matrix ! PETERDEBUG111 cleanup
-          ! if (useGPU) then
-          !   call gpu_update_ndef_c(ndef_c_dev, idx_dev, p_col_dev, idx2_dev, na, na1, np_rem, ndef, debug, my_stream)
-
-          ! endif ! useGPU
-
           ndef = MAX(nnzu,nnzl) ! Remote counter in input matrix
           if (useGPU) then
-            ! call gpu_copy_qtmp1_slice_to_q (PRECISION_CHAR, q_dev, qtmp1_dev, & ! PETERDEBUG111 cleanup
-            !                                 l_col_out_dev, p_col_out_dev, ndef_c_dev, p_col_dev, idx2_dev, idx_dev, &
-            !                                 l_rqs, l_rqe, l_rows, matrixRows, gemm_dim_k,  my_pcol, na1, np_rem,  na, &
-            !                                 debug, my_stream)
-
             call gpu_copy_qtmp1_slice_to_q (PRECISION_CHAR, q_dev, qtmp1_dev, &
                                             l_col_out_dev, p_col_out_dev, p_col_dev, idx2_dev, idx_dev, &
                                             ndef, l_rqs, l_rqe, l_rows, matrixRows, gemm_dim_k,  my_pcol, na1, np_rem,  na, &
                                             debug, my_stream)
-          else ! ! useGPU
+          else ! useGPU
             do i = 1, na
               idx_i = idx(i)
               if (idx_i>na1) then
@@ -2006,21 +1965,12 @@
 
         deallocate(nnzu_val, nnzl_val)
 
-
-        ! if (useGPU) then ! PETERDEBUG111 cleanup
-        !   deallocate(ndef_c, stat=istat, errmsg=errorMessage)
-        !   check_deallocate("merge_systems: ndef_c",istat, errorMessage)
-        ! endif
-
         if (useGPU) then
           successGPU = gpu_free(nnzul_dev)
           check_dealloc_gpu("merge_systems: nnzul_dev", successGPU)
 
           successGPU = gpu_free(l_col_dev)
           check_dealloc_gpu("merge_systems: l_col_dev", successGPU)
-
-          ! successGPU = gpu_free(ndef_c_dev) ! PETERDEBUG111 cleanup
-          ! check_dealloc_gpu("merge_systems: ndef_c_dev", successGPU)
 
           successGPU = gpu_free(nnzu_val_dev)
           check_dealloc_gpu("merge_systems: nnzu_val_dev", successGPU)
