@@ -214,6 +214,7 @@ void gpu_copy_qtmp1_slice_to_q (T *q_dev, T *qtmp1_dev, int *l_col_out_dev, int 
   sycl::queue q = getQueueOrDefault(my_stream);
   sycl::range<1> threadsPerBlock = maxWorkgroupSize<1>(q);
   sycl::range<1> blocks((l_rows + threadsPerBlock.get(0) - 1) / threadsPerBlock.get(0));
+  if (blocks.get(0)==0) return;
 
   q.parallel_for(sycl::nd_range<1>(blocks * threadsPerBlock, threadsPerBlock), [=](sycl::nd_item<1> it) {
         gpu_copy_qtmp1_slice_to_q_kernel<T>(q_dev, qtmp1_dev, l_col_out_dev, p_col_out_dev, p_col_dev, idx2_dev, idx_dev, 
@@ -988,13 +989,25 @@ template <typename T>
 void gpu_local_product_kernel(T *z_dev, T *z_extended_dev, int na1, int SM_count, 
                               const sycl::nd_item<1> &it){
   
-  int i0 = it.get_local_id(0);
-  //int j0 = blockIdx.x;
+  int i0 = it.get_local_id(0) + it.get_group(0) * it.get_local_range(0);
 
-  for (int j=0; j<SM_count; j+=1)
-    for (int i=i0; i<na1; i += it.get_local_range(0))
+  for (int j=0; j<SM_count; j+=1) // for parallelizing over j we need atomic_multiply
+    for (int i=i0; i<na1; i += it.get_local_range(0)*it.get_group_range(0))
       z_dev[i] = z_dev[i] * z_extended_dev[i + na1*j];
-  
+ 
+}
+
+template <typename T>
+void gpu_local_product(T *z_dev, T *z_extended_dev, int na1, int SM_count, int debug, gpuStream_t my_stream){
+
+  sycl::queue q = getQueueOrDefault(my_stream);
+  sycl::range<1> threadsPerBlock = maxWorkgroupSize<1>(q)/2; // PETERDEBUG111: this helped
+  sycl::range<1> blocks(SM_count);
+
+  q.parallel_for(sycl::nd_range<1>(blocks * threadsPerBlock, threadsPerBlock), [=](sycl::nd_item<1> it) {
+        gpu_local_product_kernel<T>(z_dev, z_extended_dev, na1, SM_count, it);
+  });
+  if (debug) syclDeviceSynchronizeFromC();
 }
 
 template <typename T>

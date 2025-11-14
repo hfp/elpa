@@ -227,6 +227,7 @@ void gpu_copy_qtmp1_slice_to_q (T *q_dev, T *qtmp1_dev, int *l_col_out_dev, int 
   
   dim3 threadsPerBlock(MAX_THREADS_PER_BLOCK);
   dim3 blocks((l_rows + threadsPerBlock.x - 1) / threadsPerBlock.x);
+  if (blocks.x==0) return;
 
 #ifdef WITH_GPU_STREAMS
     gpu_copy_qtmp1_slice_to_q_kernel<T><<<blocks,threadsPerBlock,0,my_stream>>>(q_dev, qtmp1_dev, l_col_out_dev, p_col_out_dev, p_col_dev, idx2_dev, idx_dev, 
@@ -1049,11 +1050,10 @@ extern "C" void CONCATENATE(ELPA_GPU,  _solve_secular_equation_loop_FromC) (char
 template <typename T>
 __global__ void gpu_local_product_kernel(T *z_dev, T *z_extended_dev, int na1, int SM_count){
   
-  int i0 = threadIdx.x;
-  //int j0 = blockIdx.x;
+  int i0 = threadIdx.x + blockIdx.x*blockDim.x;
 
   for (int j=0; j<SM_count; j+=1)
-    for (int i=i0; i<na1; i+=blockDim.x)
+    for (int i=i0; i<na1; i+=blockDim.x*gridDim.x) // for parallelizing over j we need atomic_multiply
       z_dev[i] = z_dev[i] * z_extended_dev[i + na1*j];
   
 }
@@ -1061,7 +1061,7 @@ __global__ void gpu_local_product_kernel(T *z_dev, T *z_extended_dev, int na1, i
 template <typename T>
 void gpu_local_product(T *z_dev, T *z_extended_dev, int na1, int SM_count, int debug, gpuStream_t my_stream){
 
-  dim3 blocks = dim3(1,1,1); // one block, so we don't need atomic_multiply
+  dim3 blocks = dim3(SM_count,1,1);
   dim3 threadsPerBlock = dim3(MAX_THREADS_PER_BLOCK,1,1);
 
 #ifdef WITH_GPU_STREAMS
