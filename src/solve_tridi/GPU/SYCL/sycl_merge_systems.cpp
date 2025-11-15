@@ -63,8 +63,6 @@ using namespace sycl_be;
 
 extern "C" int syclDeviceSynchronizeFromC();
 
-ERROR_TO_TEST_SYCL_IN_CI // PETERDEBUG111
-
 //________________________________________________________________
 
 void gpu_compute_nnzl_nnzu_val_part1_kernel (int *p_col, int *idx1, int *coltyp, int *nnzu_val, int *nnzl_val, 
