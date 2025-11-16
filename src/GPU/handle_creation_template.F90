@@ -67,7 +67,7 @@
 #endif
             stop 1
           endif
-#else
+#else /* WITH_GPU_STREAMS */
 #ifdef WITH_SYCL_GPU_VERSION
             OBJECT%gpu_setup%my_stream = 0
 #endif

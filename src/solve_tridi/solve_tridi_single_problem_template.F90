@@ -172,12 +172,13 @@
         num = nlen * size_of_datatype
 #ifdef WITH_GPU_STREAMS
         my_stream = obj%gpu_setup%my_stream
-        successGPU = gpu_memcpy_async(int(loc(e(1)),kind=c_intptr_t), e_dev, &
-                        num, gpuMemcpyDeviceToHost, my_stream)
+        successGPU = gpu_memcpy_async(int(loc(e(1)),kind=c_intptr_t), e_dev, num, gpuMemcpyDeviceToHost, my_stream)
         check_memcpy_gpu("solve_tridi_single: e_dev ", successGPU)
+
+        successGPU = gpu_stream_synchronize(my_stream)
+        check_stream_synchronize_gpu("solve_tridi_single: e_dev -> e", successGPU)
 #else
-        successGPU = gpu_memcpy(int(loc(e(1)),kind=c_intptr_t), e_dev, &
-                            num, gpuMemcpyDeviceToHost)
+        successGPU = gpu_memcpy      (int(loc(e(1)),kind=c_intptr_t), e_dev, num, gpuMemcpyDeviceToHost)
         check_memcpy_gpu("solve_tridi_single: e_dev", successGPU)
 #endif
 

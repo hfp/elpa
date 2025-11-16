@@ -1102,7 +1102,7 @@ __global__ void gpu_local_product_kernel(T *z_dev, T *z_extended_dev, int na1, i
   int i0 = threadIdx.x;
   //int j0 = blockIdx.x;
 
-  for (int j=0; j<SM_count; j+=1)
+  for (int j=0; j<SM_count; j+=1) // for parallelizing over j we need atomic_multiply
     for (int i=i0; i<na1; i+=blockDim.x)
       z_dev[i] = z_dev[i] * z_extended_dev[i + na1*j];
   
@@ -1111,7 +1111,7 @@ __global__ void gpu_local_product_kernel(T *z_dev, T *z_extended_dev, int na1, i
 template <typename T>
 void gpu_local_product(T *z_dev, T *z_extended_dev, int na1, int SM_count, int debug, gpuStream_t my_stream){
 
-  dim3 blocks = dim3(1,1,1); // one block, so we don't need atomic_multiply
+  dim3 blocks = dim3(1,1,1);
   dim3 threadsPerBlock = dim3(MAX_THREADS_PER_BLOCK,1,1);
 
 #ifdef WITH_GPU_STREAMS

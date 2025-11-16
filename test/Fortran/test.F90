@@ -881,6 +881,13 @@ program test
 
   call e%set("use_gpu_id", int(gpuID,kind=c_int), error_elpa)
   assert_elpa_ok(error_elpa)
+
+  ! Set device
+  successGPU = gpu_setdevice(gpuID)
+  if (.not.(successGPU)) then
+    print *,"Cannot set GPU device. Aborting..."
+    stop 1
+  endif
 #endif
 
 #if TEST_GPU_DEVICE_POINTER_API == 1
@@ -890,21 +897,6 @@ program test
     call set_gpu_parameters()
   else
     print *,"Cannot set gpu vendor!"
-    stop 1
-  endif
-
-  ! Set device
-  successGPU = .true.
-#if TEST_INTEL_GPU_SYCL == 1
-!   successGPU = sycl_getcpucount(numberOfDevices) ! temporary fix for SYCL on CPU
-!   if (.not.(successGPU)) then
-!      print *,"Error in sycl_getcpucount. Aborting..."
-!      stop 1
-!    endif
-#endif
-  successGPU = gpu_setdevice(gpuID)
-  if (.not.(successGPU)) then
-    print *,"Cannot set GPU device. Aborting..."
     stop 1
   endif
 

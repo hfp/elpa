@@ -1,7 +1,7 @@
 !
 !    Copyright 2017, L. Hüdepohl and A. Marek, MPCDF
 !
-!    This file is part of ELPA.
+!    This file is part of ELPA
 !
 !    The ELPA library was originally created by the ELPA consortium,
 !    consisting of the following organizations:

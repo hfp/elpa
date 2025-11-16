@@ -808,7 +808,6 @@ void device_solve_secular_equation (int n, int i_f, T* d1, T* z1, T* delta, T* r
   if (i_f == n)
     {
     // Special case: last eigenvalue.
-
     if (tid == 0)
       {
       dshift_sh[0] = d1[n-1];
@@ -836,7 +835,6 @@ void device_solve_secular_equation (int n, int i_f, T* d1, T* z1, T* delta, T* r
   else
     {
     // Other eigenvalues: lower bound is d1[i] and upper bound is d1[i+1]
-
     if (tid==0)
       {
       x_sh[0] = 0.5*(d1[i] + d1[i+1]);
@@ -875,6 +873,8 @@ void device_solve_secular_equation (int n, int i_f, T* d1, T* z1, T* delta, T* r
   // Bisection
   for (int iter = 0; iter < maxIter; iter++)
     {
+    it.barrier();
+
     if (tid==0)
       {
       x_sh[0] = 0.5*(a_sh[0] + b_sh[0]);
@@ -904,14 +904,14 @@ void device_solve_secular_equation (int n, int i_f, T* d1, T* z1, T* delta, T* r
     if (break_flag_sh[0]) break;
     }
 
-  it.barrier(); // PETERDEBUG: needed, but why?
+  it.barrier(); // maybe, not needed anymore. helped to resolve numerical errors at early stage
 
   // Update delta: delta[j] = delta[j] - x for all j.
   for (int j = tid; j < n; j += threads_total)
     {
     delta[j] = delta[j] - x_sh[0];
     }
-
+  
 }
 
 //________________________________________________________________
@@ -1062,21 +1062,20 @@ template <typename T>
 void gpu_local_product_kernel(T *z_dev, T *z_extended_dev, int na1, int SM_count, 
                               const sycl::nd_item<1> &it){
   
-  int i0 = it.get_local_id(0);
-  //int j0 = blockIdx.x;
+  int i0 = it.get_local_id(0) + it.get_group(0) * it.get_local_range(0);
 
-  for (int j=0; j<SM_count; j+=1)
-    for (int i=i0; i<na1; i += it.get_local_range(0))
+  for (int j=0; j<SM_count; j+=1) // for parallelizing over j we need atomic_multiply
+    for (int i=i0; i<na1; i += it.get_local_range(0)*it.get_group_range(0))
       z_dev[i] = z_dev[i] * z_extended_dev[i + na1*j];
-  
+ 
 }
 
 template <typename T>
 void gpu_local_product(T *z_dev, T *z_extended_dev, int na1, int SM_count, int debug, gpuStream_t my_stream){
 
   sycl::queue q = getQueueOrDefault(my_stream);
-  sycl::range<1> threadsPerBlock = maxWorkgroupSize<1>(q);
-  sycl::range<1> blocks(1); // one block, so we don't need atomic_multiply
+  sycl::range<1> threadsPerBlock = maxWorkgroupSize<1>(q); // reducing number of threads might help with numerical error
+  sycl::range<1> blocks(SM_count);
 
   q.parallel_for(sycl::nd_range<1>(blocks * threadsPerBlock, threadsPerBlock), [=](sycl::nd_item<1> it) {
         gpu_local_product_kernel<T>(z_dev, z_extended_dev, na1, SM_count, it);
@@ -1133,7 +1132,9 @@ void gpu_add_tmp_loop_kernel (T *d1_dev, T *dbase_dev, T *ddiff_dev, T *z_dev, T
       tmp_extended_dev[index] = tmp_extended_dev[index] + dbase_or_diff_i;
       tmp_extended_dev[index] = z_dev[j] / tmp_extended_dev[index];
       }
-    
+
+    it.barrier(); // this sync is needed only for Intel GPUs (not for NVIDIA/AMD)
+
     T dot_product = elpa_sum<T>(na1, thread, block_size, cache, it, [=](int j) {
       return tmp_extended_dev[j+na1*block]*tmp_extended_dev[j+na1*block];
     });
@@ -1152,7 +1153,7 @@ void gpu_add_tmp_loop(T *d1_dev, T *dbase_dev, T *ddiff_dev, T *z_dev, T *ev_sca
                       int na1, int my_proc, int n_procs, int SM_count, int debug, gpuStream_t my_stream){
 
   sycl::queue q = getQueueOrDefault(my_stream);
-  sycl::range<1> threadsPerBlock = maxWorkgroupSize<1>(q);
+  sycl::range<1> threadsPerBlock = maxWorkgroupSize<1>(q); // reducing number of threads might help with numerical error
   sycl::range<1> blocks(SM_count);
 
 

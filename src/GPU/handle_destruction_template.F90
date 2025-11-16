@@ -57,15 +57,17 @@
 #endif
           if (.not.(success)) then
 #ifdef WITH_NVIDIA_GPU_VERSION
-            print *,"Cannot destroy cuda stream handle"
+            print *,"ELPA: Cannot destroy cuda stream handle"
+            stop 1
 #endif
 #ifdef WITH_AMD_GPU_VERSION
-            print *,"Cannot destroy hip stream handle"
+            print *,"ELPA: Cannot destroy hip stream handle"
+            stop 1
 #endif
 #ifdef WITH_SYCL_GPU_VERSION
-            print *,"Cannot destroy sycl stream handle"
+            print *,"ELPA: Cannot destroy sycl stream handle"
+            !stop 1 ! PETERDEBUG111: uncomment after the problem with sycl stream destruction is solved
 #endif
-            stop 1
           endif
 #endif /* WITH_GPU_STREAMS */
 
