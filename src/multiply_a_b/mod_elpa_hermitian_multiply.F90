@@ -42,14 +42,7 @@
 !
 ! This file was written by A. Marek, MPCDF
 #include "config-f90.h"
-
-#ifdef WITH_NVTX
-#define NVTX_RANGE_PUSH(x) call nvtxRangePush(x)
-#define NVTX_RANGE_POP(x) call nvtxRangePop()
-#else
-#define NVTX_RANGE_PUSH(x)
-#define NVTX_RANGE_POP(x)
-#endif
+#include "../general/nvtx_labels.h"
 
 module elpa_hermitian_multiply
   use, intrinsic :: iso_c_binding
@@ -82,8 +75,8 @@ module elpa_hermitian_multiply
 #include "../general/precision_macros.h"
 
 !> \brief  elpa_hermitian_multiply_a_h_a_real_double_impl: Performs C : = A**T * B
-!>         where   A is a square matrix (obj%na,obj%na) which is optionally upper or lower triangular
-!>                 B is a (obj%na,ncb) matrix
+!>         where   A is a square matrix (obj%na,obj%na1) which is optionally upper or lower triangular
+!>                 B is a (obj%na1,ncb) matrix
 !>                 C is a (obj%na,ncb) matrix where optionally only the upper or lower
 !>                   triangle may be computed
 !> \details

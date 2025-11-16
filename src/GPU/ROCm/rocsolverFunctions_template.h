@@ -640,7 +640,6 @@ void rocsolverDsyevd_elpa_wrapper (SOLVER_handle gpusolverHandle, int n, double 
 
   if (status != HIPSOLVER_STATUS_SUCCESS) elpa_hipsolverPrintError(status);
 #else
-  //rocblas_evect jobz = rocblas_evect_tridiagonal; PETERDEBUG: <-- use directly rocsolver_stedc instead
   rocblas_evect jobz = rocblas_evect_original;
   const rocblas_fill  uplo = rocblas_fill_lower;
 
@@ -687,7 +686,6 @@ void rocsolverSsyevd_elpa_wrapper (SOLVER_handle gpusolverHandle, int n, float *
 
   if (status != HIPSOLVER_STATUS_SUCCESS) elpa_hipsolverPrintError(status);
 #else
-  //rocblas_evect jobz = rocblas_evect_tridiagonal; PETERDEBUG: <-- use directly rocsolver_stedc instead
   rocblas_evect jobz = rocblas_evect_original;
   const rocblas_fill  uplo = rocblas_fill_lower;
 

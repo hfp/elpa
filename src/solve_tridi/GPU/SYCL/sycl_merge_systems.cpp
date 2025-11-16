@@ -63,73 +63,6 @@ using namespace sycl_be;
 
 extern "C" int syclDeviceSynchronizeFromC();
 
-void gpu_update_ndef_c_kernel_1(int *ndef_c, int *idx, int *p_col, int *idx2,
-                              const int na, const int na1, const int np_rem, const int ndef_start,
-                              const sycl::nd_item<1> &it) {
-  int ii = it.get_group(0) * it.get_local_range(0) + it.get_local_id(0); // na
-
-  //for (int ii=0;ii<na;ii++) {
-    if (ii>=0 && ii<na) {
-      ndef_c[ii] = ndef_start;
-        int jj = idx[ii];
-        if (jj > na1) {
-          if (p_col[idx2[jj-1-na1]-1] == np_rem) {
-            ndef_c[ii] = -1;
-          }
-        }
-      }
-  //}
-    
-}
-
-void gpu_update_ndef_c_kernel_2(int *ndef_c, int *idx, int *p_col, int *idx2,
-                              const int na, const int na1, const int np_rem, const int ndef_start,
-                              const sycl::nd_item<1> &it) {
-  int ii = it.get_group(0) * it.get_local_range(0) + it.get_local_id(0); // na
-
-  int counter = 0;
-  if (ii == 0) {
-    for (int k=0;k<na;k++){
-      if (ndef_c[k] == -1) {
-        counter = counter + 1;
-        ndef_c[k] = ndef_start + counter;
-      } else {
-        ndef_c[k] = ndef_start;
-      }
-    }
-  }
-    
-}
-
-void gpu_update_ndef_c (int *ndef_c_dev, int *idx_dev, int *p_col_dev, int *idx2_dev, 
-                        const int na, const int na1, const int np_rem, const int ndef_start, 
-                        const int debug, gpuStream_t my_stream) {
-  
-  sycl::queue q = getQueueOrDefault(my_stream);
-  sycl::range<1> threadsPerBlock = maxWorkgroupSize<1>(q);
-  sycl::range<1> blocks((na + threadsPerBlock.get(0) - 1) / threadsPerBlock.get(0));
-
-  q.parallel_for(sycl::nd_range<1>(blocks * threadsPerBlock, threadsPerBlock), [=](sycl::nd_item<1> it) {
-        gpu_update_ndef_c_kernel_1 (ndef_c_dev, idx_dev, p_col_dev, idx2_dev, 
-                                  na, na1, np_rem, ndef_start, it);
-  });
-  if (debug) syclDeviceSynchronizeFromC();
-
-  q.parallel_for(sycl::nd_range<1>(blocks * threadsPerBlock, threadsPerBlock), [=](sycl::nd_item<1> it) {
-        gpu_update_ndef_c_kernel_2 (ndef_c_dev, idx_dev, p_col_dev, idx2_dev, 
-                                  na, na1, np_rem, ndef_start, it);
-  });
-  if (debug) syclDeviceSynchronizeFromC();
-
-}
-
-extern "C" void CONCATENATE(ELPA_GPU,  _update_ndef_c_FromC) (intptr_t ndef_c_dev, intptr_t idx_dev, intptr_t p_col_dev, intptr_t idx2_dev, 
-                                                              int na, int na1, int np_rem, int ndef_start, 
-                                                              int debug, gpuStream_t my_stream) {
-  gpu_update_ndef_c((int *) ndef_c_dev, (int *) idx_dev, (int *) p_col_dev, (int *) idx2_dev,
-                    na, na1, np_rem, ndef_start, debug, my_stream);
-}
-
 //________________________________________________________________
 
 void gpu_compute_nnzl_nnzu_val_part1_kernel (int *p_col, int *idx1, int *coltyp, int *nnzu_val, int *nnzl_val, 
@@ -139,7 +72,7 @@ void gpu_compute_nnzl_nnzu_val_part1_kernel (int *p_col, int *idx1, int *coltyp,
 
     int np_c = np - 1;
     //for (int i=0;i<na1;i++) {
-      if (i>=0 && i<na1) {
+      if (i<na1) {
         if (np_c>=0 && np_c<npc_n+1) {
           nnzu_val[i + na1*(np_c)] = 0;
           nnzl_val[i + na1*(np_c)] = 0;
@@ -249,66 +182,58 @@ extern "C" void CONCATENATE(ELPA_GPU,  _compute_nnzl_nnzu_val_part2_FromC) (intp
 //________________________________________________________________
 
 template <typename T>
-void gpu_copy_qtmp1_slice_to_q_kernel(T *q, T *qtmp1, int *l_col_out, int *p_col_out, int *ndef_c, int *p_col, int *idx2, int *idx, 
-                                      const int l_rqs, const int l_rqe, const int l_rows, const int matrixRows, const int gemm_dim_k, 
+void gpu_copy_qtmp1_slice_to_q_kernel(T *q, T *qtmp1, int *l_col_out, int *p_col_out, int *p_col, int *idx2, int *idx, 
+                                      int ndef, const int l_rqs, const int l_rqe, const int l_rows, const int matrixRows, const int gemm_dim_k, 
                                       const int my_pcol, const int na1, const int np_rem, const int na,
-                                      const sycl::nd_item<3> &it){
-  int slice = it.get_group(2) * it.get_local_range(2) + it.get_local_id(2);
-  int i = it.get_group(1) * it.get_local_range(1) + it.get_local_id(1);
-  if (i>=0 && i < na) {
-    if (slice >=0 && slice < l_rows) {
-      int j = idx[i];
-      if (j> na1) {
-        int index3 = idx2[j-na1-1];
-        if (p_col[index3-1] == np_rem) {
-          if (p_col_out[i] == my_pcol) {
-            if (slice >= 0 && slice < l_rows) {
-              int ndef = ndef_c[i];
-              int index2 = slice + gemm_dim_k * (ndef-1);
-              int l_col = l_col_out[i];
-              int index = l_rqs -1 + slice + matrixRows * (l_col-1);
-              q[index] = qtmp1[index2];
-            }
+                                      const sycl::nd_item<1> &it){
+
+  int j = it.get_group(0) * it.get_local_range(0) + it.get_local_id(0); // l_rows
+
+  if (j<l_rows) {
+    for (int i=1; i<na+1; i++){
+      int idx_i = idx[i-1];
+      if (idx_i>na1) {
+        if (p_col[idx2[idx_i-na1-1]-1] == np_rem) {
+          ndef = ndef+1;
+          if (p_col_out[i-1] == my_pcol) {
+            q[l_rqs -1 + j + matrixRows*(l_col_out[i-1]-1)] = qtmp1[j + gemm_dim_k * (ndef-1) ];
           }
         }
       }
     }
-
   }
+
 }
 
 template <typename T>
-void gpu_copy_qtmp1_slice_to_q (T *q_dev, T *qtmp1_dev, int *l_col_out_dev, int *p_col_out_dev, int *ndef_c_dev, int *p_col_dev, int *idx2_dev, int *idx_dev, 
-                                const int l_rqs, const int l_rqe, const int l_rows, const int matrixRows, const int gemm_dim_k, 
+void gpu_copy_qtmp1_slice_to_q (T *q_dev, T *qtmp1_dev, int *l_col_out_dev, int *p_col_out_dev, int *p_col_dev, int *idx2_dev, int *idx_dev, 
+                                int ndef, const int l_rqs, const int l_rqe, const int l_rows, const int matrixRows, const int gemm_dim_k, 
                                 const int my_pcol, const int na1, const int np_rem, const int na, const int debug, gpuStream_t my_stream){
   sycl::queue q = getQueueOrDefault(my_stream);
-  sycl::range<3> threadsPerBlock(1,32,32);
-  sycl::range<3> blocks( 1,
-                        (na     + threadsPerBlock.get(1) - 1) / threadsPerBlock.get(1), 
-                        (l_rows + threadsPerBlock.get(2) - 1) / threadsPerBlock.get(2));
+  sycl::range<1> threadsPerBlock = maxWorkgroupSize<1>(q);
+  sycl::range<1> blocks((l_rows + threadsPerBlock.get(0) - 1) / threadsPerBlock.get(0));
+  if (blocks.get(0)==0) return;
 
-  if (blocks.get(2)==0 || blocks.get(1)==0) return;
-
-  q.parallel_for(sycl::nd_range<3>(blocks * threadsPerBlock, threadsPerBlock), [=](sycl::nd_item<3> it) {
-        gpu_copy_qtmp1_slice_to_q_kernel<T>(q_dev, qtmp1_dev, l_col_out_dev, p_col_out_dev, ndef_c_dev, p_col_dev, idx2_dev, idx_dev, 
-                                            l_rqs, l_rqe, l_rows, matrixRows, gemm_dim_k, my_pcol, na1, np_rem, na, it);
+  q.parallel_for(sycl::nd_range<1>(blocks * threadsPerBlock, threadsPerBlock), [=](sycl::nd_item<1> it) {
+        gpu_copy_qtmp1_slice_to_q_kernel<T>(q_dev, qtmp1_dev, l_col_out_dev, p_col_out_dev, p_col_dev, idx2_dev, idx_dev, 
+                                            ndef, l_rqs, l_rqe, l_rows, matrixRows, gemm_dim_k, my_pcol, na1, np_rem, na, it);
   });
   if (debug) syclDeviceSynchronizeFromC();
 }
 
 extern "C" void CONCATENATE(ELPA_GPU,  _copy_qtmp1_slice_to_q_FromC) (char dataType, intptr_t q_dev, intptr_t qtmp1_dev, 
-                                                                    intptr_t l_col_out_dev, intptr_t p_col_out_dev, intptr_t ndef_c_dev, 
+                                                                    intptr_t l_col_out_dev, intptr_t p_col_out_dev, 
                                                                     intptr_t p_col_dev, intptr_t idx2_dev, intptr_t idx_dev, 
-                                                                    int l_rqs, int l_rqe, int l_rows, int matrixRows, int gemm_dim_k, 
+                                                                    int ndef, int l_rqs, int l_rqe, int l_rows, int matrixRows, int gemm_dim_k, 
                                                                     int my_pcol, int na1, int np_rem, int na, int debug, gpuStream_t my_stream){
   if      (dataType=='D') gpu_copy_qtmp1_slice_to_q<double>((double *) q_dev, (double *) qtmp1_dev,
-                                                            (int *) l_col_out_dev, (int *) p_col_out_dev, (int *) ndef_c_dev, 
+                                                            (int *) l_col_out_dev, (int *) p_col_out_dev,
                                                             (int *) p_col_dev, (int *) idx2_dev, (int *) idx_dev,
-                                                            l_rqs, l_rqe, l_rows, matrixRows, gemm_dim_k, my_pcol, na1, np_rem, na, debug, my_stream);
+                                                            ndef, l_rqs, l_rqe, l_rows, matrixRows, gemm_dim_k, my_pcol, na1, np_rem, na, debug, my_stream);
   else if (dataType=='S') gpu_copy_qtmp1_slice_to_q<float> ((float  *) q_dev, (float  *) qtmp1_dev,
-                                                            (int *) l_col_out_dev, (int *) p_col_out_dev, (int *) ndef_c_dev, 
+                                                            (int *) l_col_out_dev, (int *) p_col_out_dev,
                                                             (int *) p_col_dev, (int *) idx2_dev, (int *) idx_dev,
-                                                            l_rqs, l_rqe, l_rows, matrixRows, gemm_dim_k, my_pcol, na1, np_rem, na, debug, my_stream);
+                                                            ndef, l_rqs, l_rqe, l_rows, matrixRows, gemm_dim_k, my_pcol, na1, np_rem, na, debug, my_stream);
   else {
     printf("Error in gpu_copy_qtmp1_slice_to_q: Unsupported data type\n");
   }
@@ -646,18 +571,19 @@ extern "C" void CONCATENATE(ELPA_GPU,  _zero_q_FromC) (char dataType, intptr_t q
 //________________________________________________________________
 
 template <typename T>
-void gpu_copy_q_slice_to_qtmp1_kernel(T *qtmp1, T *q, int *ndef_c,int *l_col, int *idx2, int *p_col, 
-                                      const int na2, const int na, const int my_pcol, const int l_rows, const int l_rqs, const int l_rqe, 
+void gpu_copy_q_slice_to_qtmp1_kernel(T *qtmp1, T *q, int *l_col, int *idx2, int *p_col, 
+                                      int ndef, const int na2, const int my_pcol, const int l_rows, const int l_rqs, const int l_rqe, 
                                       const int matrixRows, const int gemm_dim_k, 
                                       const sycl::nd_item<1> &it) {
   int j = it.get_group(0) * it.get_local_range(0) + it.get_local_id(0); // l_rows
+  int l_idx;
 
-  if (j>=0 && j<l_rows) {
+  if (j<l_rows) {
     for (int i=1; i<na2+1; i++){
-      int l_idx = l_col[idx2[i-1]-1];
       if (p_col[idx2[i-1]-1] == my_pcol) {
-        ndef_c[j] = ndef_c[j]+1;
-        qtmp1[j+gemm_dim_k*(ndef_c[j]-1)] = q[j+l_rqs-1 + matrixRows*(l_idx-1)];      
+        l_idx = l_col[idx2[i-1]-1];
+        ndef = ndef+1;
+        qtmp1[j+gemm_dim_k*(ndef-1)] = q[j+l_rqs-1 + matrixRows*(l_idx-1)];
       }
     }
   }
@@ -665,8 +591,8 @@ void gpu_copy_q_slice_to_qtmp1_kernel(T *qtmp1, T *q, int *ndef_c,int *l_col, in
 }
 
 template <typename T>
-void gpu_copy_q_slice_to_qtmp1(T *qtmp1_dev, T *q_dev, int *ndef_c_dev, int *l_col_out_dev, int *idx2_dev, int *p_col_dev, 
-                               const int na2, const int na, const int my_pcol, const int l_rows, const int l_rqs, const int l_rqe, 
+void gpu_copy_q_slice_to_qtmp1(T *qtmp1_dev, T *q_dev, int *l_col_out_dev, int *idx2_dev, int *p_col_dev, 
+                               int ndef, const int na2, const int my_pcol, const int l_rows, const int l_rqs, const int l_rqe, 
                                const int matrixRows, const int gemm_dim_k, const int debug, gpuStream_t my_stream) {
  
   sycl::queue q = getQueueOrDefault(my_stream);
@@ -675,25 +601,24 @@ void gpu_copy_q_slice_to_qtmp1(T *qtmp1_dev, T *q_dev, int *ndef_c_dev, int *l_c
   if (blocks.get(0)==0) return;
 
   q.parallel_for(sycl::nd_range<1>(blocks * threadsPerBlock, threadsPerBlock), [=](sycl::nd_item<1> it) {
-        gpu_copy_q_slice_to_qtmp1_kernel<T>(qtmp1_dev, q_dev, ndef_c_dev, l_col_out_dev, idx2_dev, p_col_dev, 
-                                            na2, na2, my_pcol, l_rows, l_rqs, l_rqe, matrixRows, gemm_dim_k, it);
+        gpu_copy_q_slice_to_qtmp1_kernel<T>(qtmp1_dev, q_dev, l_col_out_dev, idx2_dev, p_col_dev, 
+                                            ndef, na2, my_pcol, l_rows, l_rqs, l_rqe, matrixRows, gemm_dim_k, it);
   });
   if (debug) syclDeviceSynchronizeFromC();
 }
 
 extern "C" void CONCATENATE(ELPA_GPU,  _copy_q_slice_to_qtmp1_FromC) (char dataType, intptr_t qtmp1_dev, intptr_t q_dev, 
-                                                                      intptr_t ndef_c_dev, intptr_t l_col_out_dev, intptr_t idx2_dev, intptr_t p_col_dev, 
-                                                                      int na2, int na, int my_pcol, int l_rows, int l_rqs, int l_rqe, 
+                                                                      intptr_t l_col_out_dev, intptr_t idx2_dev, intptr_t p_col_dev, 
+                                                                      int ndef, int na2, int my_pcol, int l_rows, int l_rqs, int l_rqe, 
                                                                       int matrixRows, int gemm_dim_k, int debug, gpuStream_t my_stream) {
-  if      (dataType=='D') gpu_copy_q_slice_to_qtmp1<double>((double *) qtmp1_dev, (double *) q_dev, (int *) ndef_c_dev, (int *) l_col_out_dev, (int *) idx2_dev, (int *) p_col_dev,
-                                                              na2, na, my_pcol, l_rows, l_rqs, l_rqe, matrixRows, gemm_dim_k, debug, my_stream);
-  else if (dataType=='S') gpu_copy_q_slice_to_qtmp1<float> ((float  *) qtmp1_dev, (float  *) q_dev, (int *) ndef_c_dev, (int *) l_col_out_dev, (int *) idx2_dev, (int *) p_col_dev,
-                                                              na2, na, my_pcol, l_rows, l_rqs, l_rqe, matrixRows, gemm_dim_k, debug, my_stream);
+  if      (dataType=='D') gpu_copy_q_slice_to_qtmp1<double>((double *) qtmp1_dev, (double *) q_dev, (int *) l_col_out_dev, (int *) idx2_dev, (int *) p_col_dev,
+                                                             ndef, na2, my_pcol, l_rows, l_rqs, l_rqe, matrixRows, gemm_dim_k, debug, my_stream);
+  else if (dataType=='S') gpu_copy_q_slice_to_qtmp1<float> ((float  *) qtmp1_dev, (float  *) q_dev, (int *) l_col_out_dev, (int *) idx2_dev, (int *) p_col_dev,
+                                                             ndef, na2, my_pcol, l_rows, l_rqs, l_rqe, matrixRows, gemm_dim_k, debug, my_stream);
   else {
     printf("Error in gpu_copy_q_slice_to_qtmp1: Unsupported data type\n");
   }
 }
-
 
 //________________________________________________________________
 
@@ -703,8 +628,8 @@ void gpu_copy_qtmp1_to_qtmp1_tmp_kernel(T* qtmp1, T* qtmp1_tmp, const int gemm_d
   int i = it.get_group(2) * it.get_local_range(2) + it.get_local_id(2);
   int j = it.get_group(1) * it.get_local_range(1) + it.get_local_id(1);
 
-  if (i>=0 && i<gemm_dim_k) {
-    if (j>=0 && j<gemm_dim_l) {
+  if (i<gemm_dim_k) {
+    if (j<gemm_dim_l) {
       qtmp1_tmp[i+gemm_dim_k*j] = qtmp1[i+gemm_dim_k*j];
     }    
   }           
@@ -1062,13 +987,25 @@ template <typename T>
 void gpu_local_product_kernel(T *z_dev, T *z_extended_dev, int na1, int SM_count, 
                               const sycl::nd_item<1> &it){
   
-  int i0 = it.get_local_id(0);
-  //int j0 = blockIdx.x;
+  int i0 = it.get_local_id(0) + it.get_group(0) * it.get_local_range(0);
 
-  for (int j=0; j<SM_count; j+=1)
-    for (int i=i0; i<na1; i += it.get_local_range(0))
+  for (int j=0; j<SM_count; j+=1) // for parallelizing over j we need atomic_multiply
+    for (int i=i0; i<na1; i += it.get_local_range(0)*it.get_group_range(0))
       z_dev[i] = z_dev[i] * z_extended_dev[i + na1*j];
-  
+ 
+}
+
+template <typename T>
+void gpu_local_product(T *z_dev, T *z_extended_dev, int na1, int SM_count, int debug, gpuStream_t my_stream){
+
+  sycl::queue q = getQueueOrDefault(my_stream);
+  sycl::range<1> threadsPerBlock = maxWorkgroupSize<1>(q)/2; // PETERDEBUG111: this helped
+  sycl::range<1> blocks(SM_count);
+
+  q.parallel_for(sycl::nd_range<1>(blocks * threadsPerBlock, threadsPerBlock), [=](sycl::nd_item<1> it) {
+        gpu_local_product_kernel<T>(z_dev, z_extended_dev, na1, SM_count, it);
+  });
+  if (debug) syclDeviceSynchronizeFromC();
 }
 
 template <typename T>

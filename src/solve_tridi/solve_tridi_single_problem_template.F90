@@ -130,7 +130,9 @@
 #if defined(WITH_AMD_ROCSOLVER)
     useGPUsolver =.false.
     gpusolver_version = gpusolver_get_version()
-    if (gpusolver_version<=0 .or. gpusolver_version>999999) write(error_unit,'(a)') 'Error in get_gpusolver_version(gpusolver_version) call'
+    if (gpusolver_version<=0 .or. gpusolver_version>999999) then
+      write(error_unit,'(a)') 'Error in get_gpusolver_version(gpusolver_version) call'
+    endif
     if (gpusolver_version >= 32802) useGPUsolver =.true. ! rocSOLVER 3.28.2 for ROCm 6.4.2 introduced improved stedc
     if (wantDebug) print *, "gpusolver_version=", gpusolver_version, "useGPUsolver=", useGPUsolver
 #endif
