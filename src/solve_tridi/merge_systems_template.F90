@@ -443,13 +443,6 @@
         successGPU = gpu_memcpy      (one_dev, int(loc(ONE_real),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
 #endif
         check_memcpy_gpu("merge_systems: one_dev", successGPU)
-
-        ! successGPU = gpu_stream_synchronize(my_stream)
-        ! successGPU = gpu_DeviceSynchronize()
-        ! successGPU = gpu_memcpy(int(loc(buffer_debug(1)),kind=c_intptr_t), one_dev, &
-        !                         1*size_of_datatype, gpuMemcpyDeviceToHost)
-        ! sum_debug = buffer_debug(1)
-        ! print *, "myid=", myid,"start sum one_dev=", sum_debug        
       endif ! useGPU
 
       ! Calculations start here
@@ -519,14 +512,6 @@
 #endif
         check_memcpy_gpu("merge_systems: z_dev", successGPU)
       endif
-
-!       sum_debug = sum(z(1:na))
-!       !print *, "myid=", myid, "sum a_dev=", sum_debug
-! #ifdef WITH_MPI
-!       call MPI_Allreduce(MPI_IN_PLACE, sum_debug, 1_MPI_KIND, MPI_MATH_DATATYPE_PRECISION, MPI_SUM, &
-!                          MPI_COMM_WORLD, mpierr)
-! #endif
-!       if (myid==0) print *, "before global_gather, sum z=", sum_debug
 
       call global_gather_&
       &PRECISION&
@@ -1728,11 +1713,9 @@
                 check_memcpy_gpu("merge_systems: qtmp1_dev", successGPU)
 #endif
 
-                print *, "MPI_Sendrecv_replace start, myid=",myid, "l_rows=",l_rows, "max_local_cols=",max_local_cols
                 call MPI_Sendrecv_replace(qtmp1, int(l_rows*max_local_cols,kind=MPI_KIND), MPI_REAL_PRECISION,     &
                                           int(np_next,kind=MPI_KIND), 1111_MPI_KIND, int(np_prev,kind=MPI_KIND), &
                                           1111_MPI_KIND, int(mpi_comm_cols_self,kind=MPI_KIND), MPI_STATUS_IGNORE, mpierr)
-                print *, "MPI_Sendrecv_replace end, myid=",myid
 #ifdef WITH_GPU_STREAMS 
                 my_stream = obj%gpu_setup%my_stream
                 successGPU = gpu_stream_synchronize(my_stream)
@@ -1956,27 +1939,6 @@
 
             if (l_rows-l_rnm>0 .and. ncnt>0 .and. nnzl>0) then
               if (useGPU) then
-
-                ! print *, "gemm_dim_k*gemm_dim_l", gemm_dim_k*gemm_dim_l
-                ! successGPU = gpu_memcpy      (int(loc(buffer_debug(1)),kind=c_intptr_t), qtmp1_dev, &
-                !             gemm_dim_k*gemm_dim_l*size_of_datatype, gpuMemcpyDeviceToHost)
-                ! sum_debug = sum(buffer_debug(1:gemm_dim_k*gemm_dim_l))
-                ! print *, "upper sum qtmp1_dev=", sum_debug
-! #ifdef WITH_MPI
-! call MPI_Allreduce(MPI_IN_PLACE, sum_debug, 1_MPI_KIND, MPI_MATH_DATATYPE_PRECISION, MPI_SUM, MPI_COMM_WORLD, mpierr)
-! #endif
-!                 if (myid==0) print *, "lower sum qtmp1_dev=", sum_debug
-
-                ! print *, "gemm_dim_l*gemm_dim_m", gemm_dim_l*gemm_dim_m
-                ! successGPU = gpu_memcpy      (int(loc(buffer_debug(1)),kind=c_intptr_t), ev_dev, &
-                !             gemm_dim_l*gemm_dim_m*size_of_datatype, gpuMemcpyDeviceToHost)
-                ! sum_debug = sum(buffer_debug(1:gemm_dim_l*gemm_dim_m))
-                ! print *, "upper sum ev_dev=", sum_debug
-! #ifdef WITH_MPI
-! call MPI_Allreduce(MPI_IN_PLACE, sum_debug, 1_MPI_KIND, MPI_MATH_DATATYPE_PRECISION, MPI_SUM, MPI_COMM_WORLD, mpierr)
-! #endif
-!                 if (myid==0) print *, "lower sum ev_dev=", sum_debug
-
                 call obj%timer%start("gpublas_gemm")
                 NVTX_RANGE_PUSH("gpublas_gemm_lower")
                 gpuHandle = obj%gpu_setup%gpublasHandleArray(0)
