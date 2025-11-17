@@ -313,17 +313,7 @@
 
           success = .true.
           success = gpu_getdevicecount(numberOfDevices)
-#ifdef WITH_SYCL_GPU_VERSION
-          if (myid == 0 .and. wantDebugMessage) then
-            write(error_unit,*) "SYCL: syclShowOnlyIntelGpus =  ", syclShowOnlyIntelGpus
-            write(error_unit,*) "SYCL: numberOfDevices =  ", numberOfDevices
-            call sycl_printdevices()
-          endif
-          !TODO  I'd also like to check that all the chosen devices have the same platform, 
-          !TODO  as mixing platforms and thus also different devices will probably performace
-          !TODO  extremely poorly. This will need another Function in syclCommon, and the
-          !TODO  interfaces that that brings with it.
-#endif
+
           if (.not.(success)) then
 #ifdef WITH_NVIDIA_GPU_VERSION
             write(error_unit,*) "error in cuda_getdevicecount"
@@ -339,6 +329,17 @@
 #endif
             stop 1
           endif
+#ifdef WITH_SYCL_GPU_VERSION
+          if (myid == 0 .and. wantDebugMessage) then
+            write(error_unit,*) "SYCL: syclShowOnlyIntelGpus =  ", syclShowOnlyIntelGpus
+            write(error_unit,*) "SYCL: numberOfDevices =  ", numberOfDevices
+            call sycl_printdevices()
+          endif
+          !TODO  I'd also like to check that all the chosen devices have the same platform, 
+          !TODO  as mixing platforms and thus also different devices will probably performace
+          !TODO  extremely poorly. This will need another Function in syclCommon, and the
+          !TODO  interfaces that that brings with it.
+#endif
 
           ! make sure that all nodes have the same number of GPU's, otherwise
           ! we run into loadbalancing trouble
