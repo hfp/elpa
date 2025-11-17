@@ -748,7 +748,10 @@ module elpa_impl
       if (check_elpa_get(error, ELPA_ERROR_SETUP)) return
 #endif
       if (gpu .eq. 0) then
-        write(error_unit,*) "ELPA_SETUP_GPU: no GPUs used. Leaving..."
+        call self%get("debug",debug, error)
+        if (debug .eq. 1) then
+          write(error_unit,*) "ELPA_SETUP_GPU: no GPUs used. Leaving..."
+        endif
       endif
 #endif
       if (gpu .eq. 0) then
@@ -767,7 +770,6 @@ module elpa_impl
 
       if (self%is_set("debug") == 1) then
          call self%get("debug",debug, error)
-         print *,"debug ",debug
          if (check_elpa_get(error, ELPA_ERROR_SETUP)) return
          if (debug .eq. 1) then
            wantDebugMessage = .true.

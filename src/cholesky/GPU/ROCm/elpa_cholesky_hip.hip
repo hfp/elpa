@@ -57,6 +57,7 @@
 #include <hip/hip_complex.h>
 #include "hip/hip_runtime.h"
 #include <stdint.h>
+#include <assert.h>
 #include "config-f90.h"
 
 #include "../../../GPU/common_device_functions.h"

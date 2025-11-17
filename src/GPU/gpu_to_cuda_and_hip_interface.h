@@ -97,6 +97,8 @@
 #define ELPA_GPU hip
 #endif
 
+//_________________________________________________________________________________________________
+
 #ifdef WITH_SYCL_GPU_VERSION
 #define gpuDeviceSynchronize syclDeviceSynchronize
 #define gpuStream_t QueueData*
