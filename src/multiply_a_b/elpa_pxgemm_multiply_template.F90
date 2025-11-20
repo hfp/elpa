@@ -493,7 +493,7 @@
           if (a_transposed) then
             call gpu_memcpy_async_and_stream_synchronize("elpa_pxgemm_multiply: aux_a_full_dev -> aux_a_full",  &
                   aux_a_full_dev, 0_c_intptr_t, aux_a_full(1:nblk_mult,1:nblk_mult), &
-                  1, 1, num*size_of_datatype, gpuMemcpyDeviceToHost, my_stream, .false., .false., .false.)
+                  1, 1, num*size_of_datatype, gpuMemcpyDeviceToHost, my_stream, .false., .true., .false.)
           else if (b_transposed) then
             call gpu_memcpy_async_and_stream_synchronize("elpa_pxgemm_multiply: aux_b_full_dev -> aux_b_full", &
                   aux_b_full_dev, 0_c_intptr_t, aux_b_full(1:nblk_mult,1:nblk_mult), &
@@ -511,7 +511,6 @@
           endif
 #endif  
         endif ! (useGPU .and. .not. useCCL)
-
 
         ! Broadcast processor column
         if (useCCL) then
@@ -611,7 +610,7 @@
 #ifdef WITH_GPU_STREAMS
           call gpu_memcpy_async_and_stream_synchronize("elpa_pxgemm_multiply: tmp1_full_dev -> tmp1_full",  &
                 tmp1_full_dev, 0_c_intptr_t, tmp1_full(1:nblk_mult,1:nblk_mult), &
-                1, 1, num*size_of_datatype, gpuMemcpyDeviceToHost, my_stream, .false., .false., .false.)
+                1, 1, num*size_of_datatype, gpuMemcpyDeviceToHost, my_stream, .false., .true., .false.)
 #else
           successGPU = gpu_memcpy(int(loc(tmp1_full),kind=c_intptr_t), tmp1_full_dev, num*size_of_datatype, gpuMemcpyDeviceToHost)
           check_memcpy_gpu("elpa_pxgemm_multiply: tmp1_full_dev -> tmp1_full", successGPU)
@@ -790,6 +789,17 @@
           allocate(b(ldb, ldbCols), stat=istat, errmsg=errorMessage)
           check_allocate("elpa_pxgemm_multiply: b", istat, errorMessage)
 
+#if defined(WITH_GPU_STREAMS)
+          call gpu_memcpy_async_and_stream_synchronize ("elpa_pxgemm_multiply: a_dev -> a", &
+                        a_dev, 0_c_intptr_t, a(1:obj%local_nrows,1:obj%local_ncols), 1, 1, &
+                        obj%local_nrows*obj%local_ncols*size_of_datatype, gpuMemcpyDeviceToHost, my_stream, .false., .false., .false.)
+          check_memcpy_gpu("elpa_pxgemm_multiply: a_dev -> a", successGPU)
+
+          call gpu_memcpy_async_and_stream_synchronize ("elpa_pxgemm_multiply: b_dev -> b", &
+                        b_dev, 0_c_intptr_t, b(1:ldb,1:ldbCols), 1, 1, &
+                        ldb*ldbCols*size_of_datatype, gpuMemcpyDeviceToHost, my_stream, .false., .true., .false.)
+          check_memcpy_gpu("elpa_pxgemm_multiply: b_dev -> b", successGPU)
+#else
           successGPU = gpu_memcpy(int(loc(a),kind=c_intptr_t), a_dev, &
                                   obj%local_nrows*obj%local_ncols*size_of_datatype, gpuMemcpyDeviceToHost)
           check_memcpy_gpu("elpa_pxgemm_multiply: a_dev -> a", successGPU)
@@ -797,6 +807,7 @@
           successGPU = gpu_memcpy(int(loc(b),kind=c_intptr_t), b_dev, &
                                   ldb*ldbCols*size_of_datatype, gpuMemcpyDeviceToHost)
           check_memcpy_gpu("elpa_pxgemm_multiply: b_dev -> b", successGPU)
+#endif /* WITH_GPU_STREAMS */
 #endif /* defined(DEVICE_POINTER) */          
         endif ! useCCL
       endif ! (a_transposed .or. b_transposed)
@@ -1215,6 +1226,17 @@
           allocate(b(ldb, ldbCols), stat=istat, errmsg=errorMessage)
           check_allocate("elpa_pxgemm_multiply: b", istat, errorMessage)
 
+#ifdef WITH_GPU_STREAMS
+          call gpu_memcpy_async_and_stream_synchronize ("elpa_pxgemm_multiply: a_dev -> a", &
+                a_dev, 0_c_intptr_t, a(1:obj%local_nrows,1:obj%local_ncols), 1, 1, &
+                obj%local_nrows*obj%local_ncols*size_of_datatype, gpuMemcpyDeviceToHost, my_stream, .false., .false., .false.)
+          check_memcpy_gpu("elpa_pxgemm_multiply: a_dev -> a", successGPU)
+
+          call gpu_memcpy_async_and_stream_synchronize ("elpa_pxgemm_multiply: b_dev -> b", &
+                        b_dev, 0_c_intptr_t, b(1:ldb,1:ldbCols), 1, 1, &
+                        ldb*ldbCols*size_of_datatype, gpuMemcpyDeviceToHost, my_stream, .false., .true., .false.)
+          check_memcpy_gpu("elpa_pxgemm_multiply: b_dev -> b", successGPU)
+#else
           successGPU = gpu_memcpy(int(loc(a),kind=c_intptr_t), a_dev, &
                                   obj%local_nrows*obj%local_ncols*size_of_datatype, gpuMemcpyDeviceToHost)
           check_memcpy_gpu("elpa_pxgemm_multiply: a_dev -> a", successGPU)
@@ -1222,6 +1244,7 @@
           successGPU = gpu_memcpy(int(loc(b),kind=c_intptr_t), b_dev, &
                                   ldb*ldbCols*size_of_datatype, gpuMemcpyDeviceToHost)
           check_memcpy_gpu("elpa_pxgemm_multiply: b_dev -> b", successGPU)
+#endif /* WITH_GPU_STREAMS */
 #endif /* defined(DEVICE_POINTER) */
         endif ! useCCL
       endif
@@ -1618,9 +1641,6 @@
         ! In this turn, procs of row/col np assemble the result for TN/NT case
         
         np_t_fine=np_fine ! np, that posesses the given "col of a"/"row of b" for TN/NT
-
-        !np   = mod(np_fine, np_rows)
-        !np_t = mod(np_t_fine, np_cols)
 
         np   = mod(np_fine, np_dirs)
         np_t = mod(np_t_fine, np_dirs_t)
