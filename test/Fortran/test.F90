@@ -370,7 +370,7 @@ program test
   !  discard for the moment until allocates and memcpy are in the correct loop
 #if TEST_GPU_DEVICE_POINTER_API == 1
 #ifdef WITH_MPI
-  call mpi_finalize(mpierr)
+  call MPI_Finalize(mpierr)
 #endif
   stop 77
 #endif
@@ -381,7 +381,7 @@ program test
 
 #if (TEST_NVIDIA_GPU == 1) || (TEST_INTEL_GPU == 1) || (TEST_AMD_GPU == 1) || (TEST_INTEL_GPU_OPENMP == 1) || (TEST_INTEL_GPU_SYCL == 1)
 #ifdef WITH_MPI
-  call mpi_finalize(mpierr)
+  call MPI_Finalize(mpierr)
 #endif
   stop 77
 #endif /* TEST_NVIDIA_GPU || TEST_INTEL_GPU */
@@ -394,7 +394,7 @@ program test
     endif
 
 #ifdef WITH_MPI
-    call mpi_finalize(mpierr)
+    call MPI_Finalize(mpierr)
 #endif
     stop 77
   endif
@@ -404,14 +404,14 @@ program test
 #ifdef WITH_CUDA_AWARE_MPI
 #if TEST_NVIDIA_GPU != 1
 #ifdef WITH_MPI
-  call mpi_finalize(mpierr)
+  call MPI_Finalize(mpierr)
 #endif
   stop 77
 #endif
 
 #ifdef TEST_ALL_KERNELS
 #ifdef WITH_MPI
-  call mpi_finalize(mpierr)
+  call MPI_Finalize(mpierr)
 #endif
   stop 77
 #endif
@@ -425,7 +425,7 @@ program test
 
 #if defined(TEST_GENERALIZED_EIGENPROBLEM) && defined(TEST_ALL_LAYOUTS)
 #ifdef WITH_MPI
-     call mpi_finalize(mpierr)
+     call MPI_Finalize(mpierr)
 #endif
      stop 77
 #endif
@@ -450,7 +450,7 @@ program test
       print *," Ecountered critical error when setting up blacs. Aborting..."
     endif
 #ifdef WITH_MPI
-    call mpi_finalize(mpierr)
+    call MPI_Finalize(mpierr)
 #endif
     stop 1
 #endif
@@ -505,7 +505,7 @@ program test
       print *,"At the moment with the random matrix you need nev >=1"
     endif
 #ifdef WITH_MPI
-    call mpi_finalize(mpierr)
+    call MPI_Finalize(mpierr)
 #endif
     stop 77
   endif
@@ -859,28 +859,48 @@ program test
   assert_elpa_ok(error_elpa)
 #endif
 
-#if defined(TEST_NVIDIA_GPU) || defined(TEST_AMD_GPU) || defined(TEST_INTEL_GPU) || defined(TEST_INTEL_GPU_OPENMP) || defined(TEST_INTEL_GPU_SYCL)
-  assert_elpa_ok(e%setup_gpu())
-#endif
 
-#if (TEST_GPU_SET_ID == 1) && (TEST_INTEL_GPU == 0) && (TEST_INTEL_GPU_OPENMP == 0) && (TEST_INTEL_GPU_SYCL == 0)
-  if (gpu_vendor() /= no_gpu) then
-    call set_gpu_parameters()
-  else
-    print *,"Cannot set gpu vendor!"
-    stop 1
-  endif
+#if TEST_GPU_SET_ID == 1
+#ifdef DEBUG_SYCL_ON_CPU
+! for SYCL on CPU case: gpu_id and device_pointer_api tests don't make sense and are disabled
+#ifdef WITH_MPI
+  call MPI_Finalize(mpierr)
+#endif
+  stop 77
+#endif /* DEBUG_SYCL_ON_CPU */
 
   successGPU = gpu_GetDeviceCount(numberOfDevices)
   if (.not.(successGPU)) then
     print *,"Error in gpu_GetDeviceCount. Aborting..."
     stop 1
   endif
-  !print *,"numberOfDevices=", numberOfDevices
+  if (myid==0) print *,"Number of Devices found: ", numberOfDevices
+
+  if (numberOfDevices==0) then
+    if (myid==0) print *, "No GPU devices found! Aborting..."
+    stop 1
+  endif
+
   gpuID = mod(myid, numberOfDevices)
 
   call e%set("use_gpu_id", int(gpuID,kind=c_int), error_elpa)
   assert_elpa_ok(error_elpa)
+#endif /* TEST_GPU_SET_ID */
+
+#if defined(TEST_NVIDIA_GPU) || defined(TEST_AMD_GPU) || defined(TEST_INTEL_GPU) || defined(TEST_INTEL_GPU_OPENMP) || defined(TEST_INTEL_GPU_SYCL)
+  assert_elpa_ok(e%setup_gpu())
+#endif
+
+#if TEST_GPU_DEVICE_POINTER_API == 1
+  ! executed only for TEST_GPU_SET_ID=1
+
+  ! Set gpuMemcpyHostToDevice, gpuMemcpyDeviceToHost
+  if (gpu_vendor() /= no_gpu) then
+    call set_gpu_parameters()
+  else
+    print *,"Cannot set gpu vendor!"
+    stop 1
+  endif
 
   ! Set device
   successGPU = gpu_setdevice(gpuID)
@@ -888,18 +908,8 @@ program test
     print *,"Cannot set GPU device. Aborting..."
     stop 1
   endif
-#endif
 
-#if TEST_GPU_DEVICE_POINTER_API == 1
   ! create device pointers for a,q, ev; copy a to device
-
-  if (gpu_vendor() /= no_gpu) then
-    call set_gpu_parameters()
-  else
-    print *,"Cannot set gpu vendor!"
-    stop 1
-  endif
-
 #if defined(TEST_EIGENVECTORS) && defined(TEST_MATRIX_RANDOM)
   ! malloc
   successGPU = gpu_malloc(a_dev, na_rows*na_cols*size_of_datatype)
@@ -984,24 +994,6 @@ program test
 #endif /* defined(TEST_GENERALIZED_EIGENPROBLEM) && defined(TEST_MATRIX_RANDOM) */
 
 #if defined(TEST_CHOLESKY)
-#if TEST_NVIDIA_GPU == 1
-  call e%set("nvidia-gpu", TEST_GPU, error_elpa)
-  assert_elpa_ok(error_elpa)
-#endif
-
-#if TEST_AMD_GPU == 1
-  call e%set("amd-gpu", TEST_GPU, error_elpa)
-  assert_elpa_ok(error_elpa)
-#endif
-
-#if TEST_INTEL_GPU == 1 || (TEST_INTEL_GPU_OPENMP == 1) || (TEST_INTEL_GPU_SYCL == 1)
-  call e%set("intel-gpu", TEST_GPU, error_elpa)
-  assert_elpa_ok(error_elpa)
-#endif
-
-  call e%set("gpu_cholesky", 1, error_elpa)
-  assert_elpa_ok(error_elpa)
-
   successGPU = gpu_malloc(a_dev, na_rows*na_cols*size_of_datatype)
   if (.not.(successGPU)) then
     print *,"Cannot allocate matrix a on GPU! Aborting..."
@@ -1017,24 +1009,6 @@ program test
 #endif /* TEST_CHOLESKY */
 
 #if defined(TEST_MULTIPLY)
-#if TEST_NVIDIA_GPU == 1
-  call e%set("nvidia-gpu", TEST_GPU, error_elpa)
-  assert_elpa_ok(error_elpa)
-#endif
-
-#if TEST_AMD_GPU == 1
-  call e%set("amd-gpu", TEST_GPU, error_elpa)
-  assert_elpa_ok(error_elpa)
-#endif
-
-#if TEST_INTEL_GPU == 1 || (TEST_INTEL_GPU_OPENMP == 1) || (TEST_INTEL_GPU_SYCL == 1)
-  call e%set("intel-gpu", TEST_GPU, error_elpa)
-  assert_elpa_ok(error_elpa)
-#endif
-
-  call e%set("gpu_hermitian_multiply",1, error_elpa)
-  assert_elpa_ok(error_elpa)
-
   successGPU = gpu_malloc(a_dev, na_rows*na_cols*size_of_datatype)
   if (.not.(successGPU)) then
     print *,"Cannot allocate matrix a on GPU! Aborting..."
@@ -1827,7 +1801,7 @@ end do ! kernels
   assert_elpa_ok(error_elpa)
 
 #ifdef WITH_MPI
-  call mpi_finalize(mpierr)
+  call MPI_Finalize(mpierr)
 #endif
 
   call exit(status)
@@ -1841,7 +1815,7 @@ end do ! kernels
       if (status /= 0) then
         if (myid == 0) print *, "Result incorrect!"
 #ifdef WITH_MPI
-        call mpi_finalize(mpierr)
+        call MPI_Finalize(mpierr)
 #endif
         call exit(status)
       endif
