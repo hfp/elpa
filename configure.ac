@@ -911,7 +911,12 @@ if test x"$cuda_compute_capability" = x"sm_80" ; then
   nvidia_a100_support=yes
   AC_DEFINE([WITH_NVIDIA_GPU_SM80_COMPUTE_CAPABILITY],[1],[the NVIDIA GPU kernels for A100 can be used])
 fi
+if test x"$cuda_compute_capability" = x"sm_90" ; then
+  nvidia_a100_support=yes
+  AC_DEFINE([WITH_NVIDIA_GPU_SM80_COMPUTE_CAPABILITY],[1],[the NVIDIA GPU kernels for A100 can be used])
+fi
 AM_CONDITIONAL([WITH_NVIDIA_GPU_SM80_COMPUTE_CAPABILITY],[test x"${nvidia_a100_support}" = x"yes"])
+
 
 AC_LANG_PUSH([Fortran])
 dnl Test possibility of 'use mpi', if requested
@@ -2865,6 +2870,28 @@ fi
 #TODO AMD memory debugging
 #TODO Intel memory debugging
 
+##########################################################################################
+#
+# SYCL on CPU (for debugging only)
+#
+##########################################################################################
+
+
+AC_MSG_CHECKING(whether SYCL on CPU debugging should be enabled)
+AC_ARG_ENABLE([sycl-on-cpu],
+                AS_HELP_STRING([--enable-sycl-on-cpu],
+                               [Enable SYCL on CPU codepath (for debugging only)]),
+                               [if test x"$enableval" = x"yes"; then
+                                  enable_sycl_on_cpu=yes
+                                else
+                                  enable_sycl_on_cpu=no
+                                fi],
+              [enable_sycl_on_cpu=no])
+AC_MSG_RESULT([${enable_sycl_on_cpu}])
+if test x"${enable_sycl_on_cpu}" = x"yes" ; then
+  AC_DEFINE([DEBUG_SYCL_ON_CPU],[1],[enable SYCL on CPU debugging])
+fi
+
 ################################################################################################
 #
 # GPU aware MPI
@@ -3495,9 +3522,8 @@ if test x"$use_amd_rccl" = x"yes"; then
   fi
   AC_DEFINE([WITH_AMD_RCCL],[1],[enable usage of AMD RCCL])
 
-  #needed ?
-  #AC_ARG_WITH([rccl-path],[AS_HELP_STRING([--with-rccl-path=PATH],[prefix where RCCL is installed @<:@default=auto@:>@])],
-  #            [RCCL_INSTALL_PATH=$withval], [with_cuda=auto])
+  AC_ARG_WITH([rccl-path],[AS_HELP_STRING([--with-rccl-path=PATH],[prefix where RCCL is installed @<:@default=auto@:>@])],
+              [RCCL_INSTALL_PATH=$withval], [RCCL_INSTALL_PATH=auto])
 
   AC_LANG_PUSH([C])
   #needed?
@@ -4257,13 +4283,13 @@ if test x"${ax_cv_have_avx512f_cpu_ext}" = x"yes" -a  x"${need_avx512}" = x"no";
   echo " "
 fi
 
-echo " "
-echo "***********************************************************************"
-echo "*  This is the first release candidate of ELPA 2025.06.001.rc1        *"
-echo "*  There might be still some changes until the final release of       *"
-echo "*  ELPA 2025.06.001                                                   *"
-echo "***********************************************************************"
-echo " "
+#echo " "
+#echo "***********************************************************************"
+#echo "*  This is the first release candidate of ELPA 2025.06.001.rc1        *"
+#echo "*  There might be still some changes until the final release of       *"
+#echo "*  ELPA 2025.06.001                                                   *"
+#echo "***********************************************************************"
+#echo " "
 
 if test x"$enable_kcomputer" = x"yes" ; then
   echo " "

@@ -56,7 +56,7 @@
        reDistributeMatrix = .true.
      else
        reDistributeMatrix = .false.
-       if (my_pe == 0) then
+       if (myid == 0) then
          write(error_unit,*) 'Warning: Matrix re-distribution is not used, since you did not set the matrix_order'
          write(error_unit,*) '         Only task 0 prints this warning'
        endif

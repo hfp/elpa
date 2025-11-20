@@ -54,6 +54,13 @@
 
       ! First try dstedc, this is normally faster but it may fail sometimes (why???)
       
+      ! allocate(ds(nlen), es(nlen), stat=istat, errmsg=errorMessage)
+      ! check_allocate("solve_tridi_single: ds, es", istat, errorMessage)
+
+      ! Save d and e for the case that dstedc fails
+      ! ds(:) = d(:)
+      ! es(:) = e(:)
+
       if (wantDebug) then
         call obj%timer%start("check_nans")
         has_nans = .false.
@@ -80,10 +87,12 @@
       allocate(work(lwork), iwork(liwork), stat=istat, errmsg=errorMessage)
       check_allocate("solve_tridi_single: work, iwork", istat, errorMessage)
       call obj%timer%start("lapack_stedc")
+
       call PRECISION_STEDC('I', int(nlen,kind=BLAS_KIND), d, e, q, int(ldq,kind=BLAS_KIND),    &
                           work, int(lwork,kind=BLAS_KIND), int(iwork,kind=BLAS_KIND), int(liwork,kind=BLAS_KIND), &
                           infoBLAS)
       info = int(infoBLAS,kind=ik)
+      
       call obj%timer%stop("lapack_stedc")
 
       ! STEDC can affect the input arrays d and e, so we need to copy them if we want to use STEQR
@@ -113,7 +122,9 @@
       endif
 
 
-      deallocate(work,iwork,ds,es, stat=istat, errmsg=errorMessage)
-      check_deallocate("solve_tridi_single: work, iwork, ds, es", istat, errorMessage)
+      deallocate(work,iwork, stat=istat, errmsg=errorMessage)
+      check_deallocate("solve_tridi_single: work, iwork", istat, errorMessage)
 
+      !deallocate(ds,es, stat=istat, errmsg=errorMessage)
+      !check_deallocate("solve_tridi_single: ds, es", istat, errorMessage)
 

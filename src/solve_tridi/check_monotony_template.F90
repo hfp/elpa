@@ -20,7 +20,7 @@ subroutine check_monotony_&
   success = .true.
   do i=1,n-1
     if (d(i+1)<d(i)) then
-      if (wantDebug) write(error_unit,'(a,a,i8,2g25.17)') 'ELPA1_check_monotony: Monotony error on ',text,i,d(i),d(i+1)
+      if (wantDebug) write(error_unit,'(a,a,i8,2g25.17)') 'ELPA_check_monotony: Monotony error on ',text,i,d(i),d(i+1)
       success = .false.
       return
     endif
