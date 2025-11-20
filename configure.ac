@@ -2837,11 +2837,16 @@ if test x"${need_intel_gpu}" = x"yes" ; then
     AC_MSG_ERROR([icx not found; try to set the oneapi-path or disable INTEL GPU support])
   fi
   AC_LANG_POP([C])
+fi
 
+if test x"${use_intel_gpu}" = x"yes" ; then
   AC_LANG_PUSH([C++])
   CXXFLAGS="$CXXFLAGS -fno-sycl-id-queries-fit-in-int"
   AC_LANG_POP([C++])
 fi
+
+dnl PETERDEBUG111
+dnl CXXFLAGS="$CXXFLAGS -fno-sycl-id-queries-fit-in-int"
 
 #TODO mklGPUBLAS
 
