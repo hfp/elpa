@@ -557,7 +557,7 @@ int main(int argc, char** argv) {
 #endif /* defined(TEST_SOLVE_2STAGE) && defined(TEST_KERNEL) */
 
 
-#if TEST_GPU_SET_ID == 1
+#if TEST_GPU_SET_ID == 1 && (TEST_INTEL_GPU == 0) && (TEST_INTEL_GPU_OPENMP == 0) && (TEST_INTEL_GPU_SYCL == 0)
 #ifdef DEBUG_SYCL_ON_CPU
 // for SYCL on CPU case: gpu_id and device_pointer_api tests don't make sense and are disabled
 #ifdef WITH_MPI
@@ -589,11 +589,13 @@ int main(int argc, char** argv) {
   set_gpu_parameters_tests();
 
   // Set device
+#if (TEST_INTEL_GPU == 0) && (TEST_INTEL_GPU_OPENMP == 0) && (TEST_INTEL_GPU_SYCL == 0)
   successGPU = gpuSetDevice_tests(gpuID);
   if (!successGPU){
     printf("Error in gpuSetDevice\n");
     exit(1);
   }
+#endif
 
 #if defined(TEST_EIGENVECTORS)
   // malloc
@@ -685,10 +687,6 @@ int main(int argc, char** argv) {
 #endif /* defined(TEST_GENERALIZED_EIGENPROBLEM) && defined(TEST_MATRIX_RANDOM) */
 
 #if defined(TEST_CHOLESKY)
-// PETERDEBUG111: cleanup
-  // elpa_set(handle, "gpu_cholesky", 1, &error_elpa);
-  // assert_elpa_ok(error_elpa);
-
   successGPU = gpuMalloc_tests((intptr_t *) &a_dev , na_rows*na_cols*sizeof(MATRIX_TYPE));
   if (!successGPU){
     fprintf(stderr, "Error in gpuMalloc(a_dev)\n");
@@ -705,10 +703,6 @@ int main(int argc, char** argv) {
 #endif /* TEST_CHOLESKY */
 
 #if defined(TEST_MULTIPLY)
-// PETERDEBUG111: cleanup
-  // elpa_set(handle, "gpu_hermitian_multiply", 1, &error_elpa);
-  // assert_elpa_ok(error_elpa);
-
   successGPU = gpuMalloc_tests((intptr_t *) &a_dev , na_rows*na_cols*sizeof(MATRIX_TYPE));
   if (!successGPU){
     fprintf(stderr, "Error in gpuMalloc(a_dev)\n");

@@ -311,7 +311,7 @@ int main(int argc, char** argv) {
 #endif
 
 
-#if TEST_GPU_SET_ID == 1
+#if TEST_GPU_SET_ID == 1 && (TEST_INTEL_GPU == 0) && (TEST_INTEL_GPU_OPENMP == 0) && (TEST_INTEL_GPU_SYCL == 0)
 #ifdef DEBUG_SYCL_ON_CPU
 // for SYCL on CPU case: gpu_id and device_pointer_api tests don't make sense and are disabled
 #ifdef WITH_MPI
@@ -343,11 +343,13 @@ int main(int argc, char** argv) {
 
    set_gpu_parameters_tests();
 
+#if (TEST_INTEL_GPU == 0) && (TEST_INTEL_GPU_OPENMP == 0) && (TEST_INTEL_GPU_SYCL == 0)
    successGPU = gpuSetDevice_tests(gpuID);
    if (!successGPU){    
       printf("Error in gpuSetDevice\n");
       exit(1);
       }
+#endif
 
    // create device pointer for a_dev; copy a -> a_dev
    // malloc
