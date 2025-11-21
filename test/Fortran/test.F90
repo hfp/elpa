@@ -894,6 +894,14 @@ program test
 #if TEST_GPU_DEVICE_POINTER_API == 1
   ! executed only for TEST_GPU_SET_ID=1
 
+  ! Set gpu_vendor, gpuMemcpyHostToDevice, gpuMemcpyDeviceToHost
+  if (gpu_vendor() /= no_gpu) then
+    call set_gpu_parameters()
+  else
+    print *,"Cannot set gpu vendor!"
+    stop 1
+  endif
+
   ! Set device
 #if (TEST_INTEL_GPU == 0) && (TEST_INTEL_GPU_OPENMP == 0) && (TEST_INTEL_GPU_SYCL == 0)
   successGPU = gpu_setdevice(gpuID)
@@ -902,14 +910,6 @@ program test
     stop 1
   endif
 #endif
-
-  ! Set gpuMemcpyHostToDevice, gpuMemcpyDeviceToHost
-  if (gpu_vendor() /= no_gpu) then
-    call set_gpu_parameters()
-  else
-    print *,"Cannot set gpu vendor!"
-    stop 1
-  endif
 
   ! create device pointers for a,q, ev; copy a to device
 #if defined(TEST_EIGENVECTORS) && defined(TEST_MATRIX_RANDOM)
