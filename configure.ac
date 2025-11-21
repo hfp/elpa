@@ -887,27 +887,39 @@ AC_ARG_WITH([cuda-sdk-path],[AS_HELP_STRING([--with-cuda-sdk-path=PATH],[prefix 
 
 
 dnl setup nvcc flags and use them in later tests
-user_sets_nvidia_gpu_compute_capability="no"
-AC_MSG_CHECKING(whether a Nvidia GPU compute capability is specified)
+user_sets_nvidia_gpu_compute_capabilities="no"
+AC_MSG_CHECKING(whether Nvidia GPU compute capabilities are specified)
 AC_ARG_WITH([NVIDIA-GPU-compute-capability],
-            [AS_HELP_STRING([--with-NVIDIA-GPU-compute-capability=VALUE],
-                            [use compute capability VALUE for NVIDIA GPU version, default: "sm_60"])],
-            [user_sets_nvidia_gpu_compute_capability="yes"],[cuda_compute_capability="sm_60"])
-AC_MSG_RESULT([${user_sets_nvidia_gpu_compute_capability}])
+            [AS_HELP_STRING([--with-NVIDIA-GPU-compute-capability=LIST],
+                            [use comma-separated list of compute capabilities for NVIDIA GPU version, default: "sm_60"])],
+            [user_sets_nvidia_gpu_compute_capabilities="yes"],[cuda_compute_capabilities="sm_60"])
+AC_MSG_RESULT([${user_sets_nvidia_gpu_compute_capabilities}])
 
-
-dnl sanity check whether compute capability setting by user is reasonable
-if test x"${user_sets_nvidia_gpu_compute_capability}" = x"yes" ; then
-  dnl the user must set a value which starts with "sm_"
-  value=$(echo $withval | cut -c1-3)
-  if test x"${value}" = x"sm_" ; then
-    cuda_compute_capability=$withval
-  else
-    AC_MSG_ERROR([Unknown Nvidia GPU compute capability set: ${withval}])
-  fi
+if test x"${user_sets_nvidia_gpu_compute_capabilities}" = x"yes" ; then
+  cuda_compute_capabilities=$withval
 fi
+
+dnl Remove 'sm_' prefix from comma-separated list and compute min and max
+min_capability=999
+max_capability=0
+for capability in $(echo "$cuda_compute_capabilities" | tr "," " "); do
+  dnl The user must set values which start with "sm_"
+  sm_prefix=$(echo $capability | cut -c1-3)
+  if test x"${sm_prefix}" != x"sm_" ; then
+    AC_MSG_ERROR([Unknown Nvidia GPU compute capability set: ${capability}])
+  fi
+
+  sm_value=$(echo $capability | cut -c4-)
+  if test "${sm_value}" -lt "${min_capability}"; then
+    min_capability=$sm_value
+  fi
+  if test "${sm_value}" -gt "${max_capability}"; then
+    max_capability=$sm_value
+  fi
+done
+
 nvidia_a100_support=no
-if test x"$cuda_compute_capability" = x"sm_80" ; then
+if test "${max_capability}" -ge 80; then
   nvidia_a100_support=yes
   AC_DEFINE([WITH_NVIDIA_GPU_SM80_COMPUTE_CAPABILITY],[1],[the NVIDIA GPU kernels for A100 can be used])
 fi
@@ -917,6 +929,21 @@ if test x"$cuda_compute_capability" = x"sm_90" ; then
 fi
 AM_CONDITIONAL([WITH_NVIDIA_GPU_SM80_COMPUTE_CAPABILITY],[test x"${nvidia_a100_support}" = x"yes"])
 
+if test x"${min_capability}" = x"${max_capability}"; then
+  dnl Only a single capability has been set
+  CUDA_CFLAGS="$CUDA_CFLAGS -arch sm_${max_capability}"
+else
+  AC_MSG_NOTICE([Minimum NVIDIA GPU compute capability: sm_${min_capability}])
+  AC_MSG_NOTICE([Maximum NVIDIA GPU compute capability: sm_${max_capability}])
+
+  dnl Convert the comma-separated list to NVCC-compatible format
+  for capability in $(echo "$cuda_compute_capabilities" | tr "," " "); do
+    sm_value=$(echo $capability | cut -c4-)
+    CUDA_CFLAGS="$CUDA_CFLAGS --generate-code arch=compute_${sm_value},code=sm_${sm_value}"
+  done
+  dnl Add PTX generation for the highest compute capability
+  CUDA_CFLAGS="$CUDA_CFLAGS --generate-code arch=compute_${max_capability},code=compute_${max_capability}"
+fi
 
 AC_LANG_PUSH([Fortran])
 dnl Test possibility of 'use mpi', if requested
@@ -2702,7 +2729,7 @@ if test x"${need_nvidia_gpu}" = x"yes" ; then
   AC_ARG_VAR([NVCCFLAGS],[CUDA compiler flags])
 
   AC_LANG_PUSH([C])
-  CUDA_CFLAGS="$CUDA_CFLAGS -arch $cuda_compute_capability -O2 --extended-lambda -I$CUDA_INSTALL_PATH/include "
+  CUDA_CFLAGS="$CUDA_CFLAGS -O2 --extended-lambda -I$CUDA_INSTALL_PATH/include "
   LDFLAGS="$LDFLAGS -L$CUDA_INSTALL_PATH/lib64"
   CFLAGS="$CFLAGS -I$CUDA_INSTALL_PATH/include"
   NVCCFLAGS="$CUDA_CFLAGS $CUDA_LDFLAGS $NVCCFLAGS"

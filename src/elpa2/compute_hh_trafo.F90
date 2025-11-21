@@ -396,22 +396,23 @@ last_stripe_width, kernel, my_stream, success)
 #endif
 
 #if REALCASE == 1
+    !if (obj%gpu_setup%nvidiaComputeCapability >= 80) then
+    !  call launch_compute_hh_trafo_sm80_gpu_kernel_&
+    !       &MATH_DATATYPE&
+    !       &_&
+    !       &PRECISION&
+    !       &(a_dev + dev_offset, bcast_buffer_dev + dev_offset_1, &
+    !       hh_tau_dev + dev_offset_2, nl, nbw,stripe_width, ncols, my_stream)
+    !else
       call launch_compute_hh_trafo_gpu_kernel_&
            &MATH_DATATYPE&
            &_&
            &PRECISION&
            &(a_dev + dev_offset, bcast_buffer_dev + dev_offset_1, &
            hh_tau_dev + dev_offset_2, nl, nbw,stripe_width, ncols, my_stream)
+    !end if
 #endif
 
-!#if REALCASE == 1
-!        call launch_compute_hh_trafo_sm80_gpu_kernel_&
-!            &MATH_DATATYPE&
-!            &_&
-!            &PRECISION&
-!            &(a_dev + dev_offset, bcast_buffer_dev + dev_offset_1, &
-!            hh_tau_dev + dev_offset_2, nl, nbw,stripe_width, ncols, my_stream)
-!#endif
     endif
 
 #endif /* WITH_NVIDIA_GPU_SM80_COMPUTE_CAPABILITY */

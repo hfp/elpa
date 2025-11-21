@@ -561,6 +561,12 @@
       OBJECT%gpu_setup%nvidiaSMcount  = value
       OBJECT%gpu_setup%gpuSMcount     = value
 
+      success = cuda_device_get_capability(value)
+      if (.not.(success)) then
+        write(error_unit,*) "error in cuda_device_get_capability"
+        stop 1
+      endif
+      OBJECT%gpu_setup%nvidiaComputeCapability = value
 #endif /* WITH_NVIDIA_GPU_VERSION */
 
 #ifdef WITH_AMD_GPU_VERSION

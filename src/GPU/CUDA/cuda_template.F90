@@ -70,6 +70,18 @@
 
 
   interface
+    function cuda_device_get_capability_c(value) result(istat) &
+             bind(C, name="cudaDeviceGetCapabilityFromC")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      integer(kind=C_INT)         :: value
+      integer(kind=C_INT)         :: istat
+    end function
+  end interface
+
+
+  interface
     function cublas_get_version_c(cublasHandle, version) result(istat) &
              bind(C, name="cublasGetVersionFromC")
       use, intrinsic :: iso_c_binding
@@ -1880,6 +1892,18 @@
       logical                                   :: success
 #ifdef WITH_NVIDIA_GPU_VERSION
       success = cuda_device_get_attributes_c(value, attribute) /= 0
+#else
+      success = .true.
+#endif
+    end function
+
+    function cuda_device_get_capability(value) result(success)
+      use, intrinsic :: iso_c_binding
+      implicit none
+      integer(kind=C_INT)                       :: value
+      logical                                   :: success
+#ifdef WITH_NVIDIA_GPU_VERSION
+      success = cuda_device_get_capability_c(value) /= 0
 #else
       success = .true.
 #endif
