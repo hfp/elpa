@@ -792,12 +792,14 @@
 #if defined(WITH_GPU_STREAMS)
           call gpu_memcpy_async_and_stream_synchronize ("elpa_pxgemm_multiply: a_dev -> a", &
                         a_dev, 0_c_intptr_t, a(1:obj%local_nrows,1:obj%local_ncols), 1, 1, &
-                        obj%local_nrows*obj%local_ncols*size_of_datatype, gpuMemcpyDeviceToHost, my_stream, .false., .false., .false.)
+                        obj%local_nrows*obj%local_ncols*size_of_datatype, gpuMemcpyDeviceToHost, &
+                        my_stream, .false., .false., .false.)
           check_memcpy_gpu("elpa_pxgemm_multiply: a_dev -> a", successGPU)
 
           call gpu_memcpy_async_and_stream_synchronize ("elpa_pxgemm_multiply: b_dev -> b", &
                         b_dev, 0_c_intptr_t, b(1:ldb,1:ldbCols), 1, 1, &
-                        ldb*ldbCols*size_of_datatype, gpuMemcpyDeviceToHost, my_stream, .false., .true., .false.)
+                        ldb*ldbCols*size_of_datatype, gpuMemcpyDeviceToHost, &
+                        my_stream, .false., .true., .false.)
           check_memcpy_gpu("elpa_pxgemm_multiply: b_dev -> b", successGPU)
 #else
           successGPU = gpu_memcpy(int(loc(a),kind=c_intptr_t), a_dev, &
