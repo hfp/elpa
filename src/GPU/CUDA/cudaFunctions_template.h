@@ -98,6 +98,26 @@ int cudaDeviceGetAttributeFromC(int *value, int attribute) {
   }
 }
 
+int cudaDeviceGetCapabilityFromC(int *value) {
+  *value = 0;
+
+  int device;
+  cudaError_t status = cudaGetDevice(&device);
+  if (status != cudaSuccess) {
+    errormessage("Error in cudaGetDevice: %s\n", "unknown error");
+    return 0;
+  }
+
+  cudaDeviceProp deviceProp;
+  status = cudaGetDeviceProperties(&deviceProp, device);
+  if (status != cudaSuccess) {
+    errormessage("Error in cudaDeviceGetProperties: %s\n", "unknown error");
+    return 0;
+  }
+
+  *value = deviceProp.major * 10 + deviceProp.minor;
+  return 1;
+}
 
 int cublasGetVersionFromC(cublasHandle_t cudaHandle, int *version) {
   cublasStatus_t status = cublasGetVersion(cudaHandle, version);
