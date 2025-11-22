@@ -439,10 +439,7 @@
       success = .true.
 #endif
 #ifdef WITH_SYCL_GPU_VERSION
-      if (use_gpu_vendor == sycl_gpu) then
-        success = sycl_getdevicecount(n)
-        success = .true.
-      endif
+      success = sycl_getdevicecount(n)
 #endif
 
       if (.not.(success)) then

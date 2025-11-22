@@ -154,6 +154,10 @@ static oneapi::mkl::side sideFromChar(char c) {
 
   int syclGetDeviceCountFromC(int *count) {
     *count = SyclState::defaultState().getNumDevices();
+    if (*count == 0) {
+      std::cerr << "SYCL Backend Error: No suitable devices" << std::endl;
+      return 0;
+    }
     return 1;
   }
 

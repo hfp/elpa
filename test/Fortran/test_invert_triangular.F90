@@ -217,13 +217,13 @@ program test
 #ifdef WITH_CUDA_AWARE_MPI
 #if TEST_NVIDIA_GPU != 1
 #ifdef WITH_MPI
-  call mpi_finalize(mpierr)
+  call MPI_Finalize(mpierr)
 #endif
     stop 77
 #endif
 #ifdef TEST_COMPLEX
 #ifdef WITH_MPI
-  call mpi_finalize(mpierr)
+  call MPI_Finalize(mpierr)
 #endif
     stop 77
 #endif
@@ -271,7 +271,7 @@ program test
       print *," Encountered critical error when setting up blacs. Aborting..."
     endif
 #ifdef WITH_MPI
-    call mpi_finalize(mpierr)
+    call MPI_Finalize(mpierr)
 #endif
     stop 1
   endif
@@ -343,7 +343,15 @@ program test
   assert_elpa_ok(e%setup_gpu())
 #endif 
 
-#if (TEST_GPU_SET_ID == 1) && (TEST_INTEL_GPU == 0) && (TEST_INTEL_GPU_OPENMP == 0) && (TEST_INTEL_GPU_SYCL == 0)
+#if TEST_GPU_SET_ID == 1 && (TEST_INTEL_GPU == 0) && (TEST_INTEL_GPU_OPENMP == 0) && (TEST_INTEL_GPU_SYCL == 0)
+#ifdef DEBUG_SYCL_ON_CPU
+! for SYCL on CPU case: gpu_id and device_pointer_api tests don't make sense and are disabled
+#ifdef WITH_MPI
+  call MPI_Finalize(mpierr)
+#endif
+  stop 77
+#endif /* DEBUG_SYCL_ON_CPU */
+
   if (gpu_vendor() /= no_gpu) then
     call set_gpu_parameters()
   else 
@@ -356,6 +364,14 @@ program test
     print *,"Error in gpu_GetDeviceCount. Aborting..."
     stop 1
   endif
+
+  if (myid==0) print *,"Number of Devices found: ", numberOfDevices
+
+  if (numberOfDevices==0) then
+    if (myid==0) print *, "No GPU devices found! Aborting..."
+    stop 1
+  endif
+  
   gpuID = mod(myid, numberOfDevices)
 
   call e%set("use_gpu_id", int(gpuID,kind=c_int), error_elpa)
@@ -363,8 +379,9 @@ program test
 #endif
 
 #if TEST_GPU_DEVICE_POINTER_API == 1
-  ! create device pointers for a,q, ev; copy a to device
-    
+  ! executed only for TEST_GPU_SET_ID=1
+
+  ! Set gpuMemcpyHostToDevice, gpuMemcpyDeviceToHost
   if (gpu_vendor() /= no_gpu) then
     call set_gpu_parameters()
   else 
@@ -372,22 +389,16 @@ program test
     stop 1
   endif
 
-  ! Set device 
-  successGPU = .true.        
-#if TEST_INTEL_GPU_SYCL == 1
-!   successGPU = sycl_getcpucount(numberOfDevices) ! temporary fix for SYCL on CPU
-!   if (.not.(successGPU)) then
-!      print *,"Error in sycl_getcpucount. Aborting..."
-!      stop 1
-!    endif
-#endif
-
+  ! Set device
+#if (TEST_INTEL_GPU == 0) && (TEST_INTEL_GPU_OPENMP == 0) && (TEST_INTEL_GPU_SYCL == 0)
   successGPU = gpu_setdevice(gpuID)
   if (.not.(successGPU)) then
     print *,"Cannot set GPU device. Aborting..."
     stop 1
   endif
+#endif
 
+  ! create device pointers for a,q, ev; copy a to device
   successGPU = gpu_malloc(a_dev, na_rows*na_cols*size_of_datatype)
   if (.not.(successGPU)) then
     print *,"Cannot allocate matrix a on GPU! Aborting..."
@@ -500,24 +511,6 @@ program test
 
 #endif /* TEST_GPU_DEVICE_POINTER_API */
 
-! PETERDEBUG: cleanup
-! <<<<<<< HEAD
-!   if (myid .eq. 0) then
-!     call e%print_times("e%triangular")
-!   endif
-! =======
-!    if (myid .eq. 0) then
-!      call e%print_times("e%triangular")
-!    endif
-!    !-----------------------------------------------------------------------------------------------------------------------------
-!    ! Check the results
-   
-!    if(.not. skip_check_correctness) then
-!      status = check_correctness_hermitian_multiply("N", na, a, as, c, na_rows, sc_desc, myid )
-!      call check_status(status, myid)
-!    endif
-! >>>>>>> origin/master_pre_stage
-
 ! _________________________________________________________________________________________________________________________________
 
   ! Check the results
@@ -550,7 +543,7 @@ program test
 
 #ifdef WITH_MPI
   call blacs_gridexit(my_blacs_ctxt)
-  call mpi_finalize(mpierr)
+  call MPI_Finalize(mpierr)
 #endif
 
   call exit(status)
@@ -566,7 +559,7 @@ program test
       if (status /= 0) then
         if (myid == 0) print *, "Result incorrect!"
 #ifdef WITH_MPI
-        call mpi_finalize(mpierr)
+        call MPI_Finalize(mpierr)
 #endif
         call exit(status)
       endif

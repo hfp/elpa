@@ -62,12 +62,12 @@
 #ifdef WITH_AMD_GPU_VERSION
             print *,"Cannot create hip stream handle"
 #endif
-#ifdef WITH_AMD_GPU_VERSION
+#ifdef WITH_SYCL_GPU_VERSION
             print *,"Cannot create sycl stream handle"
 #endif
             stop 1
           endif
-#else
+#else /* WITH_GPU_STREAMS */
 #ifdef WITH_SYCL_GPU_VERSION
             OBJECT%gpu_setup%my_stream = 0
 #endif

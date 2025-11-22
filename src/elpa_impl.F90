@@ -1,7 +1,7 @@
 !
 !    Copyright 2017, L. Hüdepohl and A. Marek, MPCDF
 !
-!    This file is part of ELPA.
+!    This file is part of ELPA
 !
 !    The ELPA library was originally created by the ELPA consortium,
 !    consisting of the following organizations:
@@ -768,12 +768,11 @@ module elpa_impl
     endif
 #endif
 
-      if (self%is_set("debug") == 1) then
-         call self%get("debug",debug, error)
-         if (check_elpa_get(error, ELPA_ERROR_SETUP)) return
-         if (debug .eq. 1) then
-           wantDebugMessage = .true.
-         endif
+      wantDebugMessage = .false.
+      call self%get("debug",debug, error)
+      if (check_elpa_get(error, ELPA_ERROR_SETUP)) return
+      if (debug .eq. 1) then
+        wantDebugMessage = .true.
       endif
 #if defined(WITH_NVIDIA_GPU_VERSION) || defined(WITH_AMD_GPU_VERSION) || defined(WITH_OPENMP_OFFLOAD_GPU_VERSION) || defined(WITH_SYCL_GPU_VERSION)
 #undef OBJECT

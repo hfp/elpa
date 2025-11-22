@@ -1052,8 +1052,8 @@ __global__ void gpu_local_product_kernel(T *z_dev, T *z_extended_dev, int na1, i
   
   int i0 = threadIdx.x + blockIdx.x*blockDim.x;
 
-  for (int j=0; j<SM_count; j+=1)
-    for (int i=i0; i<na1; i+=blockDim.x*gridDim.x) // for parallelizing over j we need atomic_multiply
+  for (int j=0; j<SM_count; j+=1) // for parallelizing over j we need atomic_multiply
+    for (int i=i0; i<na1; i+=blockDim.x*gridDim.x)
       z_dev[i] = z_dev[i] * z_extended_dev[i + na1*j];
   
 }

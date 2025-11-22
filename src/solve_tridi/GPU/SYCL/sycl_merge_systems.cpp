@@ -742,7 +742,6 @@ void device_solve_secular_equation (int n, int i_f, T* d1, T* z1, T* delta, T* r
   if (i_f == n)
     {
     // Special case: last eigenvalue.
-
     if (tid == 0)
       {
       dshift_sh[0] = d1[n-1];
@@ -770,7 +769,6 @@ void device_solve_secular_equation (int n, int i_f, T* d1, T* z1, T* delta, T* r
   else
     {
     // Other eigenvalues: lower bound is d1[i] and upper bound is d1[i+1]
-
     if (tid==0)
       {
       x_sh[0] = 0.5*(d1[i] + d1[i+1]);
@@ -809,6 +807,8 @@ void device_solve_secular_equation (int n, int i_f, T* d1, T* z1, T* delta, T* r
   // Bisection
   for (int iter = 0; iter < maxIter; iter++)
     {
+    it.barrier();
+
     if (tid==0)
       {
       x_sh[0] = 0.5*(a_sh[0] + b_sh[0]);
@@ -838,14 +838,14 @@ void device_solve_secular_equation (int n, int i_f, T* d1, T* z1, T* delta, T* r
     if (break_flag_sh[0]) break;
     }
 
-  it.barrier(); // PETERDEBUG: needed, but why?
+  it.barrier(); // maybe, not needed anymore. helped to resolve numerical errors at early stage
 
   // Update delta: delta[j] = delta[j] - x for all j.
   for (int j = tid; j < n; j += threads_total)
     {
     delta[j] = delta[j] - x_sh[0];
     }
-
+  
 }
 
 //________________________________________________________________
@@ -899,6 +899,7 @@ void gpu_solve_secular_equation_loop_kernel(T *d1_dev, T *z1_dev, T *delta_exten
   for (int i = my_proc + n_procs*block; i<na1; i += n_procs*it.get_group_range(0))
     {
     int i_f = i + 1; // i_f is the Fortran index (1-based)
+    //if (thread==0)  sycl::ext::oneapi::experimental::printf("myid=%d, i_f=%d\n", myid, i_f);
 
     device_solve_secular_equation(na1, i_f, d1_dev, z1_dev, delta_extended_dev+na1*block, rho_dev, thread, it.get_local_range(0), it,
                                   cache, dshift_sh, a_sh, b_sh, x_sh, y_sh, break_flag_sh);
@@ -948,7 +949,7 @@ void gpu_solve_secular_equation_loop (T *d1_dev, T *z1_dev, T *delta_dev, T *rho
   sycl::range<1> threadsPerBlock = 32;
   sycl::range<1> blocks(SM_count);
 
-  q.submit([&](sycl::handler& h) {
+  sycl::event ev = q.submit([&](sycl::handler& h) {
     sycl::local_accessor<T, 1> cache(threadsPerBlock.get(0), h);
     sycl::local_accessor<T, 1> dshift_sh(1, h);
     sycl::local_accessor<T, 1> a_sh(1, h);
@@ -963,6 +964,12 @@ void gpu_solve_secular_equation_loop (T *d1_dev, T *z1_dev, T *delta_dev, T *rho
                                                 cache, dshift_sh, a_sh, b_sh, x_sh, y_sh, break_flag_sh);
     });
   });
+
+  try {
+    ev.wait_and_throw();
+  } catch (const sycl::exception &e) {
+    std::cerr << "gpu_solve_secular_equation_loop_kernel failed: " << e.what() << "\n";
+  }
 
   if (debug) syclDeviceSynchronizeFromC();
 }
@@ -999,21 +1006,8 @@ template <typename T>
 void gpu_local_product(T *z_dev, T *z_extended_dev, int na1, int SM_count, int debug, gpuStream_t my_stream){
 
   sycl::queue q = getQueueOrDefault(my_stream);
-  sycl::range<1> threadsPerBlock = maxWorkgroupSize<1>(q)/2; // PETERDEBUG111: this helped
+  sycl::range<1> threadsPerBlock = maxWorkgroupSize<1>(q); // reducing number of threads might help with numerical error
   sycl::range<1> blocks(SM_count);
-
-  q.parallel_for(sycl::nd_range<1>(blocks * threadsPerBlock, threadsPerBlock), [=](sycl::nd_item<1> it) {
-        gpu_local_product_kernel<T>(z_dev, z_extended_dev, na1, SM_count, it);
-  });
-  if (debug) syclDeviceSynchronizeFromC();
-}
-
-template <typename T>
-void gpu_local_product(T *z_dev, T *z_extended_dev, int na1, int SM_count, int debug, gpuStream_t my_stream){
-
-  sycl::queue q = getQueueOrDefault(my_stream);
-  sycl::range<1> threadsPerBlock = maxWorkgroupSize<1>(q);
-  sycl::range<1> blocks(1); // one block, so we don't need atomic_multiply
 
   q.parallel_for(sycl::nd_range<1>(blocks * threadsPerBlock, threadsPerBlock), [=](sycl::nd_item<1> it) {
         gpu_local_product_kernel<T>(z_dev, z_extended_dev, na1, SM_count, it);
@@ -1060,6 +1054,8 @@ void gpu_add_tmp_loop_kernel (T *d1_dev, T *dbase_dev, T *ddiff_dev, T *z_dev, T
       tmp_extended_dev[index] = d1_dev[j] - dbase_or_diff_i;
       }
 
+    it.barrier(); // this sync is needed only for Intel GPUs (not for NVIDIA/AMD)
+
     // separate loop to prevent compiler from optimization
     dbase_or_diff_i = ddiff_dev[i];
     for (int j = thread; j < na1; j += block_size)
@@ -1069,6 +1065,8 @@ void gpu_add_tmp_loop_kernel (T *d1_dev, T *dbase_dev, T *ddiff_dev, T *z_dev, T
       tmp_extended_dev[index] = z_dev[j] / tmp_extended_dev[index];
       }
 
+    it.barrier(); // this sync is needed only for Intel GPUs (not for NVIDIA/AMD)
+
     T dot_product = elpa_sum<T>(na1, thread, block_size, cache, it, [=](int j) {
       return tmp_extended_dev[j+na1*block]*tmp_extended_dev[j+na1*block];
     });
@@ -1077,6 +1075,7 @@ void gpu_add_tmp_loop_kernel (T *d1_dev, T *dbase_dev, T *ddiff_dev, T *z_dev, T
       {
       ev_scale_dev[i] = T(1.0)/sycl::sqrt(dot_product);
       }
+
   }
 }
 
@@ -1086,13 +1085,13 @@ void gpu_add_tmp_loop(T *d1_dev, T *dbase_dev, T *ddiff_dev, T *z_dev, T *ev_sca
                       int na1, int my_proc, int n_procs, int SM_count, int debug, gpuStream_t my_stream){
 
   sycl::queue q = getQueueOrDefault(my_stream);
-  sycl::range<1> threadsPerBlock = MAX_THREADS_PER_BLOCK;
+  sycl::range<1> threadsPerBlock = maxWorkgroupSize<1>(q); // reducing number of threads might help with numerical error
   sycl::range<1> blocks(SM_count);
 
 
-  q.submit([&](sycl::handler& h) {
+  sycl::event ev = q.submit([&](sycl::handler& h) {
 
-    sycl::local_accessor<T, 1> cache(MAX_THREADS_PER_BLOCK, h);
+    sycl::local_accessor<T, 1> cache(threadsPerBlock.get(0), h);
 
     h.parallel_for(sycl::nd_range<1>(blocks * threadsPerBlock, threadsPerBlock),
                    [=](sycl::nd_item<1> it) {
@@ -1100,6 +1099,12 @@ void gpu_add_tmp_loop(T *d1_dev, T *dbase_dev, T *ddiff_dev, T *z_dev, T *ev_sca
                                  na1, my_proc, n_procs, it, cache);
     });
   });
+
+  try {
+  ev.wait_and_throw();
+  } catch (const sycl::exception &e) {
+  std::cerr << "gpu_add_tmp_loop_kernel failed: " << e.what() << "\n";
+  }
 
   if (debug) syclDeviceSynchronizeFromC();
 }

@@ -773,7 +773,6 @@
                                   tmp1, int(nstor,kind=BLAS_KIND))
               else
                 ! tmp1 = aux_mat^T * a
-                print *, "GEMM: m=", nstor, " n=", lce-lcs+1, " k=", lre-lrs+1
                 call PRECISION_GEMM(BLAS_TRANS_OR_CONJ, 'N', int(nstor,kind=BLAS_KIND), &
                                   int(lce-lcs+1,kind=BLAS_KIND), int(lre-lrs+1,kind=BLAS_KIND), ONE, &
                                   aux_mat(lrs:lre,1:nstor), int(lre-lrs+1,kind=BLAS_KIND), &

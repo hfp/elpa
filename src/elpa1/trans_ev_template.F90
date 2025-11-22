@@ -356,7 +356,7 @@ subroutine trans_ev_cpu_&
         allocate(tmat(max_stored_rows,max_stored_rows))
       endif
 
-      if (gpu_vendor() /= OPENMP_OFFLOAD_GPU) then
+      if (gpu_vendor() /= OPENMP_OFFLOAD_GPU .and. gpu_vendor() /= SYCL_GPU) then
         num = (max_local_cols*max_stored_rows) * size_of_datatype
         successGPU = gpu_malloc_host(tmp_host,num)
         check_alloc_gpu("trans_ev: tmp_host", successGPU)
@@ -530,7 +530,7 @@ subroutine trans_ev_cpu_&
           int(mpi_comm_cols,kind=MPI_KIND), mpierr)
           call obj%timer%stop("mpi_communication")
         endif
-      NVTX_RANGE_POP("mpi_bcast")
+        NVTX_RANGE_POP("mpi_bcast")
       endif ! useCCL
     endif ! (nb > 0)
 
@@ -1041,14 +1041,16 @@ subroutine trans_ev_cpu_&
         successGPU = gpu_free_host(tmat_host)
         check_host_dealloc_gpu("trans_ev: tmat_host", successGPU)
         nullify(tmat)
-
-        successGPU = gpu_free_host(tmp_host)
-        check_host_dealloc_gpu("trans_ev: tmp_host", successGPU)
-        nullify(tmp)
-
       else
         deallocate(hvm1)
         deallocate(tmat)
+      endif
+
+      if (gpu_vendor() /= OPENMP_OFFLOAD_GPU .and. gpu_vendor() /= SYCL_GPU) then
+        successGPU = gpu_free_host(tmp_host)
+        check_host_dealloc_gpu("trans_ev: tmp_host", successGPU)
+        nullify(tmp)
+      else
         deallocate(tmp)
       endif
     endif ! (.not. useCCL)

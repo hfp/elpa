@@ -311,42 +311,47 @@ int main(int argc, char** argv) {
 #endif
 
 
-#if (TEST_GPU == 1)
+#if TEST_GPU_SET_ID == 1 && (TEST_INTEL_GPU == 0) && (TEST_INTEL_GPU_OPENMP == 0) && (TEST_INTEL_GPU_SYCL == 0)
+#ifdef DEBUG_SYCL_ON_CPU
+// for SYCL on CPU case: gpu_id and device_pointer_api tests don't make sense and are disabled
+#ifdef WITH_MPI
+  MPI_Finalize();
+#endif
+  exit(77);
+#endif /* DEBUG_SYCL_ON_CPU *//
 
-#if (TEST_INTEL_GPU == 0) && (TEST_INTEL_GPU_OPENMP == 0) && (TEST_INTEL_GPU_SYCL == 0)
    gpuGetDeviceCount_tests(&numberOfDevices);
    printf("Number of Devices found: %d\n\n", numberOfDevices);
+
+  if (numberOfDevices==0) {
+    if (myid==0) printf("No GPU devices found! Aborting...\n");
+    exit(1);
+  }
+
    gpuID = myid%numberOfDevices; 
-   printf("gpuID: %i\n", gpuID);
+   
    elpa_set(handle, "use_gpu_id", gpuID, &error_elpa);
    assert_elpa_ok(error_elpa);
 #endif
 
-   set_gpu_parameters_tests();
-
-#if TEST_INTEL_GPU_SYCL == 1 /* temporary fix for SYCL on CPU */
-   successGPU = syclGetCpuCount(numberOfDevices); 
-   if (!successGPU){    
-      printf("Error in syclGetCpuCount\n");
-      exit(1);
-      }
+#if (TEST_NVIDIA_GPU == 1) || (TEST_AMD_GPU == 1) || (TEST_INTEL_GPU == 1) || (TEST_INTEL_GPU_OPENMP == 1) || (TEST_INTEL_GPU_SYCL == 1)
+  assert_elpa_ok(elpa_setup_gpu(handle));
 #endif
 
+   //-----------------------------------------------------------------------------------------------------------------------------
+#if TEST_GPU_DEVICE_POINTER_API == 1
+
+   set_gpu_parameters_tests();
+
+#if (TEST_INTEL_GPU == 0) && (TEST_INTEL_GPU_OPENMP == 0) && (TEST_INTEL_GPU_SYCL == 0)
    successGPU = gpuSetDevice_tests(gpuID);
    if (!successGPU){    
       printf("Error in gpuSetDevice\n");
       exit(1);
       }
+#endif
 
-   elpa_set(handle, "gpu_invert_trm", 1, &error_elpa);
-   assert_elpa_ok(error_elpa); 
-#endif /* TEST_GPU */
-
-
-   //-----------------------------------------------------------------------------------------------------------------------------
-   // TEST_GPU == 1: create device pointer for a_dev; copy a -> a_dev
-#if TEST_GPU == 1
-
+   // create device pointer for a_dev; copy a -> a_dev
    // malloc
    successGPU = gpuMalloc_tests((intptr_t *) &a_dev , na_rows*na_cols*sizeof(MATRIX_TYPE));
    if (!successGPU){    
@@ -360,7 +365,7 @@ int main(int argc, char** argv) {
       fprintf(stderr, "Error in gpuMemcpy(a_dev, a)\n");
       exit(1);
       }
-#endif /* TEST_GPU */   
+#endif /* TEST_GPU_DEVICE_POINTER_API */   
    
    //-----------------------------------------------------------------------------------------------------------------------------
    // The actual solve step
