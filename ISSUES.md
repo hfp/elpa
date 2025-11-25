@@ -3,8 +3,12 @@
 For more details and recent updates please visit the online [issue system](https://gitlab.mpcdf.mpg.de/elpa/elpa/issues)
 Issues which are not mentioned in a newer release are (considered as) solved.
 
+### ELPA 2025.06.002.rc1 release ###
+as in 2025.01.002
+
 ### ELPA 2025.06.001 release ###
-As in 2024.05.001 release
+BUG in solve-tridi, which can in rare situations lead to wrong results
+; FIXED in 2025.06.002
 
 ### ELPA 2025.01.002 release ###
 Fixes a performance regression erroneously introduced in ELPA 2025.01.001
