@@ -98,6 +98,8 @@ module elpa_gpu_setup
 
     integer(kind=c_int)                   :: gpusPerNode
 
+    integer(kind=c_int)                   :: nvidiaComputeCapability
+
     integer(kind=c_int)                   :: nvidiaSMcount
     integer(kind=c_int)                   :: amdSMcount
     integer(kind=c_int)                   :: syclSMcount

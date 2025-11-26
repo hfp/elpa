@@ -200,7 +200,7 @@ function elpa_solve_evp_&
                                                       do_useGPU_solve_tridi, do_useGPU_trans_ev
    integer(kind=c_int)                             :: numberOfGPUDevices
 
-   integer(kind=c_int)                             :: my_pe, n_pes, my_prow, my_pcol
+   integer(kind=c_int)                             :: myid, n_pes, my_prow, my_pcol
    integer(kind=MPI_KIND)                          :: mpierr, my_peMPI, n_pesMPI, my_prowMPI, my_pcolMPI
    real(kind=C_DATATYPE_KIND), allocatable         :: e(:)
    logical                                         :: wantDebug
@@ -248,7 +248,7 @@ function elpa_solve_evp_&
                                                                       &PRECISION&
                                                                       &_&
                                                                       &MATH_DATATYPE
-   integer(kind=c_intptr_t), parameter             :: size_of_real_datatype = size_of_&
+   integer(kind=c_intptr_t), parameter             :: size_of_datatype_real = size_of_&
                                                                       &PRECISION&
                                                                       &_real
    integer(kind=c_intptr_t)                        :: num
@@ -268,6 +268,12 @@ function elpa_solve_evp_&
    integer(kind=MPI_KIND)                                             :: allreduce_request1, &
                                                                          allreduce_request2, allreduce_request3, &
                                                                          allreduce_request4, allreduce_request
+#ifdef DEBUG_CUDA
+   MATH_DATATYPE(kind=REAL_DATATYPE), allocatable   :: buffer_debug_real(:)
+   real(kind=REAL_DATATYPE)                         :: sum_debug_real
+   MATH_DATATYPE(kind=rck), allocatable             :: buffer_debug(:)
+   real(kind=REAL_DATATYPE)                         :: sum_debug
+#endif
 
    useGPU = .false.
 
@@ -378,11 +384,11 @@ function elpa_solve_evp_&
 
 #if defined(WITH_NVIDIA_GPU_VERSION) || defined(WITH_AMD_GPU_VERSION) || defined(WITH_OPENMP_OFFLOAD_GPU_VERSION) || defined(WITH_SYCL_GPU_VERSION)
    if (useGPU) then
-     my_pe = obj%mpi_setup%myRank_comm_parent
+     myid = obj%mpi_setup%myRank_comm_parent
      call obj%timer%start("check_for_gpu")
 
      ! Count actual number of the available GPU devices
-     if (check_for_gpu(obj, my_pe, numberOfGPUDevices, wantDebug)) then
+     if (check_for_gpu(obj, myid, numberOfGPUDevices, wantDebug)) then
        do_useGPU = .true.
        ! set the neccessary parameters
        call set_gpu_parameters()
@@ -452,7 +458,7 @@ function elpa_solve_evp_&
 #endif /* REDISTRIBUTE_MATRIX */
 !
 
-   my_pe   = obj%mpi_setup%myRank_comm_parent
+   myid    = obj%mpi_setup%myRank_comm_parent
    my_prow = obj%mpi_setup%myRank_comm_rows
    my_pcol = obj%mpi_setup%myRank_comm_cols
 
@@ -465,6 +471,18 @@ function elpa_solve_evp_&
    l_cols = local_index(na, my_pcol, np_cols, nblk, -1) ! Local columns of q
    l_cols_nev = local_index(nev, my_pcol, np_cols, nblk, -1) ! Local columns corresponding to nev
 #endif
+
+
+#ifdef DEBUG_CUDA
+   if (wantDebug .and. useGPU) then
+     allocate(buffer_debug_real(na), stat=istat, errmsg=errorMessage)
+     check_allocate("elpa1_template: buffer_debug_real", istat, errorMessage)
+
+     allocate(buffer_debug(matrixRows*matrixCols), stat=istat, errmsg=errorMessage)
+     check_allocate("elpa1_template: buffer_debug", istat, errorMessage)
+   endif
+#endif
+
 
 #ifndef DEVICE_POINTER
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -570,7 +588,7 @@ function elpa_solve_evp_&
 #endif /* REDISTRIBUTE_MATRIX */
 
    if (do_useGPU) then
-     num = (na) * size_of_real_datatype
+     num = (na) * size_of_datatype_real
      successGPU = gpu_malloc(e_dev, num)
      check_alloc_gpu("elpa1_template e_dev", successGPU)
 
@@ -588,7 +606,7 @@ function elpa_solve_evp_&
                  num, gpuMemcpyHostToDevice)
      check_memcpy_gpu("elpa1_template a -> a_devIntern", successGPU)
 
-     num = (na) * size_of_real_datatype
+     num = (na) * size_of_datatype_real
      successGPU = gpu_malloc(ev_devIntern, num)
      check_alloc_gpu("elpa1_template ev_devIntern", successGPU)
 
@@ -620,7 +638,7 @@ function elpa_solve_evp_&
      endif
 
 #if COMPLEXCASE == 1
-     num = (l_rows* l_cols) * size_of_real_datatype
+     num = (l_rows* l_cols) * size_of_datatype_real
      successGPU = gpu_malloc(q_dev_real, num)
      check_alloc_gpu("elpa1_template q_dev_real", successGPU)
 #endif /* COMPLEXCASE */
@@ -641,7 +659,7 @@ function elpa_solve_evp_&
      !            num, gpuMemcpyHostToDevice)
      !check_memcpy_gpu("elpa1_template a -> a_devIntern", successGPU)
 
-     num = (na) * size_of_real_datatype
+     num = (na) * size_of_datatype_real
      successGPU = gpu_malloc(ev_devIntern, num)
      check_alloc_gpu("elpa1_template ev_devIntern", successGPU)
      !successGPU = gpu_memcpy(ev_devIntern, int(loc(ev(1)),kind=c_intptr_t), &
@@ -692,7 +710,7 @@ function elpa_solve_evp_&
      endif
 
 #if COMPLEXCASE == 1
-     num = (l_rows* l_cols) * size_of_real_datatype
+     num = (l_rows* l_cols) * size_of_datatype_real
      successGPU = gpu_malloc(q_dev_real, num)
      check_alloc_gpu("elpa1_template q_dev_real", successGPU)
 #endif /* COMPLEXCASE */
@@ -707,7 +725,7 @@ function elpa_solve_evp_&
                  num, gpuMemcpyHostToDevice)
      check_memcpy_gpu("elpa1_template a -> a_devIntern", successGPU)
 
-     num = (na) * size_of_real_datatype
+     num = (na) * size_of_datatype_real
      successGPU = gpu_malloc(ev_devIntern, num)
      check_alloc_gpu("elpa1_template ev_devIntern", successGPU)
      !successGPU = gpu_memcpy(ev_devIntern, int(loc(ev(1)),kind=c_intptr_t), &
@@ -741,7 +759,7 @@ function elpa_solve_evp_&
      endif
 
 #if COMPLEXCASE == 1
-     num = (l_rows* l_cols) * size_of_real_datatype
+     num = (l_rows* l_cols) * size_of_datatype_real
      successGPU = gpu_malloc(q_dev_real, num)
      check_alloc_gpu("elpa1_template q_dev_real", successGPU)
 #endif /* COMPLEXCASE */
@@ -757,7 +775,7 @@ function elpa_solve_evp_&
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    !
    if (do_useGPU) then
-     num = (na) * size_of_real_datatype
+     num = (na) * size_of_datatype_real
      successGPU = gpu_malloc(e_dev, num)
      check_alloc_gpu("elpa1_template e_dev", successGPU)
 
@@ -787,7 +805,7 @@ function elpa_solve_evp_&
      endif
 
 #if COMPLEXCASE == 1
-     num = (l_rows* l_cols) * size_of_real_datatype
+     num = (l_rows* l_cols) * size_of_datatype_real
      successGPU = gpu_malloc(q_dev_real, num)
      check_alloc_gpu("elpa1_template q_dev_real", successGPU)
 #endif /* COMPLEXCASE */
@@ -814,7 +832,7 @@ function elpa_solve_evp_&
        endif
 
 #if COMPLEXCASE == 1
-       num = (l_rows* l_cols) * size_of_real_datatype
+       num = (l_rows* l_cols) * size_of_datatype_real
        successGPU = gpu_malloc(q_dev_real, num)
        check_alloc_gpu("elpa1_template q_dev_real", successGPU)
 #endif /* COMPLEXCASE */
@@ -841,7 +859,7 @@ function elpa_solve_evp_&
        endif
 
 #if COMPLEXCASE == 1
-       num = (l_rows* l_cols) * size_of_real_datatype
+       num = (l_rows* l_cols) * size_of_datatype_real
        successGPU = gpu_malloc(q_dev_real, num)
        check_alloc_gpu("elpa1_template q_dev_real", successGPU)
 #endif /* COMPLEXCASE */
@@ -869,7 +887,7 @@ function elpa_solve_evp_&
      call init_thread_affinity(nrThreads)
 
      call check_thread_affinity()
-     if (my_pe .eq. 0) call print_thread_affinity(my_pe)
+     if (myid .eq. 0) call print_thread_affinity(myid)
      call cleanup_thread_affinity()
    endif
 #endif
@@ -927,11 +945,11 @@ function elpa_solve_evp_&
        successGPU = gpu_memcpy(int(loc(a),kind=c_intptr_t), a_dev, num, gpuMemcpyDeviceToHost)
        check_memcpy_gpu("elpa1_template: a_dev -> a", successGPU)
 
-       num = (na) * size_of_real_datatype
+       num = (na) * size_of_datatype_real
        successGPU = gpu_memcpy(int(loc(ev),kind=c_intptr_t), ev_dev, num, gpuMemcpyDeviceToHost)
        check_memcpy_gpu("elpa1_template: ev_dev -> ev", successGPU)
 
-       num = (na) * size_of_real_datatype
+       num = (na) * size_of_datatype_real
        successGPU = gpu_memcpy(int(loc(e),kind=c_intptr_t), e_dev, num, gpuMemcpyDeviceToHost)
        check_memcpy_gpu("elpa1_template: e_dev -> e", successGPU)
 
@@ -955,11 +973,13 @@ function elpa_solve_evp_&
        & (obj, na, a, matrixRows, nblk, matrixCols, mpi_comm_rows, mpi_comm_cols, ev, e, tau, &
           wantDebug, nrThreads, isSkewsymmetric, success)
      endif
+
      if (success) then
        success_int = 0
      else
        success_int = 1
      endif
+
 #ifdef WITH_MPI
      if (useNonBlockingCollectivesAll) then
        call mpi_iallreduce(mpi_in_place, success_int, 1_MPI_KIND, MPI_INTEGER, MPI_MAX, int(mpi_comm_all,kind=MPI_KIND), &
@@ -974,23 +994,79 @@ function elpa_solve_evp_&
        return
      endif
 
+#ifdef DEBUG_CUDA     
+     if (wantDebug .and. useGPU) then
+       my_stream = obj%gpu_setup%my_stream
+
+       num = (matrixRows*matrixCols) * size_of_datatype
+#ifdef WITH_GPU_STREAMS
+        successGPU = gpu_memcpy_async(int(loc(buffer_debug(1)),kind=c_intptr_t), a_dev, num, gpuMemcpyDeviceToHost, my_stream)
+        successGPU = gpu_stream_synchronize(my_stream)
+#else
+       successGPU = gpu_memcpy       (int(loc(buffer_debug(1)),kind=c_intptr_t), a_dev, num, gpuMemcpyDeviceToHost)
+#endif
+       check_memcpy_gpu("elpa1_template: a_dev -> buffer_debug", successGPU)
+       sum_debug = sum(buffer_debug(1:matrixRows*matrixCols))
+#ifdef WITH_MPI
+       call MPI_Allreduce(MPI_IN_PLACE, sum_debug, 1_MPI_KIND, MPI_MATH_DATATYPE_PRECISION, MPI_SUM, &
+                          int(mpi_comm_all,kind=MPI_KIND), mpierr)
+#endif
+       if (myid==0) print *, "ELPA1, after tridiag: sum a_dev=", sum_debug
+       
+       num = na * size_of_datatype_real
+#ifdef WITH_GPU_STREAMS
+       successGPU = gpu_memcpy_async(int(loc(buffer_debug_real(1)),kind=c_intptr_t), ev_dev, num, gpuMemcpyDeviceToHost, my_stream)
+       successGPU = gpu_stream_synchronize(my_stream)
+#else
+       successGPU = gpu_memcpy      (int(loc(buffer_debug_real(1)),kind=c_intptr_t), ev_dev, num, gpuMemcpyDeviceToHost)
+#endif
+       check_memcpy_gpu("elpa1_template: ev_dev -> buffer_debug_real", successGPU)
+       sum_debug_real = sum(buffer_debug_real(1:na))
+#ifdef WITH_MPI
+       call MPI_Allreduce(MPI_IN_PLACE, sum_debug_real, 1_MPI_KIND, MPI_REAL_PRECISION, MPI_SUM, &
+                          int(mpi_comm_all,kind=MPI_KIND), mpierr)
+#endif
+       if (myid==0) print *, "sum ev_dev=", sum_debug_real
+
+       num = na * size_of_datatype_real
+       successGPU = gpu_memcpy(int(loc(buffer_debug_real(1)),kind=c_intptr_t), e_dev, num, gpuMemcpyDeviceToHost)
+       check_memcpy_gpu("elpa1_template: e_dev -> buffer_debug_real", successGPU)
+       sum_debug_real = sum(buffer_debug_real(1:(na-1)))
+#ifdef WITH_MPI
+       call MPI_Allreduce(MPI_IN_PLACE, sum_debug_real, 1_MPI_KIND, MPI_REAL_PRECISION, MPI_SUM, &
+                          int(mpi_comm_all,kind=MPI_KIND), mpierr)
+#endif
+       if (myid==0) print *, "sum e_dev=", sum_debug_real
+
+       num = na * size_of_datatype_real
+       successGPU = gpu_memcpy(int(loc(buffer_debug_real(1)),kind=c_intptr_t), tau_dev, num, gpuMemcpyDeviceToHost)
+       check_memcpy_gpu("elpa1_template: tau_dev -> buffer_debug_real", successGPU)
+       sum_debug_real = sum(buffer_debug_real(1:(na-1)))
+#ifdef WITH_MPI
+       call MPI_Allreduce(MPI_IN_PLACE, sum_debug_real, 1_MPI_KIND, MPI_REAL_PRECISION, MPI_SUM, &
+                          int(mpi_comm_all,kind=MPI_KIND), mpierr)
+#endif
+       if (myid==0) print *, "sum tau_dev=", sum_debug_real
+     endif ! (wantDebug .and. useGPU .and. na<100)
+#endif /* DEBUG_CUDA */
+
      if (do_useGPU .and. .not. do_useGPU_tridiag) then
-      num = (matrixRows* matrixCols) * size_of_datatype
-      successGPU = gpu_memcpy(a_dev, int(loc(a),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
-      check_memcpy_gpu("elpa1_template: a -> a_dev", successGPU)
+       num = (matrixRows* matrixCols) * size_of_datatype
+       successGPU = gpu_memcpy(a_dev, int(loc(a),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
+       check_memcpy_gpu("elpa1_template: a -> a_dev", successGPU)
 
-      num = (na) * size_of_real_datatype
-      successGPU = gpu_memcpy(ev_dev, int(loc(ev),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
-      check_memcpy_gpu("elpa1_template: ev -> ev_dev", successGPU)
+       num = (na) * size_of_datatype_real
+       successGPU = gpu_memcpy(ev_dev, int(loc(ev),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
+       check_memcpy_gpu("elpa1_template: ev -> ev_dev", successGPU)
 
-      num = (na) * size_of_real_datatype
-      successGPU = gpu_memcpy(e_dev, int(loc(e),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
-      check_memcpy_gpu("elpa1_template: e -> e_dev", successGPU)
+       num = (na) * size_of_datatype_real
+       successGPU = gpu_memcpy(e_dev, int(loc(e),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
+       check_memcpy_gpu("elpa1_template: e -> e_dev", successGPU)
 
-      num = (na) * size_of_datatype
-      successGPU = gpu_memcpy(tau_dev, int(loc(tau),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
-      check_memcpy_gpu("elpa1_template: tau -> tau_dev", successGPU)
-    endif ! (do_useGPU .and. .not. do_useGPU_tridiag) then
+       num = (na) * size_of_datatype
+       successGPU = gpu_memcpy(tau_dev, int(loc(tau),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
+       check_memcpy_gpu("elpa1_template: tau -> tau_dev", successGPU)
+     endif ! (do_useGPU .and. .not. do_useGPU_tridiag) then
 
 #ifdef WITH_NVTX
      call nvtxRangePop()
@@ -1015,11 +1091,11 @@ function elpa_solve_evp_&
 #endif
 
      if (do_useGPU .and. .not. do_useGPU_solve_tridi) then
-       num = (na) * size_of_real_datatype
+       num = (na) * size_of_datatype_real
        successGPU = gpu_memcpy(int(loc(ev),kind=c_intptr_t), ev_dev, num, gpuMemcpyDeviceToHost)
        check_memcpy_gpu("elpa1_template: ev_dev -> ev", successGPU)
 
-       num = (na) * size_of_real_datatype
+       num = (na) * size_of_datatype_real
        successGPU = gpu_memcpy(int(loc(e),kind=c_intptr_t), e_dev, num, gpuMemcpyDeviceToHost)
        check_memcpy_gpu("elpa1_template: e_dev -> e", successGPU)
 
@@ -1029,7 +1105,7 @@ function elpa_solve_evp_&
        check_memcpy_gpu("elpa1_template: q_dev_actual -> q_actual", successGPU)
 #endif
 #if COMPLEXCASE == 1
-        num = (l_rows* l_cols) * size_of_real_datatype
+        num = (l_rows* l_cols) * size_of_datatype_real
         successGPU = gpu_memcpy(int(loc(q_real(1,1)),kind=c_intptr_t), q_dev_real, num, gpuMemcpyDeviceToHost)
         check_memcpy_gpu("elpa1_template: q_dev_real -> q_real", successGPU)
 #endif
@@ -1061,12 +1137,61 @@ function elpa_solve_evp_&
                 success, nrThreads)
      endif
 
+#ifdef DEBUG_CUDA
+     if (wantDebug .and. useGPU) then
+      num = (matrixRows*matrixCols) * size_of_datatype
+#ifdef WITH_GPU_STREAMS
+       successGPU = gpu_memcpy_async(int(loc(buffer_debug(1)),kind=c_intptr_t), q_dev_actual, num, gpuMemcpyDeviceToHost, my_stream)
+       successGPU = gpu_stream_synchronize(my_stream)
+#else
+      successGPU = gpu_memcpy       (int(loc(buffer_debug(1)),kind=c_intptr_t), q_dev_actual, num, gpuMemcpyDeviceToHost)
+#endif
+      check_memcpy_gpu("elpa1_template: q_dev_actual -> buffer_debug", successGPU)
+      sum_debug = sum(buffer_debug(1:matrixRows*matrixCols))
+#ifdef WITH_MPI
+      call MPI_Allreduce(MPI_IN_PLACE, sum_debug, 1_MPI_KIND, MPI_MATH_DATATYPE_PRECISION, MPI_SUM, &
+                         int(mpi_comm_all,kind=MPI_KIND), mpierr)
+#endif
+      if (myid==0) print *, "elpa1, after solve_tridi: sum q_dev_actual=", sum_debug
+      
+      num = na * size_of_datatype_real
+#ifdef WITH_GPU_STREAMS
+       successGPU = gpu_memcpy_async(int(loc(buffer_debug_real(1)),kind=c_intptr_t), ev_dev, num, gpuMemcpyDeviceToHost, my_stream)
+       successGPU = gpu_stream_synchronize(my_stream)
+#else
+      successGPU = gpu_memcpy       (int(loc(buffer_debug_real(1)),kind=c_intptr_t), ev_dev, num, gpuMemcpyDeviceToHost)
+#endif
+      check_memcpy_gpu("elpa1_template: ev_dev -> buffer_debug_real", successGPU)
+      sum_debug_real = sum(buffer_debug_real(1:na))
+#ifdef WITH_MPI
+      call MPI_Allreduce(MPI_IN_PLACE, sum_debug_real, 1_MPI_KIND, MPI_REAL_PRECISION, MPI_SUM, &
+                         int(mpi_comm_all,kind=MPI_KIND), mpierr)
+#endif
+      if (myid==0) print *, "elpa1, after solve_tridi: sum ev_dev=", sum_debug_real
+
+      num = na * size_of_datatype_real
+#ifdef WITH_GPU_STREAMS
+       successGPU = gpu_memcpy_async(int(loc(buffer_debug_real(1)),kind=c_intptr_t), e_dev, num, gpuMemcpyDeviceToHost, my_stream)
+       successGPU = gpu_stream_synchronize(my_stream)
+#else
+       successGPU = gpu_memcpy      (int(loc(buffer_debug_real(1)),kind=c_intptr_t), e_dev, num, gpuMemcpyDeviceToHost)
+#endif
+      check_memcpy_gpu("elpa1_template: e_dev -> buffer_debug_real", successGPU)
+      sum_debug_real = sum(buffer_debug_real(1:(na-1)))
+#ifdef WITH_MPI
+      call MPI_Allreduce(MPI_IN_PLACE, sum_debug_real, 1_MPI_KIND, MPI_REAL_PRECISION, MPI_SUM, &
+                         int(mpi_comm_all,kind=MPI_KIND), mpierr)
+#endif
+      if (myid==0) print *, "elpa1, after solve_tridi: sum e_dev=", sum_debug_real
+     endif ! (wantDebug .and. useGPU
+#endif /* DEBUG_CUDA */
+
      if (do_useGPU .and. .not. do_useGPU_solve_tridi) then
-       num = (na) * size_of_real_datatype
+       num = (na) * size_of_datatype_real
        successGPU = gpu_memcpy(ev_dev, int(loc(ev),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
        check_memcpy_gpu("elpa1_template: ev -> ev_dev", successGPU)
 
-       num = (na) * size_of_real_datatype
+       num = (na) * size_of_datatype_real
        successGPU = gpu_memcpy(e_dev, int(loc(e),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
        check_memcpy_gpu("elpa1_template: e -> e_dev", successGPU)
 
@@ -1076,7 +1201,7 @@ function elpa_solve_evp_&
        check_memcpy_gpu("elpa1_template: q_actual -> q_dev_actual", successGPU)
 #endif
 #if COMPLEXCASE == 1
-       num = (l_rows* l_cols) * size_of_real_datatype
+       num = (l_rows* l_cols) * size_of_datatype_real
        successGPU = gpu_memcpy(q_dev_real, int(loc(q_real(1,1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
        check_memcpy_gpu("elpa1_template: q_real -> q_dev_real", successGPU)
 #endif
@@ -1095,6 +1220,7 @@ function elpa_solve_evp_&
      else
        success_int = 1
      endif
+
 #ifdef WITH_MPI
      if (useNonBlockingCollectivesAll) then
        call mpi_iallreduce(mpi_in_place, success_int, 1_MPI_KIND, MPI_INTEGER, MPI_MAX, int(mpi_comm_all,kind=MPI_KIND), &
@@ -1128,7 +1254,7 @@ function elpa_solve_evp_&
 #include "./elpa1_aborting_template.F90"
        endif
        if (do_useGPU_solve_tridi) then
-         num = (na) * size_of_real_datatype
+         num = (na) * size_of_datatype_real
          successGPU = gpu_memcpy(int(loc(ev(1)),kind=c_intptr_t), ev_dev, &
                  num, gpuMemcpyDeviceToHost)
          check_memcpy_gpu("elpa1_template ev_dev -> ev", successGPU)
@@ -1404,7 +1530,7 @@ function elpa_solve_evp_&
 #ifndef DEVICE_POINTER
      if (do_useGPU) then
        ! copy back always
-       num = (na) * size_of_real_datatype
+       num = (na) * size_of_datatype_real
        successGPU = gpu_memcpy(int(loc(ev(1)),kind=c_intptr_t), ev_dev, &
                  num, gpuMemcpyDeviceToHost)
        check_memcpy_gpu("elpa1_template ev_dev -> ev", successGPU)
@@ -1659,6 +1785,15 @@ function elpa_solve_evp_&
 
 #endif /* DEVICE_POINTER */
 
+#ifdef DEBUG_CUDA
+   if (wantDebug .and. useGPU) then
+     deallocate(buffer_debug, stat=istat, errmsg=errorMessage)
+     check_deallocate("elpa1_template: buffer_debug", istat, errorMessage)
+
+     deallocate(buffer_debug_real, stat=istat, errmsg=errorMessage)
+     check_deallocate("elpa1_template_real: buffer_debug", istat, errorMessage)
+   endif
+#endif /* DEBUG_CUDA */
 
 #if defined(WITH_NVIDIA_GPU_VERSION) || defined(WITH_AMD_GPU_VERSION)
    if (useGPU) then

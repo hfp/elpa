@@ -140,6 +140,7 @@ void cuda_copy_and_set_zeros_FromC(T *v_row_dev, T *a_dev, int *l_rows_in, int *
 #endif
 
   if (wantDebug){
+    cudaDeviceSynchronize();
     cudaError_t cuerr = cudaGetLastError();
     if (cuerr != cudaSuccess) printf("Error in executing cuda_copy_and_set_zeros: %s\n",cudaGetErrorString(cuerr));
   }
@@ -228,6 +229,7 @@ void cuda_dot_product_FromC(int* n_in, T *x_dev, int *incx_in, T *y_dev, int *in
   cuda_dot_product_kernel<<<blocks,threadsPerBlock>>>(n, x_dev, incx, y_dev, incy, result_dev);
 #endif
   if (wantDebug){
+    cudaDeviceSynchronize();
     cudaError_t cuerr = cudaGetLastError();
     if (cuerr != cudaSuccess){
       printf("Error in executing cuda_dot_product_kernel: %s\n",cudaGetErrorString(cuerr));
@@ -330,6 +332,7 @@ void cuda_dot_product_and_assign_FromC(T *v_row_dev, int *l_rows_in, int *isOurP
 #endif
 
   if (wantDebug){
+    cudaDeviceSynchronize();
     cudaError_t cuerr = cudaGetLastError();
     if (cuerr != cudaSuccess){
       printf("Error in executing cuda_dot_product_and_assign_kernel: %s\n",cudaGetErrorString(cuerr));
@@ -469,6 +472,7 @@ void cuda_set_e_vec_scale_set_one_store_v_row_FromC(T_real *e_vec_dev, T *vrl_de
 #endif
       if (wantDebug)
         {
+        cudaDeviceSynchronize();
         cudaError_t cuerr = cudaGetLastError();
         if (cuerr != cudaSuccess) printf("Error in executing cuda_set_e_vec_scale_set_one_store_v_row_kernel: %s\n",cudaGetErrorString(cuerr));
         }
@@ -649,6 +653,7 @@ void cuda_store_u_v_in_uv_vu_FromC(T *vu_stored_rows_dev, T *uv_stored_cols_dev,
 
       if (wantDebug)
         {
+        cudaDeviceSynchronize();
         cudaError_t cuerr = cudaGetLastError();
         if (cuerr != cudaSuccess) printf("Error in executing cuda_store_u_v_in_uv_vu_kernel: %s\n",cudaGetErrorString(cuerr));
         }
@@ -789,6 +794,7 @@ void cuda_update_matrix_element_add_FromC(T *vu_stored_rows_dev, T *uv_stored_co
                                                   isSkewsymmetric);
 #endif
   if (wantDebug){
+    cudaDeviceSynchronize();
     cudaError_t cuerr = cudaGetLastError();
     if (cuerr != cudaSuccess){
       printf("Error in executing cuda_update_matrix_element_add_kernel: %s\n",cudaGetErrorString(cuerr));
@@ -983,6 +989,7 @@ void cuda_hh_transform_FromC(T *alpha_dev, T *xnorm_sq_dev, T *xf_dev, T *tau_de
   cuda_hh_transform_kernel<<<blocks,threadsPerBlock>>>(alpha_dev, xnorm_sq_dev, xf_dev, tau_dev, wantDebug);
 
   if (wantDebug){
+    cudaDeviceSynchronize();
     cudaError_t cuerr = cudaGetLastError();
     if (cuerr != cudaSuccess){
       printf("Error in executing cuda_hh_transform_kernel: %s\n",cudaGetErrorString(cuerr));
@@ -1099,6 +1106,7 @@ void cuda_transpose_reduceadd_vectors_copy_block_FromC(T *aux_transpose_dev, T *
 #endif
   if(wantDebug)
     {
+    cudaDeviceSynchronize();
     cudaError_t cuerr = cudaGetLastError();
     if (cuerr != cudaSuccess) printf("Error in executing cuda_transpose_reduceadd_vectors_copy_block_kernel: %s\n",cudaGetErrorString(cuerr));
     }

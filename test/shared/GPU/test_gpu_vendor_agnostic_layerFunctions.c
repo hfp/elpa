@@ -167,9 +167,3 @@ int gpuMemcpy_tests(intptr_t *dest, intptr_t *src, size_t count, int dir){
 #error "openmp_offload missing"
 #endif  
 }
-
-#ifdef WITH_SYCL_GPU_VERSION
-int syclGetCpuCount(int numberOfDevices) {
-   return syclGetCpuCountFromC(&numberOfDevices);
-}
-#endif
