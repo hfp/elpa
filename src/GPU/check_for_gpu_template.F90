@@ -224,25 +224,6 @@
       endif
 #endif
 #endif
-#ifdef WITH_SYCL_GPU_VERSION
-      if (.not. (OBJECT%gpu_setup%gpuAlreadySet)) then
-        call OBJECT%get("sycl_show_all_devices", syclShowAllDevices, error)
-        if (error .ne. ELPA_OK) then
-          write(error_unit,*) "Problem getting option for sycl_show_all_devices. Aborting..."
-          stop 1
-        endif
-        if (syclShowAllDevices == 1) then
-          syclShowOnlyIntelGpus = 0
-        else
-          syclShowOnlyIntelGpus = 1
-        endif
-        success = sycl_state_initialize(syclShowOnlyIntelGpus, wantDebugMessage)
-        if (.not. success) then
-          write(error_unit, *) "sycl_state_initialize: inconsistent SYCL setup. Aborting..."
-          stop 1
-        endif
-      endif
-#endif
       if (OBJECT%is_set("use_gpu_id") == 1) then ! useGPUid
         if (.not.(OBJECT%gpu_setup%gpuAlreadySet)) then
           call OBJECT%get("use_gpu_id", use_gpu_id, error)
