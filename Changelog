@@ -3,7 +3,7 @@ Changelog for next release
 
 - not yet decided
 
-Changelog for ELPA 2025.06.002.rc1
+Changelog for ELPA 2025.06.002
 - allow multi-architecture builds for Nvidia GPUS
 - bugfix in solve tridi
 - several bugfixes in Intel GPU version
