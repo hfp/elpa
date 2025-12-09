@@ -2872,9 +2872,6 @@ if test x"${use_intel_gpu}" = x"yes" ; then
   AC_LANG_POP([C++])
 fi
 
-dnl PETERDEBUG111
-dnl CXXFLAGS="$CXXFLAGS -fno-sycl-id-queries-fit-in-int"
-
 #TODO mklGPUBLAS
 
 ##########################################################################################
