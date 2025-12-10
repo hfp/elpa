@@ -315,6 +315,7 @@
 #include "./handle_creation_template.F90"
 
       OBJECT%gpu_setup%gpuAlreadySET = .true.
+      gpuAvailable = .true.
 
 
       ! Check if there is one MPI task per GPU and enable CCL
