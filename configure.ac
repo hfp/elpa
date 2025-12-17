@@ -2872,9 +2872,6 @@ if test x"${use_intel_gpu}" = x"yes" ; then
   AC_LANG_POP([C++])
 fi
 
-dnl PETERDEBUG111
-dnl CXXFLAGS="$CXXFLAGS -fno-sycl-id-queries-fit-in-int"
-
 #TODO mklGPUBLAS
 
 ##########################################################################################
@@ -4315,13 +4312,13 @@ if test x"${ax_cv_have_avx512f_cpu_ext}" = x"yes" -a  x"${need_avx512}" = x"no";
   echo " "
 fi
 
-echo " "
-echo "***********************************************************************"
-echo "*  This is the first release candidate of ELPA 2025.06.002.rc1        *"
-echo "*  There might be still some changes until the final release of       *"
-echo "*  ELPA 2025.06.002                                                   *"
-echo "***********************************************************************"
-echo " "
+#echo " "
+#echo "***********************************************************************"
+#echo "*  This is the first release candidate of ELPA 2025.06.002.rc1        *"
+#echo "*  There might be still some changes until the final release of       *"
+#echo "*  ELPA 2025.06.002                                                   *"
+#echo "***********************************************************************"
+#echo " "
 
 if test x"$enable_kcomputer" = x"yes" ; then
   echo " "
