@@ -102,7 +102,7 @@ typedef struct {
         int autotune_level_old;
         int autotune_level;
         int autotune_domain;
-	int autotune_part;
+  int autotune_part;
         elpa_index_valid_int_t valid;
         elpa_index_cardinality_t cardinality;
         elpa_index_enumerate_int_option_t enumerate;

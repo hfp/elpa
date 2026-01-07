@@ -273,7 +273,7 @@ void cannons_reduction_impl(math_type* A, math_type* U,
          }
          else {
             Size_receive_A_now = na_cols;
-	      }
+        }
 
          Size_receive_A = Size_receive_A + Size_receive_A_now;  // here accumulate number of columns of A that I will receive
 
@@ -283,10 +283,10 @@ void cannons_reduction_impl(math_type* A, math_type* U,
          CopyTo = &Buf_to_receive_A[intNumber*na_rows*nblk];  // here I will start copying the received buffer
          if (pcol_where_to_send_A != my_pcol) {
             CopyFrom = Buf_A;
-	      }
+        }
          else {
             CopyFrom = A;
-	      }
+        }
 
          intNumber = ceil((math_type)Size_receive_A_now/(math_type)nblk);   // how many block-columns I have received
          for(j = 0; j < intNumber; j++)
@@ -491,21 +491,21 @@ void cannons_reduction_impl(math_type* A, math_type* U,
          rows_in_block_A = (curr_col_glob/(nblk*np_rows))*nblk;     // in A; not to go down beyond  the upper triangular part
          if (my_prow <= proc_row_curr) {
             rows_in_block_A = rows_in_block_A + nblk;
-	      }
+        }
          if (rows_in_block_A > na_rows) {
             rows_in_block_A = na_rows;
          }
          if ((curr_col_loc_buf + nblk) <= cols_in_buffer) {
             cols_in_block = nblk;      // number columns in block of U which will take part in this calculation
-	      }
+        }
          else {
             cols_in_block = cols_in_buffer - curr_col_loc_buf;
-	      }
+        }
 
          rows_in_block_U = (curr_col_glob/(nblk*np_rows))*nblk;    // corresponds to columns in A;
          if (proc_row_curr >= row_origin_U) {
             rows_in_block_U = rows_in_block_U + nblk;
-	      }
+        }
          if (rows_in_block_U > rows_in_buffer) {
             rows_in_block_U = rows_in_buffer;
          }
@@ -801,10 +801,10 @@ void cannons_reduction_impl(math_type* A, math_type* U,
             intNumber = pcol_from_where_to_receive_A/np_rows; // how many processors will send me blocks, such that they will be placed before the current blocks
             if (proc_col_min <= my_prow) {   // if among procs who will send me there is one with the full sets of block-rows in the lower part
                CopyTo = &Buf_to_receive_A[nblk*(na_rows*intNumber - nblk*(intNumber-1)*intNumber/2)];  // here I will copy to; formula based on arithm. progression
-	    }
+      }
             else {
                CopyTo = &Buf_to_receive_A[nblk*(na_rows*intNumber - nblk*intNumber*(intNumber+1)/2)];  // otherwise, the first block-column will be shorter by one block
-	    }
+      }
             CopyFrom = Buf_A;
          }
          else  // if I need to send to myself on this step, then I will copy from Buf_to_send_L to Buf_to_receive_A
@@ -819,10 +819,10 @@ void cannons_reduction_impl(math_type* A, math_type* U,
             intNumber = my_pcol/np_rows; // how many processors will send me blocks, such that they will be placed before the current blocks
             if (proc_col_min <= my_prow) {   // if among procs who will send me there is one with the full sets of block-rows in the lower part
                CopyTo = &Buf_to_receive_A[nblk*(na_rows*intNumber - nblk*(intNumber-1)*intNumber/2)];  // here I will copy to; formula based on arithm. progression
-	    }
+      }
             else {
                CopyTo = &Buf_to_receive_A[nblk*(na_rows*intNumber - nblk*intNumber*(intNumber+1)/2)];  // otherwise, the first block-column will be shorter by one block
-	    }
+      }
             CopyFrom = Buf_to_send_A;
 
             Size_receive_A = Size_receive_A + Size_send_A - 1;
@@ -835,10 +835,10 @@ void cannons_reduction_impl(math_type* A, math_type* U,
          {
             if ((j+1)*nblk < cols_in_buffer_A_now) {
                cols_in_block = nblk;
-	    }
+      }
             else {
                cols_in_block = cols_in_buffer_A_now - j*nblk;
-	    }
+      }
             C_LACPY("A", &rows_in_block, &cols_in_block, CopyFrom, &rows_in_block, CopyTo, &rows_in_block);
 
             CopyFrom = CopyFrom + rows_in_block*cols_in_block;
@@ -943,8 +943,8 @@ void cannons_reduction_impl(math_type* A, math_type* U,
             U_to_calc = Buf_to_send_U;
          }
          else {
-	         MPI_Isend(U_to_calc, (C_INT_MPI_TYPE) Size_send_U, MPI_MATH_DATATYPE_PRECISION_C, (C_INT_MPI_TYPE) where_to_send_U, (C_INT_MPI_TYPE) zero, col_comm, &request_U_Send);
-	      }
+           MPI_Isend(U_to_calc, (C_INT_MPI_TYPE) Size_send_U, MPI_MATH_DATATYPE_PRECISION_C, (C_INT_MPI_TYPE) where_to_send_U, (C_INT_MPI_TYPE) zero, col_comm, &request_U_Send);
+        }
          MPI_Irecv(Buf_to_receive_U, (C_INT_MPI_TYPE) Size_U_stored, MPI_MATH_DATATYPE_PRECISION_C, (C_INT_MPI_TYPE) from_where_to_receive_U, (C_INT_MPI_TYPE) zero, col_comm, &request_U_Recv);
       }
 
@@ -1018,7 +1018,7 @@ void cannons_reduction_impl(math_type* A, math_type* U,
 
          if ((curr_col_loc_U + nblk) <= cols_in_buffer_U) {
             cols_in_block = nblk;      // number columns in block of U which will take part in this calculation
-	      }
+        }
          else {
             cols_in_block = cols_in_buffer_U - curr_col_loc_U;
          }
@@ -1052,7 +1052,7 @@ void cannons_reduction_impl(math_type* A, math_type* U,
             {
                if ((ii+1)*nblk <= cols_in_buffer_A) {
                   rows_in_block_U_curr = nblk;
-	            }
+              }
                else {
                   rows_in_block_U_curr = cols_in_buffer_A - ii*nblk;
                }
@@ -1117,7 +1117,7 @@ void cannons_reduction_impl(math_type* A, math_type* U,
       {
          MPI_Wait(&request_U_Send, &status);
          MPI_Wait(&request_U_Recv, &status);
-	      MPI_Get_count(&status, MPI_MATH_DATATYPE_PRECISION_C, &Size_receive_UMPI); // find out how many elements I have received
+        MPI_Get_count(&status, MPI_MATH_DATATYPE_PRECISION_C, &Size_receive_UMPI); // find out how many elements I have received
          Size_receive_U = (C_INT_TYPE) Size_receive_UMPI;
       }
    }
@@ -1232,7 +1232,7 @@ void cannons_reduction_impl(math_type* A, math_type* U,
          {
             if ((ii+1)*nblk <= cols_in_buffer_A) {
                rows_in_block_U_curr = nblk;
-	         }
+           }
             else {
                rows_in_block_U_curr = cols_in_buffer_A - ii*nblk;
             }

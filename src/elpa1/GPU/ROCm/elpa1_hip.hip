@@ -205,11 +205,11 @@ __global__ void hip_copy_skewsymmetric_second_half_q_double_minus_kernel(double 
 
     i is given from outside
     for (j=matrixCols;j<2*matrixCols;j++){
-	    q[(i-1) + matrixRows * j] = q [(i-1) + matrixRows * (j-matrixCols)]
+      q[(i-1) + matrixRows * j] = q [(i-1) + matrixRows * (j-matrixCols)]
 
     }
     threadsPerBlock = 1024
-	   => threadIdx.x = 0..1023
+     => threadIdx.x = 0..1023
     blocks = (matrixCols + 1024 - 1) / 1024
           => blocksIdx.x = 0...blocks - 1
 

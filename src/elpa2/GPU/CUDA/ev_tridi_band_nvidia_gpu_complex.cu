@@ -218,7 +218,7 @@ compute_hh_trafo_cuda_kernel_complex_double(cuDoubleComplex * __restrict__ q, co
     while (j >= 1)
     {
 #ifdef WITH_CUCUB_COMPLEX
-	ht = hh_tau[j - 1];
+  ht = hh_tau[j - 1];
         hv = hh[h_off];
 #endif
         if (tid == 0)

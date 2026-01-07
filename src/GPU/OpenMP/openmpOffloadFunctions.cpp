@@ -157,12 +157,12 @@ extern "C" {
       printf("Return val o fmemcpy %d\n",retVal);
 #endif
       if (retVal != 0){
-	return 0;
+        return 0;
       } else {
 //#ifdef OPENMP_OFFLOAD_DEBUG
         std::cout << "Copied " << size << "B successfully from " << reinterpret_cast<intptr_t>(src) << " to " << reinterpret_cast<intptr_t>(dst) << "." << std::endl;
 //#endif
-	return 1;
+        return 1;
       }
   }
 
@@ -192,10 +192,10 @@ extern "C" {
   void mklOpenmpOffloadSgemmFromC(intptr_t *handle, char cta, char ctb, int m, int n, int k, float alpha, void *a, int lda, void *b, int ldb, float beta, void *c, int ldc) {
       //handle not needed
 #ifdef OPENMP_OFFLOAD_DEBUG
-	  std::cout << "Calling sgemm" << std::endl;
-	  std::cout << "m=" << m << std::endl;
-	  std::cout << "n=" << n << std::endl;
-	  std::cout << "k=" << k << std::endl;
+      std::cout << "Calling sgemm" << std::endl;
+      std::cout << "m=" << m << std::endl;
+      std::cout << "n=" << n << std::endl;
+      std::cout << "k=" << k << std::endl;
 #endif
       #pragma omp target variant dispatch device(openmpOffloadChosenGpu)
       sgemm(&cta, &ctb, &m, &n, &k, &alpha, reinterpret_cast<float *>(a), &lda, reinterpret_cast<float *>(b), &ldb, &beta, reinterpret_cast<float *>(c), &ldc);

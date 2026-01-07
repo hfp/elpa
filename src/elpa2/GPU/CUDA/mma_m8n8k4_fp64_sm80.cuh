@@ -132,39 +132,39 @@ __device__ void sum(double *smem_a, double *smem_b, double *smem_c) {
   constexpr int tile_col_dim = bN / MMA_N; // number of tiles in the row dimension
   constexpr int tile_acc_dim = bK / MMA_K; // number of tiles in the acc dimension
 
-	constexpr int total_tile = tile_row_dim * tile_col_dim;
-	constexpr int warp_cycle = total_tile / total_warp;
+  constexpr int total_tile = tile_row_dim * tile_col_dim;
+  constexpr int warp_cycle = total_tile / total_warp;
 
-	static_assert(total_tile % total_warp == 0, "Total number of tiles should be divisible by the number of warps.");
+  static_assert(total_tile % total_warp == 0, "Total number of tiles should be divisible by the number of warps.");
 
-	const int thread_id = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
-	const int warp_id = thread_id / 32;
+  const int thread_id = (threadIdx.z * blockDim.y + threadIdx.y) * blockDim.x + threadIdx.x;
+  const int warp_id = thread_id / 32;
 
-	WarpRegisterMapping wrm(thread_id);
-
-#pragma unroll
-	for (int c = 0; c < warp_cycle; c++) {
-
-		MmaOperandC op_c;
-
-		// The logical warp assigned to each part of the matrix.
-		int logical_warp_index = warp_id * warp_cycle + c;
-		int tile_n = logical_warp_index;
+  WarpRegisterMapping wrm(thread_id);
 
 #pragma unroll
-		for (int tile_k = 0; tile_k < tile_acc_dim; tile_k++) {
-			MmaOperandA op_a;
-			op_a.construct_sum(smem_a, tile_k, wrm);
+  for (int c = 0; c < warp_cycle; c++) {
 
-			MmaOperandB op_b;
-			op_b.template load<bK, bN>(smem_b, tile_k, tile_n, wrm);
+    MmaOperandC op_c;
 
-			asm volatile("mma.sync.aligned.m8n8k4.row.col.f64.f64.f64.f64 {%0,%1}, {%2}, {%3}, {%0,%1};"
-					: "+d"(op_c.reg[0]), "+d"(op_c.reg[1]) : "d"(op_a.reg), "d"(op_b.reg)
-					);
-		}
+    // The logical warp assigned to each part of the matrix.
+    int logical_warp_index = warp_id * warp_cycle + c;
+    int tile_n = logical_warp_index;
 
-		op_c.store_sum(smem_c, tile_n * MMA_N, wrm);
-	}
+#pragma unroll
+    for (int tile_k = 0; tile_k < tile_acc_dim; tile_k++) {
+      MmaOperandA op_a;
+      op_a.construct_sum(smem_a, tile_k, wrm);
+
+      MmaOperandB op_b;
+      op_b.template load<bK, bN>(smem_b, tile_k, tile_n, wrm);
+
+      asm volatile("mma.sync.aligned.m8n8k4.row.col.f64.f64.f64.f64 {%0,%1}, {%2}, {%3}, {%0,%1};"
+          : "+d"(op_c.reg[0]), "+d"(op_c.reg[1]) : "d"(op_a.reg), "d"(op_b.reg)
+          );
+    }
+
+    op_c.store_sum(smem_c, tile_n * MMA_N, wrm);
+  }
 
 }

@@ -74,7 +74,7 @@ template <typename T, unsigned int blk> __device__ void warp_shfl_reduce_real(vo
 
     for (int i = 16; i >= 1; i /= 2)
     {
-	    // fix this
+      // fix this
         val += __shfl_xor_sync(0xffffffff, val, i, 32);
     }
 
@@ -240,7 +240,7 @@ compute_hh_trafo_hip_kernel_real(T * __restrict__ q, const T * __restrict__ hh, 
     while (j >= 1)
     {
 #ifdef WITH_HIPCUB
-	ht = hh_tau[j - 1];
+  ht = hh_tau[j - 1];
         hv = hh[h_off];
 #endif
         if (tid == 0)
@@ -254,10 +254,10 @@ compute_hh_trafo_hip_kernel_real(T * __restrict__ q, const T * __restrict__ hh, 
 
         q_v = BlockReduceT(temp_storage).Sum(dt);
 
-	if (tid == 0) q_vs = q_v;
+  if (tid == 0) q_vs = q_v;
         __syncthreads();
 
-	q_v2 -= q_vs * ht * hv;
+  q_v2 -= q_vs * ht * hv;
 #else
         dotp_s[tid] = q_v2 * hh[h_off];
 

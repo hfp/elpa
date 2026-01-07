@@ -549,13 +549,13 @@
 #endif /* VEC_SET == AVX_512 || SVE_512 */
 __forceinline void CONCAT_8ARGS(hh_trafo_kernel_,ROW_LENGTH,_,SIMD_SET,_,BLOCK,hv_,WORD_LENGTH) (DATA_TYPE_PTR q, DATA_TYPE_PTR hh, int nb, int ldq, int ldh,
 #ifdef BLOCK2
-	DATA_TYPE s);
+  DATA_TYPE s);
 #endif
 #ifdef BLOCK4
-	DATA_TYPE s_1_2, DATA_TYPE s_1_3, DATA_TYPE s_2_3, DATA_TYPE s_1_4, DATA_TYPE s_2_4, DATA_TYPE s_3_4);
+  DATA_TYPE s_1_2, DATA_TYPE s_1_3, DATA_TYPE s_2_3, DATA_TYPE s_1_4, DATA_TYPE s_2_4, DATA_TYPE s_3_4);
 #endif
 #ifdef BLOCK6
-	DATA_TYPE_PTR scalarprods);
+  DATA_TYPE_PTR scalarprods);
 #endif
 
 #if VEC_SET == SSE_128 || VEC_SET == SPARC64_SSE || VEC_SET == VSX_SSE || VEC_SET == NEON_ARCH64_128 || VEC_SET == SVE_128
@@ -592,13 +592,13 @@ __forceinline void CONCAT_8ARGS(hh_trafo_kernel_,ROW_LENGTH,_,SIMD_SET,_,BLOCK,h
 #endif /* VEC_SET == AVX_512 || VEC_SET == SVE_512 */
 __forceinline void CONCAT_8ARGS(hh_trafo_kernel_,ROW_LENGTH,_,SIMD_SET,_,BLOCK,hv_,WORD_LENGTH) (DATA_TYPE_PTR q, DATA_TYPE_PTR hh, int nb, int ldq, int ldh,
 #ifdef BLOCK2
-	DATA_TYPE s);
+  DATA_TYPE s);
 #endif
 #ifdef BLOCK4
-	DATA_TYPE s_1_2, DATA_TYPE s_1_3, DATA_TYPE s_2_3, DATA_TYPE s_1_4, DATA_TYPE s_2_4, DATA_TYPE s_3_4);
+  DATA_TYPE s_1_2, DATA_TYPE s_1_3, DATA_TYPE s_2_3, DATA_TYPE s_1_4, DATA_TYPE s_2_4, DATA_TYPE s_3_4);
 #endif
 #ifdef BLOCK6
-	DATA_TYPE_PTR scalarprods);
+  DATA_TYPE_PTR scalarprods);
 #endif
 
 #if VEC_SET == SSE_128 || VEC_SET == SPARC64_SSE || VEC_SET == VSX_SSE || VEC_SET == NEON_ARCH64_128 || VEC_SET == SVE_128
@@ -636,13 +636,13 @@ __forceinline void CONCAT_8ARGS(hh_trafo_kernel_,ROW_LENGTH,_,SIMD_SET,_,BLOCK,h
 
 __forceinline void CONCAT_8ARGS(hh_trafo_kernel_,ROW_LENGTH,_,SIMD_SET,_,BLOCK,hv_,WORD_LENGTH) (DATA_TYPE_PTR q, DATA_TYPE_PTR hh, int nb, int ldq, int ldh,
 #ifdef BLOCK2
-	DATA_TYPE s);
+  DATA_TYPE s);
 #endif
 #ifdef BLOCK4
-	DATA_TYPE s_1_2, DATA_TYPE s_1_3, DATA_TYPE s_2_3, DATA_TYPE s_1_4, DATA_TYPE s_2_4, DATA_TYPE s_3_4);
+  DATA_TYPE s_1_2, DATA_TYPE s_1_3, DATA_TYPE s_2_3, DATA_TYPE s_1_4, DATA_TYPE s_2_4, DATA_TYPE s_3_4);
 #endif
 #ifdef BLOCK6
-	DATA_TYPE_PTR scalarprods);
+  DATA_TYPE_PTR scalarprods);
 #endif
 
 #if VEC_SET == SSE_128 || VEC_SET == SPARC64_SSE || VEC_SET == VSX_SSE || VEC_SET == NEON_ARCH64_128 || VEC_SET == SVE_128
@@ -680,13 +680,13 @@ __forceinline void CONCAT_8ARGS(hh_trafo_kernel_,ROW_LENGTH,_,SIMD_SET,_,BLOCK,h
 
 __forceinline void CONCAT_8ARGS(hh_trafo_kernel_,ROW_LENGTH,_,SIMD_SET,_,BLOCK,hv_,WORD_LENGTH) (DATA_TYPE_PTR q, DATA_TYPE_PTR hh, int nb, int ldq, int ldh,
 #ifdef BLOCK2
-	DATA_TYPE s);
+  DATA_TYPE s);
 #endif
 #ifdef BLOCK4
-	DATA_TYPE s_1_2, DATA_TYPE s_1_3, DATA_TYPE s_2_3, DATA_TYPE s_1_4, DATA_TYPE s_2_4, DATA_TYPE s_3_4);
+  DATA_TYPE s_1_2, DATA_TYPE s_1_3, DATA_TYPE s_2_3, DATA_TYPE s_1_4, DATA_TYPE s_2_4, DATA_TYPE s_3_4);
 #endif
 #ifdef BLOCK6
-	DATA_TYPE_PTR scalarprods);
+  DATA_TYPE_PTR scalarprods);
 #endif
 
 #if  VEC_SET == SSE_128 || VEC_SET == SPARC64_SSE || VEC_SET == VSX_SSE || VEC_SET == NEON_ARCH64_128 || VEC_SET == SVE_128
@@ -724,13 +724,13 @@ __forceinline void CONCAT_8ARGS(hh_trafo_kernel_,ROW_LENGTH,_,SIMD_SET,_,BLOCK,h
 
 __forceinline void CONCAT_8ARGS(hh_trafo_kernel_,ROW_LENGTH,_,SIMD_SET,_,BLOCK,hv_,WORD_LENGTH) (DATA_TYPE_PTR q, DATA_TYPE_PTR hh, int nb, int ldq, int ldh,
 #ifdef BLOCK2
-	DATA_TYPE s);
+  DATA_TYPE s);
 #endif
 #ifdef BLOCK4
-	DATA_TYPE s_1_2, DATA_TYPE s_1_3, DATA_TYPE s_2_3, DATA_TYPE s_1_4, DATA_TYPE s_2_4, DATA_TYPE s_3_4);
+  DATA_TYPE s_1_2, DATA_TYPE s_1_3, DATA_TYPE s_2_3, DATA_TYPE s_1_4, DATA_TYPE s_2_4, DATA_TYPE s_3_4);
 #endif
 #ifdef BLOCK6
-	DATA_TYPE_PTR scalarprods);
+  DATA_TYPE_PTR scalarprods);
 #endif
 
 #if  VEC_SET == SSE_128 || VEC_SET == SPARC64_SSE || VEC_SET == VSX_SSE || VEC_SET == NEON_ARCH64_128 || VEC_SET == SVE_128
@@ -768,13 +768,13 @@ __forceinline void CONCAT_8ARGS(hh_trafo_kernel_,ROW_LENGTH,_,SIMD_SET,_,BLOCK,h
 
 __forceinline void CONCAT_8ARGS(hh_trafo_kernel_,ROW_LENGTH,_,SIMD_SET,_,BLOCK,hv_,WORD_LENGTH) (DATA_TYPE_PTR q, DATA_TYPE_PTR hh, int nb, int ldq, int ldh,
 #ifdef BLOCK2
-	DATA_TYPE s);
+  DATA_TYPE s);
 #endif
 #ifdef BLOCK4
-	DATA_TYPE s_1_2, DATA_TYPE s_1_3, DATA_TYPE s_2_3, DATA_TYPE s_1_4, DATA_TYPE s_2_4, DATA_TYPE s_3_4);
+  DATA_TYPE s_1_2, DATA_TYPE s_1_3, DATA_TYPE s_2_3, DATA_TYPE s_1_4, DATA_TYPE s_2_4, DATA_TYPE s_3_4);
 #endif
 #ifdef BLOCK6
-	DATA_TYPE_PTR scalarprods);
+  DATA_TYPE_PTR scalarprods);
 #endif
 
 void CONCAT_7ARGS(PREFIX,_hh_trafo_real_,SIMD_SET,_,BLOCK,hv_,WORD_LENGTH) (DATA_TYPE_PTR q, DATA_TYPE_PTR hh, int* pnb, int* pnq, int* pldq, int* pldh);
@@ -9339,7 +9339,7 @@ __forceinline void CONCAT_8ARGS(hh_trafo_kernel_,ROW_LENGTH,_,SIMD_SET,_,BLOCK,h
 #endif
 
 #if VEC_SET == AVX_256 || VEC_SET == AVX2_256
-	h6 = _SIMD_BROADCAST(&hh[(ldh*5)+i-(BLOCK-6)]);
+  h6 = _SIMD_BROADCAST(&hh[(ldh*5)+i-(BLOCK-6)]);
 #endif
 
 #ifdef __ELPA_USE_FMA__

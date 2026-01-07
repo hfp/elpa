@@ -23,21 +23,21 @@
 #include <string.h>
 
 long ftimings_highwater_mark() {
-	long hwm = 0L;
-	char line[1024];
-	FILE* fp = NULL;
+  long hwm = 0L;
+  char line[1024];
+  FILE* fp = NULL;
 
-	if ((fp = fopen( "/proc/self/status", "r" )) == NULL ) {
-		return 0L;
-	}
+  if ((fp = fopen( "/proc/self/status", "r" )) == NULL ) {
+    return 0L;
+  }
 
-	/* Read memory size data from /proc/pid/status */
-	while(fgets(line, sizeof line, fp)) {
-		if (sscanf(line, "VmHWM: %ld kB", &hwm) == 1) {
-			break;
-		}
-	}
-	fclose(fp);
+  /* Read memory size data from /proc/pid/status */
+  while(fgets(line, sizeof line, fp)) {
+    if (sscanf(line, "VmHWM: %ld kB", &hwm) == 1) {
+      break;
+    }
+  }
+  fclose(fp);
 
-	return hwm * 1024L;
+  return hwm * 1024L;
 }

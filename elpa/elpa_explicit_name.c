@@ -69,14 +69,14 @@ void elpa_eigenvectors_double(elpa_t handle, double *a, double *ev, double *q, i
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_eigenvectors_d_ptr_d(handle, a, ev, q, error);
-	}
-	else {
-		elpa_eigenvectors_a_h_a_d(handle, a, ev, q, error);
-	}
+  if (IsDevicePtr){
+    elpa_eigenvectors_d_ptr_d(handle, a, ev, q, error);
+  }
+  else {
+    elpa_eigenvectors_a_h_a_d(handle, a, ev, q, error);
+  }
 #else
-	elpa_eigenvectors_a_h_a_d(handle, a, ev, q, error);
+  elpa_eigenvectors_a_h_a_d(handle, a, ev, q, error);
 #endif
 }
 
@@ -97,12 +97,12 @@ void elpa_eigenvectors_float(elpa_t handle, float *a, float *ev, float *q, int *
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_eigenvectors_d_ptr_f(handle, a, ev, q, error);
-	}
-	else {
-		elpa_eigenvectors_a_h_a_f(handle, a, ev, q, error);
-	}
+  if (IsDevicePtr){
+    elpa_eigenvectors_d_ptr_f(handle, a, ev, q, error);
+  }
+  else {
+    elpa_eigenvectors_a_h_a_f(handle, a, ev, q, error);
+  }
 #else
   elpa_eigenvectors_a_h_a_f(handle, a, ev, q, error);
 #endif
@@ -125,15 +125,15 @@ void elpa_eigenvectors_double_complex(elpa_t handle, double complex *a, double *
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_eigenvectors_d_ptr_dc(handle, a, ev, q, error);
-	}
-	else {
-		elpa_eigenvectors_a_h_a_dc(handle, a, ev, q, error);
-	}
+  if (IsDevicePtr){
+    elpa_eigenvectors_d_ptr_dc(handle, a, ev, q, error);
+  }
+  else {
+    elpa_eigenvectors_a_h_a_dc(handle, a, ev, q, error);
+  }
 
 #else
-	elpa_eigenvectors_a_h_a_dc(handle, a, ev, q, error);
+  elpa_eigenvectors_a_h_a_dc(handle, a, ev, q, error);
 #endif
 }
 
@@ -154,15 +154,15 @@ void elpa_eigenvectors_float_complex(elpa_t handle, float complex *a, float *ev,
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_eigenvectors_d_ptr_fc(handle, a, ev, q, error);
-	}
-	else {
-		elpa_eigenvectors_a_h_a_fc(handle, a, ev, q, error);
-	}
+  if (IsDevicePtr){
+    elpa_eigenvectors_d_ptr_fc(handle, a, ev, q, error);
+  }
+  else {
+    elpa_eigenvectors_a_h_a_fc(handle, a, ev, q, error);
+  }
 
 #else
-	elpa_eigenvectors_a_h_a_fc(handle, a, ev, q, error);
+  elpa_eigenvectors_a_h_a_fc(handle, a, ev, q, error);
 #endif
 }
 
@@ -186,12 +186,12 @@ void elpa_skew_eigenvectors_double(elpa_t handle, double *a, double *ev, double 
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_skew_eigenvectors_d_ptr_d(handle, a, ev, q, error);
-	}
-	else {
-		elpa_skew_eigenvectors_a_h_a_d(handle, a, ev, q, error);
-	}
+  if (IsDevicePtr){
+    elpa_skew_eigenvectors_d_ptr_d(handle, a, ev, q, error);
+  }
+  else {
+    elpa_skew_eigenvectors_a_h_a_d(handle, a, ev, q, error);
+  }
 #else
   elpa_skew_eigenvectors_a_h_a_d(handle, a, ev, q, error);
 #endif
@@ -213,16 +213,16 @@ void elpa_skew_eigenvectors_float(elpa_t handle, float *a, float *ev, float *q, 
    void *a_void_ptr = (void*) a;
    int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_skew_eigenvectors_d_ptr_f(handle, a, ev, q, error);
-		}
-	else {
-		elpa_skew_eigenvectors_a_h_a_f(handle, a, ev, q, error);
-		}
+  if (IsDevicePtr){
+    elpa_skew_eigenvectors_d_ptr_f(handle, a, ev, q, error);
+    }
+  else {
+    elpa_skew_eigenvectors_a_h_a_f(handle, a, ev, q, error);
+    }
 #else
    elpa_skew_eigenvectors_a_h_a_f(handle, a, ev, q, error);
 #endif
-	}
+  }
 #endif /* HAVE_SKEWSYMMETRIC */
 
 //_________________________________________________________________________________________________
@@ -246,14 +246,14 @@ void elpa_generalized_eigenvectors_double(elpa_t handle, double *a, double *b, d
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_generalized_eigenvectors_d_ptr_d(handle, a, b, ev, q, is_already_decomposed, error);
-	}
-	else {
-		elpa_generalized_eigenvectors_a_h_a_d(handle, a, b, ev, q, is_already_decomposed, error);
-	}
+  if (IsDevicePtr){
+    elpa_generalized_eigenvectors_d_ptr_d(handle, a, b, ev, q, is_already_decomposed, error);
+  }
+  else {
+    elpa_generalized_eigenvectors_a_h_a_d(handle, a, b, ev, q, is_already_decomposed, error);
+  }
 #else
-	elpa_generalized_eigenvectors_a_h_a_d(handle, a, b, ev, q, is_already_decomposed, error);
+  elpa_generalized_eigenvectors_a_h_a_d(handle, a, b, ev, q, is_already_decomposed, error);
 #endif
 }
 
@@ -276,14 +276,14 @@ void elpa_generalized_eigenvectors_float(elpa_t handle, float *a, float *b, floa
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_generalized_eigenvectors_d_ptr_f(handle, a, b, ev, q, is_already_decomposed, error);
-	}
-	else {
-		elpa_generalized_eigenvectors_a_h_a_f(handle, a, b, ev, q, is_already_decomposed, error);
-	}
+  if (IsDevicePtr){
+    elpa_generalized_eigenvectors_d_ptr_f(handle, a, b, ev, q, is_already_decomposed, error);
+  }
+  else {
+    elpa_generalized_eigenvectors_a_h_a_f(handle, a, b, ev, q, is_already_decomposed, error);
+  }
 #else
-	elpa_generalized_eigenvectors_a_h_a_f(handle, a, b, ev, q, is_already_decomposed, error);
+  elpa_generalized_eigenvectors_a_h_a_f(handle, a, b, ev, q, is_already_decomposed, error);
 #endif
 }
 
@@ -306,14 +306,14 @@ void elpa_generalized_eigenvectors_double_complex(elpa_t handle, double complex 
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_generalized_eigenvectors_d_ptr_dc(handle, a, b, ev, q, is_already_decomposed, error);
-	}
-	else {
-		elpa_generalized_eigenvectors_a_h_a_dc(handle, a, b, ev, q, is_already_decomposed, error);
-	}
+  if (IsDevicePtr){
+    elpa_generalized_eigenvectors_d_ptr_dc(handle, a, b, ev, q, is_already_decomposed, error);
+  }
+  else {
+    elpa_generalized_eigenvectors_a_h_a_dc(handle, a, b, ev, q, is_already_decomposed, error);
+  }
 #else
-	elpa_generalized_eigenvectors_a_h_a_dc(handle, a, b, ev, q, is_already_decomposed, error);
+  elpa_generalized_eigenvectors_a_h_a_dc(handle, a, b, ev, q, is_already_decomposed, error);
 #endif
 }
 
@@ -336,14 +336,14 @@ void elpa_generalized_eigenvectors_float_complex(elpa_t handle, float complex *a
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_generalized_eigenvectors_d_ptr_fc(handle, a, b, ev, q, is_already_decomposed, error);
-	}
-	else {
-		elpa_generalized_eigenvectors_a_h_a_fc(handle, a, b, ev, q, is_already_decomposed, error);
-	}
+  if (IsDevicePtr){
+    elpa_generalized_eigenvectors_d_ptr_fc(handle, a, b, ev, q, is_already_decomposed, error);
+  }
+  else {
+    elpa_generalized_eigenvectors_a_h_a_fc(handle, a, b, ev, q, is_already_decomposed, error);
+  }
 #else
-	elpa_generalized_eigenvectors_a_h_a_fc(handle, a, b, ev, q, is_already_decomposed, error);
+  elpa_generalized_eigenvectors_a_h_a_fc(handle, a, b, ev, q, is_already_decomposed, error);
 #endif
 }
 //_________________________________________________________________________________________________
@@ -364,12 +364,12 @@ void elpa_eigenvalues_double(elpa_t handle, double *a, double *ev, int *error)
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_eigenvalues_d_ptr_d(handle, a, ev, error);
-	}
-	else {
-		elpa_eigenvalues_a_h_a_d(handle, a, ev, error);
-	}
+  if (IsDevicePtr){
+    elpa_eigenvalues_d_ptr_d(handle, a, ev, error);
+  }
+  else {
+    elpa_eigenvalues_a_h_a_d(handle, a, ev, error);
+  }
 #else
    elpa_eigenvalues_a_h_a_d(handle, a, ev, error);
 #endif
@@ -391,12 +391,12 @@ void elpa_eigenvalues_float(elpa_t handle, float *a, float *ev, int *error)
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_eigenvalues_d_ptr_f(handle, a, ev, error);
-	}
-	else {
-		elpa_eigenvalues_a_h_a_f(handle, a, ev, error);
-	}
+  if (IsDevicePtr){
+    elpa_eigenvalues_d_ptr_f(handle, a, ev, error);
+  }
+  else {
+    elpa_eigenvalues_a_h_a_f(handle, a, ev, error);
+  }
 #else
   elpa_eigenvalues_a_h_a_f(handle, a, ev, error);
 #endif
@@ -418,12 +418,12 @@ void elpa_eigenvalues_double_complex(elpa_t handle, double complex *a, double *e
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_eigenvalues_d_ptr_dc(handle, a, ev, error);
-	}
-	else {
-		elpa_eigenvalues_a_h_a_dc(handle, a, ev, error);
-	}
+  if (IsDevicePtr){
+    elpa_eigenvalues_d_ptr_dc(handle, a, ev, error);
+  }
+  else {
+    elpa_eigenvalues_a_h_a_dc(handle, a, ev, error);
+  }
 #else
   elpa_eigenvalues_a_h_a_dc(handle, a, ev, error);
 #endif
@@ -445,12 +445,12 @@ void elpa_eigenvalues_float_complex(elpa_t handle, float complex *a, float *ev, 
    void *a_void_ptr = (void*) a;
    int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_eigenvalues_d_ptr_fc(handle, a, ev, error);
-		}
-	else {
-		elpa_eigenvalues_a_h_a_fc(handle, a, ev, error);
-		}
+  if (IsDevicePtr){
+    elpa_eigenvalues_d_ptr_fc(handle, a, ev, error);
+    }
+  else {
+    elpa_eigenvalues_a_h_a_fc(handle, a, ev, error);
+  }
 #else
    elpa_eigenvalues_a_h_a_fc(handle, a, ev, error);
 #endif
@@ -476,12 +476,12 @@ void elpa_skew_eigenvalues_double(elpa_t handle, double *a, double *ev, int *err
    void *a_void_ptr = (void*) a;
    int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_skew_eigenvalues_d_ptr_d(handle, a, ev, error);
-		}
-	else {
-		elpa_skew_eigenvalues_a_h_a_d(handle, a, ev, error);
-		}
+  if (IsDevicePtr){
+    elpa_skew_eigenvalues_d_ptr_d(handle, a, ev, error);
+    }
+  else {
+    elpa_skew_eigenvalues_a_h_a_d(handle, a, ev, error);
+  }
 #else
    elpa_skew_eigenvalues_a_h_a_d(handle, a, ev, error);
 #endif
@@ -503,12 +503,12 @@ void elpa_skew_eigenvalues_float(elpa_t handle, float *a, float *ev, int *error)
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_skew_eigenvalues_d_ptr_f(handle, a, ev, error);
-	}
-	else {
-		elpa_skew_eigenvalues_a_h_a_f(handle, a, ev, error);
-	}
+  if (IsDevicePtr){
+    elpa_skew_eigenvalues_d_ptr_f(handle, a, ev, error);
+  }
+  else {
+    elpa_skew_eigenvalues_a_h_a_f(handle, a, ev, error);
+  }
 #else
   elpa_skew_eigenvalues_a_h_a_f(handle, a, ev, error);
 #endif
@@ -535,14 +535,14 @@ void elpa_generalized_eigenvalues_double(elpa_t handle, double *a, double *b, do
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_generalized_eigenvalues_d_ptr_d(handle, a, b, ev, is_already_decomposed, error);
-	}
-	else {
-		elpa_generalized_eigenvalues_a_h_a_d(handle, a, b, ev, is_already_decomposed, error);
-	}
+  if (IsDevicePtr){
+    elpa_generalized_eigenvalues_d_ptr_d(handle, a, b, ev, is_already_decomposed, error);
+  }
+  else {
+    elpa_generalized_eigenvalues_a_h_a_d(handle, a, b, ev, is_already_decomposed, error);
+  }
 #else
-	elpa_generalized_eigenvalues_a_h_a_d(handle, a, b, ev, is_already_decomposed, error);
+  elpa_generalized_eigenvalues_a_h_a_d(handle, a, b, ev, is_already_decomposed, error);
 #endif
 }
 
@@ -564,14 +564,14 @@ void elpa_generalized_eigenvalues_float(elpa_t handle, float *a, float *b, float
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_generalized_eigenvalues_d_ptr_f(handle, a, b, ev, is_already_decomposed, error);
-	}
-	else {
-		elpa_generalized_eigenvalues_a_h_a_f(handle, a, b, ev, is_already_decomposed, error);
-	}
+  if (IsDevicePtr){
+    elpa_generalized_eigenvalues_d_ptr_f(handle, a, b, ev, is_already_decomposed, error);
+  }
+  else {
+    elpa_generalized_eigenvalues_a_h_a_f(handle, a, b, ev, is_already_decomposed, error);
+  }
 #else
-	elpa_generalized_eigenvalues_a_h_a_f(handle, a, b, ev, is_already_decomposed, error);
+  elpa_generalized_eigenvalues_a_h_a_f(handle, a, b, ev, is_already_decomposed, error);
 #endif
 }
 
@@ -593,14 +593,14 @@ void elpa_generalized_eigenvalues_double_complex(elpa_t handle, double complex *
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_generalized_eigenvalues_d_ptr_dc(handle, a, b, ev, is_already_decomposed, error);
-	}
-	else {
-		elpa_generalized_eigenvalues_a_h_a_dc(handle, a, b, ev, is_already_decomposed, error);
-	}
+  if (IsDevicePtr){
+    elpa_generalized_eigenvalues_d_ptr_dc(handle, a, b, ev, is_already_decomposed, error);
+  }
+  else {
+    elpa_generalized_eigenvalues_a_h_a_dc(handle, a, b, ev, is_already_decomposed, error);
+  }
 #else
-	elpa_generalized_eigenvalues_a_h_a_dc(handle, a, b, ev, is_already_decomposed, error);
+  elpa_generalized_eigenvalues_a_h_a_dc(handle, a, b, ev, is_already_decomposed, error);
 #endif
 }
 
@@ -622,14 +622,14 @@ void elpa_generalized_eigenvalues_float_complex(elpa_t handle, float complex *a,
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_generalized_eigenvalues_d_ptr_fc(handle, a, b, ev, is_already_decomposed, error);
-	}
-	else {
-		elpa_generalized_eigenvalues_a_h_a_fc(handle, a, b, ev, is_already_decomposed, error);
-	}
+  if (IsDevicePtr){
+    elpa_generalized_eigenvalues_d_ptr_fc(handle, a, b, ev, is_already_decomposed, error);
+  }
+  else {
+    elpa_generalized_eigenvalues_a_h_a_fc(handle, a, b, ev, is_already_decomposed, error);
+  }
 #else
-	elpa_generalized_eigenvalues_a_h_a_fc(handle, a, b, ev, is_already_decomposed, error);
+  elpa_generalized_eigenvalues_a_h_a_fc(handle, a, b, ev, is_already_decomposed, error);
 #endif
 }
 
@@ -650,12 +650,12 @@ void elpa_cholesky_double(elpa_t handle, double *a, int *error)
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_cholesky_d_ptr_d(handle, a, error);
-	}
-	else {
-		elpa_cholesky_a_h_a_d(handle, a, error);
-	}
+  if (IsDevicePtr){
+    elpa_cholesky_d_ptr_d(handle, a, error);
+  }
+  else {
+    elpa_cholesky_a_h_a_d(handle, a, error);
+  }
 #else
   elpa_cholesky_a_h_a_d(handle, a, error);
 #endif
@@ -676,12 +676,12 @@ void elpa_cholesky_float(elpa_t handle, float *a, int *error)
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_cholesky_d_ptr_f(handle, a, error);
-	}
-	else {
-		elpa_cholesky_a_h_a_f(handle, a, error);
-	}
+  if (IsDevicePtr){
+    elpa_cholesky_d_ptr_f(handle, a, error);
+  }
+  else {
+    elpa_cholesky_a_h_a_f(handle, a, error);
+  }
 #else
   elpa_cholesky_a_h_a_f(handle, a, error);
 #endif
@@ -702,12 +702,12 @@ void elpa_cholesky_double_complex(elpa_t handle, double complex *a, int *error)
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_cholesky_d_ptr_dc(handle, a, error);
-	}
-	else {
-		elpa_cholesky_a_h_a_dc(handle, a, error);
-	}
+  if (IsDevicePtr){
+    elpa_cholesky_d_ptr_dc(handle, a, error);
+  }
+  else {
+    elpa_cholesky_a_h_a_dc(handle, a, error);
+  }
 #else
   elpa_cholesky_a_h_a_dc(handle, a, error);
 #endif
@@ -728,12 +728,12 @@ void elpa_cholesky_float_complex(elpa_t handle, float complex *a, int *error)
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_cholesky_d_ptr_fc(handle, a, error);
-	}
-	else {
-		elpa_cholesky_a_h_a_fc(handle, a, error);
-	}
+  if (IsDevicePtr){
+    elpa_cholesky_d_ptr_fc(handle, a, error);
+  }
+  else {
+    elpa_cholesky_a_h_a_fc(handle, a, error);
+  }
 #else
   elpa_cholesky_a_h_a_fc(handle, a, error);
 #endif
@@ -765,12 +765,12 @@ void elpa_hermitian_multiply_double(elpa_t handle, char uplo_a, char uplo_c, int
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_hermitian_multiply_d_ptr_d(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
-	}
-	else {
-		elpa_hermitian_multiply_a_h_a_d(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
-	}
+  if (IsDevicePtr){
+    elpa_hermitian_multiply_d_ptr_d(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
+  }
+  else {
+    elpa_hermitian_multiply_a_h_a_d(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
+  }
 #else
   elpa_hermitian_multiply_a_h_a_d(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
 #endif
@@ -800,12 +800,12 @@ void elpa_hermitian_multiply_float(elpa_t handle, char uplo_a, char uplo_c, int 
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_hermitian_multiply_d_ptr_f(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
+  if (IsDevicePtr){
+    elpa_hermitian_multiply_d_ptr_f(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
   }
-	else {
-		elpa_hermitian_multiply_a_h_a_f(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
-	}
+  else {
+    elpa_hermitian_multiply_a_h_a_f(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
+  }
 #else
   elpa_hermitian_multiply_a_h_a_f(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
 #endif
@@ -835,12 +835,12 @@ void elpa_hermitian_multiply_double_complex(elpa_t handle, char uplo_a, char upl
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_hermitian_multiply_d_ptr_dc(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
-	}
-	else {
-		elpa_hermitian_multiply_a_h_a_dc(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
-	}
+  if (IsDevicePtr){
+    elpa_hermitian_multiply_d_ptr_dc(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
+  }
+  else {
+    elpa_hermitian_multiply_a_h_a_dc(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
+  }
 #else
   elpa_hermitian_multiply_a_h_a_dc(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
 #endif
@@ -870,12 +870,12 @@ void elpa_hermitian_multiply_float_complex(elpa_t handle, char uplo_a, char uplo
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_hermitian_multiply_d_ptr_fc(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
-	}
-	else {
-		elpa_hermitian_multiply_a_h_a_fc(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
-	}
+  if (IsDevicePtr){
+    elpa_hermitian_multiply_d_ptr_fc(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
+  }
+  else {
+    elpa_hermitian_multiply_a_h_a_fc(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
+  }
 #else
   elpa_hermitian_multiply_a_h_a_fc(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
 #endif
@@ -907,12 +907,12 @@ void elpa_pxgemm_multiply_double(elpa_t handle, char trans_a, char trans_c, int 
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_pxgemm_multiply_d_ptr_d(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
-	}
-	else {
-		elpa_pxgemm_multiply_a_h_a_d(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
-	}
+  if (IsDevicePtr){
+    elpa_pxgemm_multiply_d_ptr_d(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
+  }
+  else {
+    elpa_pxgemm_multiply_a_h_a_d(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
+  }
 #else
   elpa_pxgemm_multiply_a_h_a_d(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
 #endif
@@ -942,12 +942,12 @@ void elpa_pxgemm_multiply_float(elpa_t handle, char trans_a, char trans_c, int n
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_pxgemm_multiply_d_ptr_f(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
+  if (IsDevicePtr){
+    elpa_pxgemm_multiply_d_ptr_f(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
   }
-	else {
-		elpa_pxgemm_multiply_a_h_a_f(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
-	}
+  else {
+    elpa_pxgemm_multiply_a_h_a_f(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
+  }
 #else
   elpa_pxgemm_multiply_a_h_a_f(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
 #endif
@@ -977,12 +977,12 @@ void elpa_pxgemm_multiply_double_complex(elpa_t handle, char trans_a, char trans
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_pxgemm_multiply_d_ptr_dc(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
-	}
-	else {
-		elpa_pxgemm_multiply_a_h_a_dc(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
-	}
+  if (IsDevicePtr){
+    elpa_pxgemm_multiply_d_ptr_dc(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
+  }
+  else {
+    elpa_pxgemm_multiply_a_h_a_dc(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
+  }
 #else
   elpa_pxgemm_multiply_a_h_a_dc(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
 #endif
@@ -1012,12 +1012,12 @@ void elpa_pxgemm_multiply_float_complex(elpa_t handle, char trans_a, char trans_
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_pxgemm_multiply_d_ptr_fc(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
-	}
-	else {
-		elpa_pxgemm_multiply_a_h_a_fc(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
-	}
+  if (IsDevicePtr){
+    elpa_pxgemm_multiply_d_ptr_fc(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
+  }
+  else {
+    elpa_pxgemm_multiply_a_h_a_fc(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
+  }
 #else
   elpa_pxgemm_multiply_a_h_a_fc(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
 #endif
@@ -1035,21 +1035,21 @@ void elpa_pxgemm_multiply_float_complex(elpa_t handle, char trans_a, char trans_
  */
 
 void elpa_invert_triangular_double(elpa_t handle, double *a, int *error)
-	{
+{
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
-   void *a_void_ptr = (void*) a;
-   int IsDevicePtr = is_device_ptr(a_void_ptr);
+  void *a_void_ptr = (void*) a;
+  int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_invert_trm_d_ptr_d(handle, a, error);
-		}
-	else {
-		elpa_invert_trm_a_h_a_d(handle, a, error);
-		}
+  if (IsDevicePtr){
+    elpa_invert_trm_d_ptr_d(handle, a, error);
+  }
+  else {
+    elpa_invert_trm_a_h_a_d(handle, a, error);
+  }
 #else
-   elpa_invert_trm_a_h_a_d(handle, a, error);
+  elpa_invert_trm_a_h_a_d(handle, a, error);
 #endif
-	}
+}
 
 /*! \brief generic C method for elpa_invert_triangular_float
  *
@@ -1061,21 +1061,21 @@ void elpa_invert_triangular_double(elpa_t handle, double *a, int *error)
  */
 
 void elpa_invert_triangular_float(elpa_t handle, float *a, int *error)
-	{
+{
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
-   void *a_void_ptr = (void*) a;
-   int IsDevicePtr = is_device_ptr(a_void_ptr);
+  void *a_void_ptr = (void*) a;
+  int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_invert_trm_d_ptr_f(handle, a, error);
-		}
-	else {
-		elpa_invert_trm_a_h_a_f(handle, a, error);
-		}
+  if (IsDevicePtr){
+    elpa_invert_trm_d_ptr_f(handle, a, error);
+    }
+  else {
+    elpa_invert_trm_a_h_a_f(handle, a, error);
+  }
 #else
-   elpa_invert_trm_a_h_a_f(handle, a, error);
+  elpa_invert_trm_a_h_a_f(handle, a, error);
 #endif
-	}
+}
 
 /*! \brief generic C method for elpa_invert_triangular_double_complex
  *
@@ -1087,21 +1087,21 @@ void elpa_invert_triangular_float(elpa_t handle, float *a, int *error)
  */
 
 void elpa_invert_triangular_double_complex(elpa_t handle, double complex *a, int *error)
-	{
+{
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
-   void *a_void_ptr = (void*) a;
-   int IsDevicePtr = is_device_ptr(a_void_ptr);
+  void *a_void_ptr = (void*) a;
+  int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_invert_trm_d_ptr_dc(handle, a, error);
-		}
-	else {
-		elpa_invert_trm_a_h_a_dc(handle, a, error);
-		}
+  if (IsDevicePtr){
+    elpa_invert_trm_d_ptr_dc(handle, a, error);
+    }
+  else {
+    elpa_invert_trm_a_h_a_dc(handle, a, error);
+  }
 #else
-   elpa_invert_trm_a_h_a_dc(handle, a, error);
+  elpa_invert_trm_a_h_a_dc(handle, a, error);
 #endif
-	}
+}
 
 /*! \brief generic C method for elpa_invert_triangular_float_complex
  *
@@ -1113,18 +1113,18 @@ void elpa_invert_triangular_double_complex(elpa_t handle, double complex *a, int
  */
 
 void elpa_invert_triangular_float_complex(elpa_t handle, float complex *a, int *error)
-	{
+{
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
-   void *a_void_ptr = (void*) a;
-   int IsDevicePtr = is_device_ptr(a_void_ptr);
+  void *a_void_ptr = (void*) a;
+  int IsDevicePtr = is_device_ptr(a_void_ptr);
 
-	if (IsDevicePtr){
-		elpa_invert_trm_d_ptr_fc(handle, a, error);
-		}
-	else {
-		elpa_invert_trm_a_h_a_fc(handle, a, error);
-		}
+  if (IsDevicePtr){
+    elpa_invert_trm_d_ptr_fc(handle, a, error);
+  }
+  else {
+    elpa_invert_trm_a_h_a_fc(handle, a, error);
+  }
 #else
-   elpa_invert_trm_a_h_a_fc(handle, a, error);
+  elpa_invert_trm_a_h_a_fc(handle, a, error);
 #endif
-	}
+}

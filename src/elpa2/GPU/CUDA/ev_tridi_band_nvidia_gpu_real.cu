@@ -237,7 +237,7 @@ compute_hh_trafo_cuda_kernel_real(T * __restrict__ q, const T * __restrict__ hh,
     while (j >= 1)
     {
 #ifdef WITH_CUCUB
-	ht = hh_tau[j - 1];
+  ht = hh_tau[j - 1];
         hv = hh[h_off];
 #endif
         if (tid == 0)

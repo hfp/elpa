@@ -97,7 +97,7 @@ subroutine hh_transform_complex_&
 
   if (wantDebug) call obj%timer%start("hh_transform_&
                    &MATH_DATATYPE&
-     	      &" // &
+             &" // &
                    &PRECISION_SUFFIX )
 
 #if COMPLEXCASE == 1

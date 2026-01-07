@@ -34,133 +34,133 @@ static int ldst_available = 0;
 #include <papi.h>
 
 int ftimings_papi_init(void) {
-	int ret;
+  int ret;
 
-	if (tried_papi_init) {
-		return papi_available;
-	}
+  if (tried_papi_init) {
+    return papi_available;
+  }
 
 #pragma omp critical
-	{
-		/* Think about it :) */
-		if (tried_papi_init) {
-			goto end;
-		}
+  {
+    /* Think about it :) */
+    if (tried_papi_init) {
+      goto end;
+    }
 
-		tried_papi_init = 1;
+    tried_papi_init = 1;
 
-		event_set = PAPI_NULL;
+    event_set = PAPI_NULL;
 
-		if ((ret = PAPI_library_init(PAPI_VER_CURRENT)) < 0) {
-			fprintf(stderr, "ftimings: %s:%d: PAPI_library_init(%d): %s\n",
-					__FILE__, __LINE__, PAPI_VER_CURRENT, PAPI_strerror(ret));
-			goto error;
-		}
+    if ((ret = PAPI_library_init(PAPI_VER_CURRENT)) < 0) {
+      fprintf(stderr, "ftimings: %s:%d: PAPI_library_init(%d): %s\n",
+          __FILE__, __LINE__, PAPI_VER_CURRENT, PAPI_strerror(ret));
+      goto error;
+    }
 
-		if ((ret = PAPI_create_eventset(&event_set)) < 0) {
-			fprintf(stderr, "ftimings: %s:%d PAPI_create_eventset(): %s\n",
-					__FILE__, __LINE__, PAPI_strerror(ret));
-			goto error;
-		}
+    if ((ret = PAPI_create_eventset(&event_set)) < 0) {
+      fprintf(stderr, "ftimings: %s:%d PAPI_create_eventset(): %s\n",
+          __FILE__, __LINE__, PAPI_strerror(ret));
+      goto error;
+    }
 
-		/* Check FLOP counter availability */
-		if ((ret = PAPI_query_event(PAPI_DP_OPS)) < 0) {
-			fprintf(stderr, "ftimings: %s:%d: PAPI_query_event(PAPI_DP_OPS): %s\n",
-					__FILE__, __LINE__, PAPI_strerror(ret));
-			flops_available = 0;
-		} else if ((ret = PAPI_add_event(event_set, PAPI_DP_OPS)) < 0) {
-			fprintf(stderr, "ftimings: %s:%d PAPI_add_event(): %s\n",
-					__FILE__, __LINE__, PAPI_strerror(ret));
-			flops_available = 0;
-		} else {
-			flops_available = 1;
-		}
+    /* Check FLOP counter availability */
+    if ((ret = PAPI_query_event(PAPI_DP_OPS)) < 0) {
+      fprintf(stderr, "ftimings: %s:%d: PAPI_query_event(PAPI_DP_OPS): %s\n",
+          __FILE__, __LINE__, PAPI_strerror(ret));
+      flops_available = 0;
+    } else if ((ret = PAPI_add_event(event_set, PAPI_DP_OPS)) < 0) {
+      fprintf(stderr, "ftimings: %s:%d PAPI_add_event(): %s\n",
+          __FILE__, __LINE__, PAPI_strerror(ret));
+      flops_available = 0;
+    } else {
+      flops_available = 1;
+    }
 
-		ldst_available = 0;
+    ldst_available = 0;
 #if 0
-		/* Loads + Stores */
-		if ((ret = PAPI_query_event(PAPI_LD_INS)) < 0) {
-			fprintf(stderr, "ftimings: %s:%d: PAPI_query_event(PAPI_LD_INS): %s\n",
-					__FILE__, __LINE__, PAPI_strerror(ret));
-			ldst_available = 0;
-		} else if ((ret = PAPI_query_event(PAPI_SR_INS)) < 0) {
-			fprintf(stderr, "ftimings: %s:%d: PAPI_query_event(PAPI_SR_INS): %s\n",
-					__FILE__, __LINE__, PAPI_strerror(ret));
-			ldst_available = 0;
-		} else if ((ret = PAPI_add_event(event_set, PAPI_LD_INS)) < 0) {
-			fprintf(stderr, "ftimings: %s:%d PAPI_add_event(event_set, PAPI_LD_INS): %s\n",
-					__FILE__, __LINE__, PAPI_strerror(ret));
-			ldst_available = 0;
-		} else if ((ret = PAPI_add_event(event_set, PAPI_SR_INS)) < 0) {
-			fprintf(stderr, "ftimings: %s:%d PAPI_add_event(event_set, PAPI_SR_INS): %s\n",
-					__FILE__, __LINE__, PAPI_strerror(ret));
-			ldst_available = 0;
-		} else {
-			ldst_available = 1;
-		}
+    /* Loads + Stores */
+    if ((ret = PAPI_query_event(PAPI_LD_INS)) < 0) {
+      fprintf(stderr, "ftimings: %s:%d: PAPI_query_event(PAPI_LD_INS): %s\n",
+          __FILE__, __LINE__, PAPI_strerror(ret));
+      ldst_available = 0;
+    } else if ((ret = PAPI_query_event(PAPI_SR_INS)) < 0) {
+      fprintf(stderr, "ftimings: %s:%d: PAPI_query_event(PAPI_SR_INS): %s\n",
+          __FILE__, __LINE__, PAPI_strerror(ret));
+      ldst_available = 0;
+    } else if ((ret = PAPI_add_event(event_set, PAPI_LD_INS)) < 0) {
+      fprintf(stderr, "ftimings: %s:%d PAPI_add_event(event_set, PAPI_LD_INS): %s\n",
+          __FILE__, __LINE__, PAPI_strerror(ret));
+      ldst_available = 0;
+    } else if ((ret = PAPI_add_event(event_set, PAPI_SR_INS)) < 0) {
+      fprintf(stderr, "ftimings: %s:%d PAPI_add_event(event_set, PAPI_SR_INS): %s\n",
+          __FILE__, __LINE__, PAPI_strerror(ret));
+      ldst_available = 0;
+    } else {
+      ldst_available = 1;
+    }
 #endif
-		/* Start */
-		if ((ret = PAPI_start(event_set)) < 0) {
-			fprintf(stderr, "ftimings: %s:%d PAPI_start(): %s\n",
-					__FILE__, __LINE__, PAPI_strerror(ret));
-			goto error;
-		}
+    /* Start */
+    if ((ret = PAPI_start(event_set)) < 0) {
+      fprintf(stderr, "ftimings: %s:%d PAPI_start(): %s\n",
+          __FILE__, __LINE__, PAPI_strerror(ret));
+      goto error;
+    }
 
-		goto end;
+    goto end;
 
 error:
-		/* PAPI works */
-		papi_available = 0;
+    /* PAPI works */
+    papi_available = 0;
 
 end:
-		/* PAPI works */
-		papi_available = 1;
+    /* PAPI works */
+    papi_available = 1;
 
-	} /* End of critical region */
+  } /* End of critical region */
 
-	return papi_available;
+  return papi_available;
 }
 
 int ftimings_flop_init(void) {
-	int ret;
+  int ret;
 
-	if (!tried_papi_init) {
-		ftimings_papi_init();
-	}
+  if (!tried_papi_init) {
+    ftimings_papi_init();
+  }
 
-	return flops_available;
+  return flops_available;
 }
 
 int ftimings_loads_stores_init(void) {
-	int ret;
+  int ret;
 
-	if (!tried_papi_init) {
-		ftimings_papi_init();
-	}
+  if (!tried_papi_init) {
+    ftimings_papi_init();
+  }
 
-	return ldst_available;
+  return ldst_available;
 }
 
 void ftimings_papi_counters(long long *flops, long long *ldst) {
-	long long res[3];
-	int i, ret;
+  long long res[3];
+  int i, ret;
 
-	if ((ret = PAPI_read(event_set, &res[0])) < 0) {
-		fprintf(stderr, "PAPI_read: %s\n", PAPI_strerror(ret));
-		exit(1);
-	}
+  if ((ret = PAPI_read(event_set, &res[0])) < 0) {
+    fprintf(stderr, "PAPI_read: %s\n", PAPI_strerror(ret));
+    exit(1);
+  }
 
-	i = 0;
-	if (flops_available) {
-		*flops = res[i++];
-	} else {
-		*flops = 0LL;
-	}
-	if (ldst_available) {
-		*ldst = res[i++];
-		*ldst += res[i++];
-	} else {
-		*ldst = 0LL;
-	}
+  i = 0;
+  if (flops_available) {
+    *flops = res[i++];
+  } else {
+    *flops = 0LL;
+  }
+  if (ldst_available) {
+    *ldst = res[i++];
+    *ldst += res[i++];
+  } else {
+    *ldst = 0LL;
+  }
 }
 #endif

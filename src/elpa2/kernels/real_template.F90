@@ -88,9 +88,9 @@
 
 !    call obj%timer%start("kernel generic: double_hh_trafo_&
 !                     &MATH_DATATYPE&
-!		     &_generic" // &
-!		     &PRECISION_SUFFIX &
-!		     )
+!         &_generic" // &
+!         &PRECISION_SUFFIX &
+!         )
 
     if(mod(ldq,4) /= 0) STOP 'double_hh_trafo: ldq not divisible by 4!'
 
@@ -153,9 +153,9 @@
 
 !    call obj%timer%stop("kernel generic: double_hh_trafo_&
 !                     &MATH_DATATYPE&
-!		     &_generic" // &
-!		     &PRECISION_SUFFIX &
-!		     )
+!         &_generic" // &
+!         &PRECISION_SUFFIX &
+!         )
 
   end subroutine
 
@@ -196,8 +196,8 @@
 
 
     !call obj%timer%start("kernel generic: hh_trafo_kernel_12_generic" // &
-    !		     &PRECISION_SUFFIX &
-    !		     )
+    !         &PRECISION_SUFFIX &
+    !         )
 
     x1  = q(1,2)
     x2  = q(2,2)
@@ -388,8 +388,8 @@
 #endif
 
 !    call obj%timer%stop("kernel generic: hh_trafo_kernel_12_generic" // &
-!		     &PRECISION_SUFFIX &
-!		     )
+!         &PRECISION_SUFFIX &
+!         )
 
   end subroutine
   ! --------------------------------------------------------------------------------------------------
@@ -422,8 +422,8 @@
     integer(kind=ik)                 :: i
 
 !    call obj%timer%start("kernel generic: hh_trafo_kernel_8_generic" // &
-!		     &PRECISION_SUFFIX &
-!		     )
+!         &PRECISION_SUFFIX &
+!         )
     x1 = q(1,2)
     x2 = q(2,2)
     x3 = q(3,2)
@@ -567,8 +567,8 @@
 
 
 !    call obj%timer%stop("kernel generic: hh_trafo_kernel_8_generic" // &
-!		     &PRECISION_SUFFIX &
-!		     )
+!         &PRECISION_SUFFIX &
+!         )
 
   end subroutine
   ! --------------------------------------------------------------------------------------------------
@@ -602,8 +602,8 @@
     integer(kind=ik)                :: i
 
 !    call obj%timer%start("kernel generic: hh_trafo_kernel_4_generic" // &
-!		     &PRECISION_SUFFIX &
-!		     )
+!         &PRECISION_SUFFIX &
+!         )
     x1 = q(1,2)
     x2 = q(2,2)
 #ifndef PACK_REAL_TO_COMPLEX
@@ -702,7 +702,7 @@
 #endif
 
 !    call obj%timer%stop("kernel generic: hh_trafo_kernel_4_generic" // &
-!		     &PRECISION_SUFFIX &
-!		     )
+!         &PRECISION_SUFFIX &
+!         )
 
   end subroutine

@@ -74,21 +74,21 @@ __global__ void hip_scale_qmat_double_complex_kernel(hipDoubleComplex *q, hipDou
     // q_mat(1,1:l_cols) = q_mat(1,1:l_cols)*(ONE-tau(2))
     if (col < l_cols) {
 
-	    // (a + ib) (c + id) = (ac - bd) + i(ad + bc)
+      // (a + ib) (c + id) = (ac - bd) + i(ad + bc)
             // a = q.x
-	    // b = q.y
-	    // c = one-tau.x
-	    // d = zero - tau.y
-	    // (q.x + i * q.y) * ((one-tau.x) + i * (zero-tau.y)) = (q.x*(one-tau.x) - q.y * (zero-tau.y)) + i * (q.x * (zero-tau.y) + q.y * (one-tau.x)
+      // b = q.y
+      // c = one-tau.x
+      // d = zero - tau.y
+      // (q.x + i * q.y) * ((one-tau.x) + i * (zero-tau.y)) = (q.x*(one-tau.x) - q.y * (zero-tau.y)) + i * (q.x * (zero-tau.y) + q.y * (one-tau.x)
         //// real part
         //q[index].x = q[index].x * (one-tau[1].x) - q[index].y * (zero - tau[1].y);
-	//// imag part
-	//q[index].y = q[index].x * (zero - tau[1].y) + q[index].y * (one - tau[1].x);
+  //// imag part
+  //q[index].y = q[index].x * (zero - tau[1].y) + q[index].y * (one - tau[1].x);
 
         //// real part
         //q[index].x = q[index].x * (one-tau[1].x) + q[index].y * tau[1].y;
-	//// imag part
-	//q[index].y = -q[index].x * tau[1].y + q[index].y * (one - tau[1].x);
+  //// imag part
+  //q[index].y = -q[index].x * tau[1].y + q[index].y * (one - tau[1].x);
 
 
         //q[index].x = q[index].x * (one - tau[1].x);

@@ -530,7 +530,7 @@ void gpu_zero_q_kernel (T *q, int *p_col_out, int *l_col_out,
     if (i>=0 && i<na) {
       if (j>=0 && j<l_rqe-l_rqs+1) {
         if (p_col_out[i] == my_pcol) {
-      	  int index = l_col_out[i] - 1;
+          int index = l_col_out[i] - 1;
           q[j+l_rqs - 1 + matrixRows*index] = 0;
       }
     }

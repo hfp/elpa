@@ -96,11 +96,11 @@ __global__ void gpu_distribute_global_column_kernel(T *g_col, T *l_col,
         if (je2>=js2) {
 
           //for (int index4=0;index4<=je2-js2;index4++) {
-	  //  int index=index4+js2;
-	    int index = ind2 + js2;
+    //  int index=index4+js2;
+      int index = ind2 + js2;
 
 
-	    if (index >= js2 && index <= je2) {
+      if (index >= js2 && index <= je2) {
 
               number_of_entries = (g_col_dim2-g_col_offset2)*g_col_dim1+g_col_dim1-g_col_offset1+1;
               entries_in_started_col=g_col_dim1-g_col_offset1+1;
@@ -146,7 +146,7 @@ __global__ void gpu_distribute_global_column_kernel(T *g_col, T *l_col,
 
 
               l_col[(l_col_global_row2-1) + ldq*(l_col_global_col2-1) ] = g_col[(g_col_global_row2-1) + g_col_dim1 * (g_col_global_col2-1)];
-	    }
+      }
           //}
         }
       }

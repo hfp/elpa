@@ -21,15 +21,15 @@
 
 long ftimings_virtual_memory() {
 
-	long rss = 0L;
-	FILE* fp = NULL;
-	if ((fp = fopen( "/proc/self/statm", "r" )) == NULL ) {
-		return 0L;
-	}
-	if (fscanf(fp, "%ld", &rss) != 1) {
-		fclose(fp);
-		return (size_t)0L;	  /* Can't read? */
-	}
-	fclose(fp);
-	return rss * sysconf( _SC_PAGESIZE);
+  long rss = 0L;
+  FILE* fp = NULL;
+  if ((fp = fopen( "/proc/self/statm", "r" )) == NULL ) {
+    return 0L;
+  }
+  if (fscanf(fp, "%ld", &rss) != 1) {
+    fclose(fp);
+    return (size_t)0L;    /* Can't read? */
+  }
+  fclose(fp);
+  return rss * sysconf( _SC_PAGESIZE);
 }

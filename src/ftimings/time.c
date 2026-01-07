@@ -31,18 +31,18 @@
  * (with 2^64 us ~ 6 * 10^5 years, this should be sufficiently overflow safe)
  */
 int64_t ftimings_microseconds_since_epoch(void) {
-	struct timeval tv;
-	if (gettimeofday(&tv, NULL) != 0) {
-		perror("gettimeofday");
-		exit(1);
-	}
-	return (int64_t) (tv.tv_sec) * ((int64_t) 1000000) + (int64_t)(tv.tv_usec);
+  struct timeval tv;
+  if (gettimeofday(&tv, NULL) != 0) {
+    perror("gettimeofday");
+    exit(1);
+  }
+  return (int64_t) (tv.tv_sec) * ((int64_t) 1000000) + (int64_t)(tv.tv_usec);
 }
 
 #ifndef WITH_MPI
 int64_t t0 = 0;
 void __attribute__((constructor)) init_time(void) {
-	t0 = ftimings_microseconds_since_epoch();
+  t0 = ftimings_microseconds_since_epoch();
 }
 
 double seconds(void) {

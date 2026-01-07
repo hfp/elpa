@@ -276,7 +276,7 @@ program test
     stop 1
   endif
 
-	! Allocate the matrices needed for elpa
+  ! Allocate the matrices needed for elpa
 
   allocate(a (na_rows,na_cols))
   allocate(as(na_rows,na_cols))

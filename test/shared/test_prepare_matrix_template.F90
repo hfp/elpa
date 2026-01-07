@@ -419,14 +419,14 @@ subroutine prepare_matrix_random_spd_&
       ! set lower triangular part of the matrix to zero
       do i_loc=1,na_rows
           ! nblk = "NB"; np_rows = "P_r"; my_prow="p_r"  (quoted-ScaLAPACK userguide notation, p.61-63)
-      	  l_1 = (i_loc-1)/nblk ! local coord of the (NBxNB) block among other blocks
-	      x_1 = mod(i_loc-1, nblk) + 1 ! local coord within the block
-	      I_glob = (l_1*np_rows + my_prow)*nblk + x_1
+          l_1 = (i_loc-1)/nblk ! local coord of the (NBxNB) block among other blocks
+        x_1 = mod(i_loc-1, nblk) + 1 ! local coord within the block
+        I_glob = (l_1*np_rows + my_prow)*nblk + x_1
 
           do j_loc=1,na_cols
               l_2 = (j_loc-1)/nblk
-	          x_2 = mod(j_loc-1, nblk) + 1
-	          J_glob = (l_2*np_cols + my_pcol)*nblk + x_2
+            x_2 = mod(j_loc-1, nblk) + 1
+            J_glob = (l_2*np_cols + my_pcol)*nblk + x_2
 
               if (I_glob == J_glob) then
                   a(i_loc,j_loc) = I_glob
@@ -831,16 +831,16 @@ subroutine prepare_matrix_random_spd_&
       ! set lower triangular part of the matrix to zero
       do i_loc=1,na_rows
           ! nblk = "NB"; np_rows = "P_r"; my_prow="p_r"  (quoted-ScaLAPACK userguide notation, p.61-63)
-      	  l_1 = (i_loc-1)/nblk ! local coord of the (NBxNB) block among other blocks
-	      x_1 = mod(i_loc-1, nblk) + 1 ! local coord within the block
-	      I_glob = (l_1*np_rows + my_prow)*nblk + x_1
+          l_1 = (i_loc-1)/nblk ! local coord of the (NBxNB) block among other blocks
+        x_1 = mod(i_loc-1, nblk) + 1 ! local coord within the block
+        I_glob = (l_1*np_rows + my_prow)*nblk + x_1
 
           do j_loc=1,na_cols
               l_2 = (j_loc-1)/nblk
-	          x_2 = mod(j_loc-1, nblk) + 1
-	          J_glob = (l_2*np_cols + my_pcol)*nblk + x_2
+            x_2 = mod(j_loc-1, nblk) + 1
+            J_glob = (l_2*np_cols + my_pcol)*nblk + x_2
 
-			  if (I_glob == J_glob) then
+        if (I_glob == J_glob) then
                   a(i_loc,j_loc) = ONE
               endif
           end do

@@ -371,9 +371,9 @@ int main(int argc, char** argv) {
   PREPARE_MATRIX_RANDOM(na, myid, na_rows, na_cols, sc_desc, a, q, as, is_hermitian, is_skewsymmetric);
 
 #ifdef TEST_MULTIPLY
-	b  = (MATRIX_TYPE *) calloc(na_rows*na_cols, sizeof(MATRIX_TYPE));
-	c  = (MATRIX_TYPE *) calloc(na_rows*na_cols, sizeof(MATRIX_TYPE));
-	PREPARE_MATRIX_RANDOM(na, myid, na_rows, na_cols, sc_desc, b, q, c, is_hermitian, is_skewsymmetric); // b=c
+  b  = (MATRIX_TYPE *) calloc(na_rows*na_cols, sizeof(MATRIX_TYPE));
+  c  = (MATRIX_TYPE *) calloc(na_rows*na_cols, sizeof(MATRIX_TYPE));
+  PREPARE_MATRIX_RANDOM(na, myid, na_rows, na_cols, sc_desc, b, q, c, is_hermitian, is_skewsymmetric); // b=c
 
   char trans_a = BLAS_TRANS_OR_CONJ;
   char trans_b = 'N';
@@ -407,13 +407,13 @@ int main(int argc, char** argv) {
 #endif
 
 #if defined(TEST_GENERALIZED_EIGENPROBLEM)
-	b  = (MATRIX_TYPE *) calloc(na_rows*na_cols, sizeof(MATRIX_TYPE));
-	bs = (MATRIX_TYPE *) calloc(na_rows*na_cols, sizeof(MATRIX_TYPE));
-	PREPARE_MATRIX_RANDOM_SPD(na, myid, na_rows, na_cols, sc_desc, b, q, bs, nblk, np_rows, np_cols, my_prow, my_pcol);
+  b  = (MATRIX_TYPE *) calloc(na_rows*na_cols, sizeof(MATRIX_TYPE));
+  bs = (MATRIX_TYPE *) calloc(na_rows*na_cols, sizeof(MATRIX_TYPE));
+  PREPARE_MATRIX_RANDOM_SPD(na, myid, na_rows, na_cols, sc_desc, b, q, bs, nblk, np_rows, np_cols, my_prow, my_pcol);
 #endif
 
 #if defined(TEST_CHOLESKY)
-	PREPARE_MATRIX_RANDOM_SPD(na, myid, na_rows, na_cols, sc_desc, a, q, as, nblk, np_rows, np_cols, my_prow, my_pcol);
+  PREPARE_MATRIX_RANDOM_SPD(na, myid, na_rows, na_cols, sc_desc, a, q, as, nblk, np_rows, np_cols, my_prow, my_pcol);
 #endif
 
 #if defined(TEST_EIGENVALUES)
@@ -1272,7 +1272,7 @@ int main(int argc, char** argv) {
 /* Check the results */
 
 #if defined(TEST_CHOLESKY)
-	status = CHECK_CORRECTNESS_CHOLESKY(na, a, as, na_rows, na_cols, sc_desc, myid);
+  status = CHECK_CORRECTNESS_CHOLESKY(na, a, as, na_rows, na_cols, sc_desc, myid);
 #endif
 
 #if defined(TEST_MULTIPLY)

@@ -71,7 +71,7 @@ call prmat(na, useGpu, a_mat, a_dev, matrixRows, matrixCols, nblk, my_prow, my_p
 !>
 !  Parameters
 !
-!> \param obj	      object of elpa_type
+!> \param obj        object of elpa_type
 !> \param na          Order of matrix
 !>
 !> \param a_mat(matrixRows,matrixCols)    Distributed matrix which should be reduced.

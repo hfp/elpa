@@ -69,7 +69,7 @@ int _mkdirifnotexists(const char *dir) {
             }
         } else {
             perror("stat()");
-	    return 0;
+      return 0;
         }
     } else if (!S_ISDIR(s.st_mode)) {
         fprintf(stderr, "\"%s\" does exist and is not a directory\n", dir);

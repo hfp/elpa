@@ -270,7 +270,7 @@ printf("ERROR on sizes\n");
 int cublasDestroyFromC(cublasHandle_t cublas_handle) {
   cublasStatus_t status = cublasDestroy(cublas_handle);
   if (status == CUBLAS_STATUS_SUCCESS) {
-//	 free((void*) *cublas_handle);
+//   free((void*) *cublas_handle);
 //       printf("all OK\n");
     return 1;
   }
