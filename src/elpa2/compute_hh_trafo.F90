@@ -281,7 +281,7 @@ last_stripe_width, kernel, my_stream, success)
     ! ncols - indicates the number of HH reflectors to apply; at least 1 must be available
     if (ncols < 1) then
       if (wantDebug) then
-        if (my_pe .eq. 0) then      
+        if (my_pe .eq. 0) then
           write(error_unit,'(a)') "Returning early from compute_hh_trafo (only task=0 prints this)"
         endif
       endif
@@ -2575,7 +2575,7 @@ last_stripe_width, kernel, my_stream, success)
 
 #if REALCASE == 1
     ! avx block4 real kernel
-#if defined(WITH_REAL_AVX_BLOCK4_KERNEL) 
+#if defined(WITH_REAL_AVX_BLOCK4_KERNEL)
 #ifndef WITH_FIXED_REAL_KERNEL
     if ((kernel .eq. ELPA_2STAGE_REAL_AVX_BLOCK4)) then
 

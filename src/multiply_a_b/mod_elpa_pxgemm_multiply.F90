@@ -124,7 +124,7 @@ module elpa_pxgemm_multiply
 !>                   triangle may be computed
 !> \details
 !>
-!> \param trans_a               'U' if A is upper triangular ! PETERDEBUG 
+!> \param trans_a               'U' if A is upper triangular ! PETERDEBUG
 !>                              'L' if A is lower triangular
 !>                              anything else if A is a full matrix
 !>                              Please note: This pertains to the original A (as set in the calling program)
@@ -167,7 +167,7 @@ module elpa_pxgemm_multiply
 !>                   triangle may be computed
 !> \details
 !>
-!> \param trans_a               'U' if A is upper triangular ! PETERDEBUG 
+!> \param trans_a               'U' if A is upper triangular ! PETERDEBUG
 !>                              'L' if A is lower triangular
 !>                              anything else if A is a full matrix
 !>                              Please note: This pertains to the original A (as set in the calling program)

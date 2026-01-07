@@ -113,7 +113,7 @@ hipsolverFillMode_t hipsolver_fill_mode(char uplo) {
     // or abort?
     return HIPSOLVER_FILL_MODE_LOWER;
   }
-} 
+}
 #endif
 
 int rocsolverGetVersionFromC() {
@@ -148,7 +148,7 @@ int rocsolverGetVersionFromC() {
     int version = major*10000 + minor*100 + patch;
     free(buf);
     return version;
-  } 
+  }
   else {
     printf("Error parsing version string.\n");
     free(buf);
@@ -201,7 +201,7 @@ int rocsolverCreateFromC(SOLVER_handle *gpusolver_handle) {
 }
 
 int rocsolverDestroyFromC(SOLVER_handle gpusolver_handle) {
-#ifdef WITH_AMD_HIPSOLVER_API  
+#ifdef WITH_AMD_HIPSOLVER_API
   hipsolverStatus_t status = hipsolverDnDestroy(gpusolver_handle);
   if (status == HIPSOLVER_STATUS_SUCCESS) {
     return 1;
@@ -532,7 +532,7 @@ void rocsolverSpotrf_elpa_wrapper (SOLVER_handle gpusolverHandle, char uplo, int
 }
 
 void rocsolverZpotrf_elpa_wrapper (SOLVER_handle gpusolverHandle, char uplo, int n, double _Complex *A, int lda, int *devInfo) {
-  SOLVER_status status; 
+  SOLVER_status status;
   hipError_t hiperr;
 
   SOLVER_double_complex* A_casted = (      SOLVER_double_complex*) A;
@@ -635,7 +635,7 @@ void rocsolverDsyevd_elpa_wrapper (SOLVER_handle gpusolverHandle, int n, double 
   if (hiperr != hipSuccess) {
     errormessage("Error in solverDsyevd_elpa_wrapper hipMalloc(d_work): %s\n",hipGetErrorString(hiperr));
   }
-  
+
   status = hipsolverDsyevd(gpusolverHandle, jobz, uplo, n, A, lda, eigenvalues, d_work, d_lwork, info_dev);
 
   if (status != HIPSOLVER_STATUS_SUCCESS) elpa_hipsolverPrintError(status);
@@ -681,7 +681,7 @@ void rocsolverSsyevd_elpa_wrapper (SOLVER_handle gpusolverHandle, int n, float *
   if (hiperr != hipSuccess) {
     errormessage("Error in solverSsyevd_elpa_wrapper hipMalloc(d_work): %s\n",hipGetErrorString(hiperr));
   }
-  
+
   status = hipsolverSsyevd(gpusolverHandle, jobz, uplo, n, A, lda, eigenvalues, d_work, d_lwork, info_dev);
 
   if (status != HIPSOLVER_STATUS_SUCCESS) elpa_hipsolverPrintError(status);
@@ -729,7 +729,7 @@ else printf("Error in rocsolver_stedc_elpa_wrapper: Unsupported data type\n");
 if (status != SOLVER_status_success)
   {
   errormessage("Error in rocsolver_stedc_elpa_wrapper: %s, %d\n", __FILE__, __LINE__);
-  
+
   if (status==rocblas_status_invalid_handle) printf("rocblas_status_invalid_handle\n");
   if (status==rocblas_status_not_implemented) printf("rocblas_status_not_implemented\n");
   if (status==rocblas_status_invalid_pointer) printf("rocblas_status_invalid_pointer\n");

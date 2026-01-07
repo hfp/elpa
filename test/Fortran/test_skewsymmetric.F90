@@ -157,7 +157,7 @@ program test
 
    type(output_t)                         :: write_to_file
    class(elpa_t), pointer                 :: e_complex, e_skewsymmetric
-           
+
    call read_input_parameters(na, nev, nblk, write_to_file)
    call setup_mpi(myid, nprocs)
 #ifdef HAVE_REDIRECT
@@ -187,7 +187,7 @@ program test
      print *, "ELPA API version not supported"
      stop 1
    endif
-! 
+!
    layout = 'C'
    do np_cols = NINT(SQRT(REAL(nprocs))),2,-1
       if(mod(nprocs,np_cols) == 0 ) exit
@@ -241,10 +241,10 @@ program test
 
    call prepare_matrix_random(na, myid, sc_desc, a_skewsymmetric, z_skewsymmetric(:,1:na_cols), as_skewsymmetric, &
                               is_hermitian=1, is_skewsymmetric=1)
-   
-   !call MPI_BARRIER(MPI_COMM_WORLD, mpierr)  
+
+   !call MPI_BARRIER(MPI_COMM_WORLD, mpierr)
    as_skewsymmetric(:,:) = a_skewsymmetric(:,:)
-   
+
 
    ! prepare the complex matrix for the "brute force" case
    allocate(a_complex (na_rows,na_cols))
@@ -255,7 +255,7 @@ program test
    a_complex(1:na_rows,1:na_cols) = 0.0
    z_complex(1:na_rows,1:na_cols) = 0.0
    as_complex(1:na_rows,1:na_cols) = 0.0
-   
+
 
       do j=1, na_cols
         do i=1,na_rows
@@ -267,7 +267,7 @@ program test
 #endif
         enddo
       enddo
-   
+
 
 
    z_complex(1:na_rows,1:na_cols)  = a_complex(1:na_rows,1:na_cols)
@@ -317,10 +317,10 @@ program test
    if (myid .eq. 0) then
      print *, ""
      call e_complex%print_times("eigenvectors: brute force as complex matrix")
-   endif 
+   endif
 #ifdef WITH_MPI
      call MPI_BARRIER(MPI_COMM_WORLD, mpierr)
-#endif     
+#endif
 !      as_complex(:,:) = z_complex(:,:)
 #ifdef TEST_SINGLE
      status = check_correctness_evp_numeric_residuals_complex_single(na, nev, as_complex, z_complex, ev_complex, sc_desc, &
@@ -367,7 +367,7 @@ program test
    assert_elpa_ok(error_elpa)
 #endif
    assert_elpa_ok(e_skewsymmetric%setup())
-   
+
    call e_skewsymmetric%set("solver", elpa_solver_2stage, error_elpa)
    assert_elpa_ok(error_elpa)
 
@@ -380,7 +380,7 @@ program test
      print *, ""
      call e_skewsymmetric%print_times("eigenvectors: skewsymmetric")
    endif
-   
+
    ! check eigenvalues
    do i=1, na
      if (myid == 0) then
@@ -398,7 +398,7 @@ program test
 
 
 !    call check_status(status, myid)
-   
+
    z_complex(:,:) = 0
    do j=1, na_cols
      do i=1,na_rows
@@ -421,7 +421,7 @@ program test
    status = check_correctness_evp_numeric_residuals_ss_real_double(na, nev, as_skewsymmetric, z_complex, ev_skewsymmetric, &
                               sc_desc, nblk, myid, np_rows,np_cols, my_prow, my_pcol)
 #endif
-   
+
 #ifdef WITH_MPI
     call MPI_BARRIER(MPI_COMM_WORLD, mpierr)
 #endif
@@ -429,7 +429,7 @@ program test
    call elpa_deallocate(e_skewsymmetric,error_elpa)
 
 
-   !to do 
+   !to do
    ! - check whether brute-force check_correctness_evp_numeric_residuals worsk (complex ev)
    ! - invent a test for skewsymmetric residuals
 

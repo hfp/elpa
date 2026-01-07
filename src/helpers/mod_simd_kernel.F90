@@ -57,7 +57,7 @@ module simd_kernel
   contains
 
   function map_real_kernel_to_simd_instruction(kernel) result(simd_set_index)
-    
+
     use, intrinsic :: iso_c_binding
     implicit none
 
@@ -112,7 +112,7 @@ module simd_kernel
   end
 
   function map_simd_instruction_to_real_kernel(simd_set_index) result(kernel)
-    
+
     use, intrinsic :: iso_c_binding
     implicit none
 
@@ -142,7 +142,7 @@ module simd_kernel
   end
 
   function map_complex_kernel_to_simd_instruction(kernel) result(simd_set_index)
-    
+
     use, intrinsic :: iso_c_binding
     implicit none
     integer(kind=c_int), intent(in)  :: kernel
@@ -172,14 +172,14 @@ module simd_kernel
     complexKernels_to_simdTable(ELPA_2STAGE_COMPLEX_NVIDIA_GPU)          = NVIDIA_INSTR
     complexKernels_to_simdTable(ELPA_2STAGE_COMPLEX_AMD_GPU)             = AMD_GPU_INSTR
     complexKernels_to_simdTable(ELPA_2STAGE_COMPLEX_INTEL_GPU)           = INTEL_GPU_INSTR
-    
+
 
     simd_set_index = complexKernels_to_simdTable(kernel)
 
   end
 
   function map_simd_instruction_to_complex_kernel(simd_set_index) result(kernel)
-    
+
     use, intrinsic :: iso_c_binding
     implicit none
     integer(kind=c_int)              :: kernel

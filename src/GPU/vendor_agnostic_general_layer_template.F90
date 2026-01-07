@@ -62,9 +62,9 @@
   ! the following variables, as long as they are not stored in the ELPA object
   ! prohibit to run ELPA at the same time on different GPUs of different vendors!
   integer(kind=c_int)            :: use_gpu_vendor
-  integer(kind=c_int)            :: gpuHostRegisterDefault    
-  integer(kind=c_int)            :: gpuMemcpyHostToDevice    
-  integer(kind=c_int)            :: gpuMemcpyDeviceToHost   
+  integer(kind=c_int)            :: gpuHostRegisterDefault
+  integer(kind=c_int)            :: gpuMemcpyHostToDevice
+  integer(kind=c_int)            :: gpuMemcpyDeviceToHost
   integer(kind=c_int)            :: gpuMemcpyDeviceToDevice
   integer(kind=c_int)            :: gpuHostRegisterMapped
   integer(kind=c_int)            :: gpuHostRegisterPortable
@@ -760,7 +760,7 @@ end function
 #endif
 
     end function
-    
+
     function gpu_memcpy_intptr(dst, src, size, dir) result(success)
       use, intrinsic :: iso_c_binding
       use cuda_functions
@@ -805,9 +805,9 @@ end function
       endif
 #endif
       return
-    
+
     end function
-    
+
     function gpu_memcpy_cptr(dst, src, size, dir) result(success)
       use, intrinsic :: iso_c_binding
       use cuda_functions
@@ -851,9 +851,9 @@ end function
       endif
 #endif
       return
-    
+
     end function
-    
+
     function gpu_memcpy_mixed_to_device(dst, src, size, dir) result(success)
       use, intrinsic :: iso_c_binding
       use cuda_functions
@@ -897,9 +897,9 @@ end function
         success = sycl_memcpy_mixed_to_device(dst, src, size, dir)
       endif
 #endif
-    
+
     end function
-    
+
     function gpu_memcpy_mixed_to_host(dst, src, size, dir) result(success)
       use, intrinsic :: iso_c_binding
       use cuda_functions
@@ -943,7 +943,7 @@ end function
         success = sycl_memcpy_mixed_to_host(dst, src, size, dir)
       endif
 #endif
-    
+
     end function
 
     function gpu_memcpy_async_intptr(dst, src, size, dir, stream) result(success)
@@ -972,7 +972,7 @@ end function
       if (use_gpu_vendor == nvidia_gpu) then
         success = cuda_memcpy_async_intptr(dst, src, size, dir, stream)
       endif
-  
+
 #ifdef WITH_AMD_GPU_VERSION
       if (use_gpu_vendor == amd_gpu) then
         success = hip_memcpy_async_intptr(dst, src, size, dir, stream)
@@ -993,9 +993,9 @@ end function
       endif
 #endif
       return
-    
+
     end function
-    
+
     function gpu_memcpy_async_cptr(dst, src, size, dir, stream) result(success)
       use, intrinsic :: iso_c_binding
       use cuda_functions
@@ -1042,9 +1042,9 @@ end function
       endif
 #endif
       return
-    
+
     end function
-    
+
     function gpu_memcpy_async_mixed_to_device(dst, src, size, dir, stream) result(success)
       use, intrinsic :: iso_c_binding
       use cuda_functions
@@ -1091,9 +1091,9 @@ end function
         success = sycl_memcpy_async_mixed_to_device(dst, src, size, dir, stream)
       endif
 #endif
-    
+
     end function
-    
+
     function gpu_memcpy_async_mixed_to_host(dst, src, size, dir, stream) result(success)
       use, intrinsic :: iso_c_binding
       use cuda_functions
@@ -1140,7 +1140,7 @@ end function
         success = sycl_memcpy_async_mixed_to_host(dst, src, size, dir, stream)
       endif
 #endif
-    
+
     end function
 
     function gpu_memset(a, val, size) result(success)

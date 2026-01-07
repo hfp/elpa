@@ -66,14 +66,14 @@ __global__ void cuda_copy_real_part_to_q_double_complex_kernel(cuDoubleComplex *
 
     //if (row < l_rows && col < l_cols_nev) {
     //    int index = row * l_cols_nev + col;
-    //    q[index].x = q_real[index]; 
-    //    q[index].y = 0.0; 
+    //    q[index].x = q_real[index];
+    //    q[index].y = 0.0;
     //}
 
     if (row < l_rows && col < l_cols_nev) {
         int index = row + matrixRows * col;
-        q[index].x = q_real[index]; 
-        q[index].y = 0.0; 
+        q[index].x = q_real[index];
+        q[index].y = 0.0;
     }
 }
 
@@ -84,7 +84,7 @@ extern "C" void cuda_copy_real_part_to_q_double_complex_FromC(double _Complex *q
 
   cuDoubleComplex* q_casted = (cuDoubleComplex*) q_dev;
 
-  dim3 threadsPerBlock(32, 32); 
+  dim3 threadsPerBlock(32, 32);
   dim3 blocks((l_rows + threadsPerBlock.x - 1) / threadsPerBlock.x, (l_cols_nev + threadsPerBlock.y - 1) / threadsPerBlock.y);
 
 #ifdef WITH_GPU_STREAMS
@@ -105,8 +105,8 @@ __global__ void cuda_copy_real_part_to_q_float_complex_kernel(cuFloatComplex *q,
 
     if (row < l_rows && col < l_cols_nev) {
         int index = row + matrixRows * col;
-        q[index].x = q_real[index]; 
-        q[index].y = 0.0f; 
+        q[index].x = q_real[index];
+        q[index].y = 0.0f;
     }
 }
 
@@ -117,7 +117,7 @@ extern "C" void cuda_copy_real_part_to_q_float_complex_FromC(float _Complex *q_d
 
   cuFloatComplex* q_casted = (cuFloatComplex*) q_dev;
 
-  dim3 threadsPerBlock(32, 32); 
+  dim3 threadsPerBlock(32, 32);
   dim3 blocks((l_rows + threadsPerBlock.x - 1) / threadsPerBlock.x, (l_cols_nev + threadsPerBlock.y - 1) / threadsPerBlock.y);
 
 #ifdef WITH_GPU_STREAMS
@@ -211,7 +211,7 @@ __global__ void cuda_copy_skewsymmetric_second_half_q_double_minus_kernel(double
 	   => threadIdx.x = 0..1023
     blocks = (matrixCols + 1024 - 1) / 1024
           => blocksIdx.x = 0...blocks - 1
-    
+
     col =  (0...blocks-1)*1024 + 0..1023  => col = 0..1023 ; 1024+0..1023 ; 2048+0..1023
 #endif
 

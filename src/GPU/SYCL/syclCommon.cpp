@@ -57,7 +57,7 @@
 #endif
 
 #ifdef WITH_ONEAPI_ONECCL
-#include <oneapi/ccl.hpp>    
+#include <oneapi/ccl.hpp>
 #endif
 
 using namespace sycl_be;
@@ -70,13 +70,13 @@ std::optional<SyclState> SyclState::_staticState;
 
 bool SyclState::initialize(bool onlyL0Gpus, bool isDebugEnabled) {
   if (SyclState::_staticState && onlyL0Gpus != SyclState::_staticState->isManagingOnlyL0Gpus) {
-    std::cout << "SyclStaticState already initialized " 
+    std::cout << "SyclStaticState already initialized "
               << ((SyclState::_staticState->isManagingOnlyL0Gpus) ? "with only L0 GPUs" : "all SYCL devices") << "."
               << " You are trying to re-initialize with " << ((onlyL0Gpus) ? "with only L0 GPUs" : "all SYCL devices")
               << " which doesn't match the previous selection. " << std::endl;
     return false;
   } else if (SyclState::_staticState && isDebugEnabled != SyclState::_staticState->isDebugEnabled) {
-    std::cout << "SyclStaticState already initialized " 
+    std::cout << "SyclStaticState already initialized "
               << ((SyclState::_staticState->isDebugEnabled) ? "with debug enabled" : "with debug disabled") << "."
               << " You are trying to re-initialize with " << ((isDebugEnabled) ? "with debug enabled" : "with debug disabled")
               << " which doesn't match the previous selection. " << std::endl;
@@ -109,12 +109,12 @@ SyclState::SyclState(bool onlyL0Gpus, bool isDebugEnabled)
           devices = p.get_devices(sycl::info::device_type::gpu);
           break;
         }
-    }    
+    }
   } else {
     for (auto &p : platforms) {
       auto platformDevices = p.get_devices(sycl::info::device_type::all);
       devices.insert(devices.end(), platformDevices.begin(), platformDevices.end());
-    }    
+    }
   }
 }
 
@@ -182,7 +182,7 @@ DeviceSelection& SyclState::getDeviceHandle(int deviceNum) {
     this->deviceData.insert({deviceNum, DeviceSelection(deviceNum, this->devices[deviceNum])});
     return this->deviceData.at(deviceNum);
   } else {
-    throw std::runtime_error("ELPA GPU SYCL Backend (This is likely a programming error in ELPA.): No GPU device chosen yet. No handle available.");     
+    throw std::runtime_error("ELPA GPU SYCL Backend (This is likely a programming error in ELPA.): No GPU device chosen yet. No handle available.");
   }
 }
 
@@ -219,7 +219,7 @@ void SyclState::teardownCclStack() {
 // DeviceSelection
 //--------------------------------------------------------------------------------------------
 
-DeviceSelection::DeviceSelection(int deviceId, sycl::device device) 
+DeviceSelection::DeviceSelection(int deviceId, sycl::device device)
   : deviceId(deviceId),
     device(device),
 #if defined(SYCL_EXT_ONEAPI_DEFAULT_CONTEXT) && SYCL_EXT_ONEAPI_DEFAULT_CONTEXT == 1
@@ -279,7 +279,7 @@ ccl::communicator* DeviceSelection::initCclCommunicator(int nRanks, int myRank, 
 // QueueData
 //--------------------------------------------------------------------------------------------
 
-QueueData::QueueData(sycl::device device, sycl::context context) 
+QueueData::QueueData(sycl::device device, sycl::context context)
   : queue(context, device, sycl::property_list(sycl::property::queue::in_order())),
 #ifdef WITH_ONEAPI_ONECCL
     cclStream(ccl::create_stream(queue)),
@@ -305,7 +305,7 @@ ccl::stream* QueueData::getCclStreamRef() {
 QueueData* sycl_be::getQueueDataOrDefault(QueueData *handle) {
 #ifdef WITH_GPU_STREAMS
   return (handle == nullptr) ? &(SyclState::defaultState().getDefaultDeviceHandle().defaultQueueHandle) : handle;
-#else 
+#else
   return SyclState::defaultState().getDefaultDeviceHandle().getDefaultQueueRef();
 #endif
 }

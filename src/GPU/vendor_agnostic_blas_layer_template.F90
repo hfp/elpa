@@ -97,82 +97,82 @@
     module procedure gpublas_Dtrmm_intptr
     module procedure gpublas_Dtrmm_cptr
   end interface
-  
+
   interface gpublas_Strmm
     module procedure gpublas_Strmm_intptr
     module procedure gpublas_Strmm_cptr
   end interface
-  
+
   interface gpublas_Ztrmm
     module procedure gpublas_Ztrmm_intptr
     module procedure gpublas_Ztrmm_cptr
   end interface
-  
+
   interface gpublas_Ctrmm
     module procedure gpublas_Ctrmm_intptr
     module procedure gpublas_Ctrmm_cptr
   end interface
-  
+
   interface gpublas_Dtrmv
     module procedure gpublas_Dtrmv_intptr
     module procedure gpublas_Dtrmv_cptr
   end interface
-  
+
   interface gpublas_Strmv
     module procedure gpublas_Strmv_intptr
     module procedure gpublas_Strmv_cptr
   end interface
-  
+
   interface gpublas_Ztrmv
     module procedure gpublas_Ztrmv_intptr
     module procedure gpublas_Ztrmv_cptr
   end interface
-  
+
   interface gpublas_Ctrmv
     module procedure gpublas_Ctrmv_intptr
     module procedure gpublas_Ctrmv_cptr
   end interface
-  
+
   interface gpublas_Dsyrk
     module procedure gpublas_Dsyrk_intptr
     module procedure gpublas_Dsyrk_cptr
   end interface
-  
+
   interface gpublas_Ssyrk
     module procedure gpublas_Ssyrk_intptr
     module procedure gpublas_Ssyrk_cptr
   end interface
-  
+
   interface gpublas_Zherk
     module procedure gpublas_Zherk_intptr
     module procedure gpublas_Zherk_cptr
   end interface
-  
+
   interface gpublas_Cherk
     module procedure gpublas_Cherk_intptr
     module procedure gpublas_Cherk_cptr
   end interface
-  
+
   interface gpublas_Dtrsm
     module procedure gpublas_Dtrsm_intptr
     module procedure gpublas_Dtrsm_cptr
   end interface
-  
+
   interface gpublas_Strsm
     module procedure gpublas_Strsm_intptr
     module procedure gpublas_Strsm_cptr
   end interface
-  
+
   interface gpublas_Ztrsm
     module procedure gpublas_Ztrsm_intptr
     module procedure gpublas_Ztrsm_cptr
   end interface
-  
+
   interface gpublas_Ctrsm
     module procedure gpublas_Ctrsm_intptr
     module procedure gpublas_Ctrsm_cptr
   end interface
-  
+
   interface gpublas_Dscal
     module procedure gpublas_Dscal_intptr
     module procedure gpublas_Dscal_cptr
@@ -559,7 +559,7 @@
           call syclblas_Dgemm_intptr(cta, ctb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc, handle)
         endif
 #endif
-    end subroutine 
+    end subroutine
 
     subroutine gpublas_Dgemm_cptr(cta, ctb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc, handle)
       use, intrinsic :: iso_c_binding
@@ -603,7 +603,7 @@
           call syclblas_Dgemm_cptr(cta, ctb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc, handle)
         endif
 #endif
-    end subroutine 
+    end subroutine
 
     subroutine gpublas_Dgemm_intptr_cptr_intptr(cta, ctb, m, n, k, alpha, a, lda, &
                                             b, ldb, beta, c, ldc, handle)
@@ -653,7 +653,7 @@
                                                              lda, b, ldb, beta, c, ldc, handle)
         endif
 #endif
-    end subroutine 
+    end subroutine
 
     subroutine gpublas_Sgemm_intptr(cta, ctb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc, handle)
       use, intrinsic :: iso_c_binding
@@ -697,7 +697,7 @@
           call syclblas_Sgemm_intptr(cta, ctb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc, handle)
         endif
 #endif
-    end subroutine 
+    end subroutine
 
     subroutine gpublas_Sgemm_cptr(cta, ctb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc, handle)
       use, intrinsic :: iso_c_binding
@@ -741,7 +741,7 @@
           call syclblas_Sgemm_cptr(cta, ctb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc, handle)
         endif
 #endif
-    end subroutine 
+    end subroutine
 
     subroutine gpublas_Sgemm_intptr_cptr_intptr(cta, ctb, m, n, k, alpha, a, lda, &
                                             b, ldb, beta, c, ldc, handle)
@@ -791,7 +791,7 @@
                                                              lda, b, ldb, beta, c, ldc, handle)
         endif
 #endif
-    end subroutine 
+    end subroutine
 
     subroutine gpublas_Zgemm_intptr(cta, ctb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc, handle)
       use, intrinsic :: iso_c_binding
@@ -835,7 +835,7 @@
           call syclblas_Zgemm_intptr(cta, ctb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc, handle)
         endif
 #endif
-    end subroutine 
+    end subroutine
 
     subroutine gpublas_Zgemm_cptr(cta, ctb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc, handle)
       use, intrinsic :: iso_c_binding
@@ -879,7 +879,7 @@
           call syclblas_Zgemm_cptr(cta, ctb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc, handle)
         endif
 #endif
-    end subroutine 
+    end subroutine
 
     subroutine gpublas_Zgemm_intptr_cptr_intptr(cta, ctb, m, n, k, alpha, a, lda, &
                                             b, ldb, beta, c, ldc, handle)
@@ -929,7 +929,7 @@
                                                              lda, b, ldb, beta, c, ldc, handle)
         endif
 #endif
-    end subroutine 
+    end subroutine
 
     subroutine gpublas_Cgemm_intptr(cta, ctb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc, handle)
       use, intrinsic :: iso_c_binding
@@ -973,7 +973,7 @@
           call syclblas_Cgemm_intptr(cta, ctb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc, handle)
         endif
 #endif
-    end subroutine 
+    end subroutine
 
     subroutine gpublas_Cgemm_cptr(cta, ctb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc, handle)
       use, intrinsic :: iso_c_binding
@@ -1017,7 +1017,7 @@
           call syclblas_Cgemm_cptr(cta, ctb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc, handle)
         endif
 #endif
-    end subroutine 
+    end subroutine
 
     subroutine gpublas_Cgemm_intptr_cptr_intptr(cta, ctb, m, n, k, alpha, a, lda, &
                                             b, ldb, beta, c, ldc, handle)
@@ -1067,7 +1067,7 @@
                                                              lda, b, ldb, beta, c, ldc, handle)
         endif
 #endif
-    end subroutine 
+    end subroutine
 
     subroutine gpublas_Dcopy_intptr(n, x, incx, y, incy, handle)
 

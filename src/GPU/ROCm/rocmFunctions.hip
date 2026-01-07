@@ -240,7 +240,7 @@
 #define SOLVER_status_success rocblas_status_success
 #define SOLVER_FILL_MODE hip_fill_mode
 #define SOLVER_handle rocblas_handle
-#define SOLVER_double_complex rocblas_double_complex 
+#define SOLVER_double_complex rocblas_double_complex
 #define SOLVER_float_complex rocblas_float_complex
 #define BLAS rocblas
 #define BLAS_status rocblas_status

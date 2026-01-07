@@ -217,11 +217,11 @@ subroutine solve_tridi_cpu_&
       if (useGPU) then
 
         ! carefull: only from 1:np_cols and not 0:np_cols as on CPU
-        num = (np_cols) * size_of_int                                    
-        successGPU = gpu_malloc(limits_dev, num)                      
+        num = (np_cols) * size_of_int
+        successGPU = gpu_malloc(limits_dev, num)
         check_alloc_gpu("solve_tridi limits_dev: ", successGPU)
 
-        num = (np_cols) * size_of_int  
+        num = (np_cols) * size_of_int
 #ifdef WITH_GPU_STREAMS
         my_stream = obj%gpu_setup%my_stream
         successGPU = gpu_memcpy_async(limits_dev, int(loc(limits(1)),kind=c_intptr_t), &
@@ -231,16 +231,16 @@ subroutine solve_tridi_cpu_&
         successGPU = gpu_memcpy(limits_dev, int(loc(limits(1)),kind=c_intptr_t), &
                       num, gpuMemcpyHostToDevice)
         check_memcpy_gpu("solve_tridi: limits_dev", successGPU)
-#endif  
+#endif
 
 
         my_stream = obj%gpu_setup%my_stream
         call gpu_update_d (PRECISION_CHAR, d_dev, e_dev, limits_dev, np_cols, na, debug, my_stream)
-        
+
         successGPU = gpu_free(limits_dev)
         check_dealloc_gpu("solve_tridi: limits_dev", successGPU)
 
-      else 
+      else
        do i=1,np_cols-1
           n = limits(i)
           d(n) = d(n)-abs(e(n))
@@ -372,7 +372,7 @@ subroutine solve_tridi_cpu_&
             l_col, p_col, l_col_bc, p_col_bc, limits, &
             np_cols, na, q_dev, d, e, &
             mpi_comm_all, mpi_comm_rows, mpi_comm_cols,&
-            useGPU, wantDebug, success, max_threads)      
+            useGPU, wantDebug, success, max_threads)
       else
         call merge_recursive_cpu_&
             &PRECISION &
@@ -423,4 +423,4 @@ subroutine solve_tridi_cpu_&
       call obj%timer%stop("solve_tridi" // PRECISION_SUFFIX // gpuString)
       return
 
-    end 
+    end

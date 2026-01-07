@@ -46,7 +46,7 @@
 #include "../general/error_checking.inc"
 
 
-! aux_mat_full: 
+! aux_mat_full:
 
 ! if (a_transposed) then
 !   allocate(aux_a_full(nblk_mult, nblk_mult), stat=istat, errmsg=errorMessage)
@@ -73,7 +73,7 @@ subroutine set_zeros_in_unused_block_part_&
   integer(kind=ik)        :: i_block_loc_fine, j_block_loc_fine
   integer(kind=ik), value :: shift_i, shift_j
 
-  if (nblk_rows_cut<nblk .and. nblk_cols_cut>0) then ! for negative nblk_rows_cut we nullify the whole block (it's locally absent)                      
+  if (nblk_rows_cut<nblk .and. nblk_cols_cut>0) then ! for negative nblk_rows_cut we nullify the whole block (it's locally absent)
     aux_mat_full(1+max(nblk_rows_cut,0) + i_block_loc_fine*nblk + shift_i : &
                  nblk                   + i_block_loc_fine*nblk + shift_i,  &
                  1                      + j_block_loc_fine*nblk + shift_j : &

@@ -49,7 +49,7 @@
 //________________________________________________________________
 
 template <typename T>
-__global__ void gpu_copy_tmp2_c_kernel(T *tmp2_dev, T *c_dev, 
+__global__ void gpu_copy_tmp2_c_kernel(T *tmp2_dev, T *c_dev,
                                        const int nr_done, const int nstor, const int lcs, const int lce, const int ldc, const int ldcCols){
 
   int idex = threadIdx.x + 1; // range 1..nstor
@@ -61,7 +61,7 @@ __global__ void gpu_copy_tmp2_c_kernel(T *tmp2_dev, T *c_dev,
 }
 
 template <typename T>
-void gpu_copy_tmp2_c (T *tmp2_dev, T *c_dev, 
+void gpu_copy_tmp2_c (T *tmp2_dev, T *c_dev,
                       int nr_done, int nstor, int lcs, int lce, int ldc, int ldcCols, int debug, gpuStream_t my_stream) {
 
   dim3 blocks = dim3(lce-lcs+1,1,1);
@@ -127,7 +127,7 @@ void gpu_copy_a_aux_bc_loop(T *a_dev, T *aux_bc_dev, int *lrs_save_dev, int *lre
                             int noff, int nblk, int lda, int n_size, int debug, gpuStream_t my_stream) {
 		
   dim3 blocks = dim3(n_size,1,1);
-  dim3 threadsPerBlock = dim3(MAX_THREADS_PER_BLOCK,1,1); 
+  dim3 threadsPerBlock = dim3(MAX_THREADS_PER_BLOCK,1,1);
 
 #ifdef WITH_GPU_STREAMS
   gpu_copy_a_aux_bc_loop_kernel<<<blocks,threadsPerBlock,0,my_stream>>>(a_dev, aux_bc_dev, lrs_save_dev, lre_save_dev, n_aux_bc_save_dev,
@@ -179,7 +179,7 @@ __global__ void gpu_copy_aux_bc_aux_mat_loop_kernel(const T* aux_bc_dev, T* aux_
 
   int n = blockIdx.x;
   int nstor = nstor0 + n;
-  
+
   int lrs = lrs_save_dev[n];
   int lre = lre_save_dev[n];
   int n_aux_bc = n_aux_bc_save_dev[n];
@@ -191,7 +191,7 @@ __global__ void gpu_copy_aux_bc_aux_mat_loop_kernel(const T* aux_bc_dev, T* aux_
 
 template <typename T>
 void gpu_copy_aux_bc_aux_mat_loop(T *aux_bc_dev, T *aux_mat_dev, int* lrs_save_dev, int *lre_save_dev, int *n_aux_bc_save_dev,
-                                  int nstor0, int l_rows, 
+                                  int nstor0, int l_rows,
                                   int n_size, int debug, gpuStream_t my_stream) {
 
   dim3 blocks = dim3(n_size,1,1);

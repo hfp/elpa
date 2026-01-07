@@ -131,7 +131,7 @@
 !#endif /* REDISTRIBUTE_MATRIX */
 
 #else /* DEVICE_POINTER */
-   
+
 !#ifdef REDISTRIBUTE_MATRIX
 
 #ifdef USE_ASSUMED_SIZE
@@ -827,7 +827,7 @@
       if (kernel .eq. ELPA_2STAGE_COMPLEX_NVIDIA_SM80_GPU) then
         kernel = ELPA_2STAGE_REAL_NVIDIA_GPU
         if (my_pe .eq. 0) then
-          write(error_unit,*) "Currently no implementation of complex Nvidia SM80 kernel." 
+          write(error_unit,*) "Currently no implementation of complex Nvidia SM80 kernel."
           write(error_unit,*) "Using the standard Nvidia GPU kernel instead."
         endif
       endif
@@ -1142,7 +1142,7 @@
 #endif
       call obj%timer%stop("full_to_band")
       call obj%autotune_timer%stop("full_to_band")
-  
+
       if (success) then
         success_int = 0
       else
@@ -1180,7 +1180,7 @@
        &PRECISION&
        (obj, na, nbw, nblk, a, matrixRows, ev, e, matrixCols, hh_trans, mpi_comm_rows, mpi_comm_cols, mpi_comm_all, &
        do_useGPU_tridiag_band, wantDebug, nrThreads, isSkewsymmetric, success)
-  
+
        if (success) then
          success_int = 0
        else
@@ -1265,25 +1265,25 @@
 
          num = (na) * size_of_real_datatype
          successGPU = gpu_memcpy(ev_dev, int(loc(ev(1)),kind=c_intptr_t), &
-                 num, gpuMemcpyHostToDevice) 
+                 num, gpuMemcpyHostToDevice)
          check_memcpy_gpu("elpa1_template ev_dev -> ev", successGPU)
 
          num = (na) * size_of_real_datatype
          successGPU = gpu_memcpy(e_dev, int(loc(e(1)),kind=c_intptr_t),  &
-                 num, gpuMemcpyHostToDevice) 
+                 num, gpuMemcpyHostToDevice)
          check_memcpy_gpu("elpa1_template ev_dev -> ev", successGPU)
 
 #if REALCASE == 1
          num = (matrixRows*matrixCols) * size_of_datatype
          successGPU = gpu_memcpy(q_dev_actual, int(loc(q_actual(1,1)),kind=c_intptr_t), &
-                 num, gpuMemcpyHostToDevice) 
+                 num, gpuMemcpyHostToDevice)
          check_memcpy_gpu("elpa1_template ev_dev -> ev", successGPU)
 #endif
 
 #if COMPLEXCASE == 1
          num = (matrixRows*matrixCols) * size_of_real_datatype
          successGPU = gpu_memcpy(q_dev_real, int(loc(q_real(1,1)),kind=c_intptr_t),  &
-                 num, gpuMemcpyHostToDevice) 
+                 num, gpuMemcpyHostToDevice)
          check_memcpy_gpu("elpa1_template ev_dev -> ev", successGPU)
 #endif
 
@@ -1301,24 +1301,24 @@
 
          num = (na) * size_of_real_datatype
          successGPU = gpu_memcpy(int(loc(ev(1)),kind=c_intptr_t), ev_dev, &
-                 num, gpuMemcpyDeviceToHost) 
+                 num, gpuMemcpyDeviceToHost)
          check_memcpy_gpu("elpa1_template ev_dev -> ev", successGPU)
 
          num = (na) * size_of_real_datatype
          successGPU = gpu_memcpy(int(loc(e(1)),kind=c_intptr_t), e_dev, &
-                 num, gpuMemcpyDeviceToHost) 
+                 num, gpuMemcpyDeviceToHost)
          check_memcpy_gpu("elpa1_template ev_dev -> ev", successGPU)
 #if REALCASE == 1
          num = (matrixRows*matrixCols) * size_of_datatype
          successGPU = gpu_memcpy(int(loc(q_actual(1,1)),kind=c_intptr_t), q_dev_actual, &
-                 num, gpuMemcpyDeviceToHost) 
+                 num, gpuMemcpyDeviceToHost)
          check_memcpy_gpu("elpa1_template ev_dev -> ev", successGPU)
 #endif
 
 #if COMPLEXCASE == 1
          num = (matrixRows*matrixCols) * size_of_real_datatype
          successGPU = gpu_memcpy(int(loc(q_real(1,1)),kind=c_intptr_t), q_dev_real, &
-                 num, gpuMemcpyDeviceToHost) 
+                 num, gpuMemcpyDeviceToHost)
          check_memcpy_gpu("elpa1_template ev_dev -> ev", successGPU)
 #endif
 
@@ -1354,7 +1354,7 @@
 #endif
        call obj%timer%stop("solve")
        call obj%autotune_timer%stop("solve")
-  
+
        if (success) then
          success_int = 0
        else

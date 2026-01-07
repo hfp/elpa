@@ -150,7 +150,7 @@
 !>     print *,"Could not setup ELPA object"
 !>   endif
 !>
-!>   ! settings for GPU: 
+!>   ! settings for GPU:
 !>   ! supported are the keywords "nvidia-gpu", "amd-gpu" and "intel-gpu"
 !>
 !>   call elpaInstance%set("nvidia-gpu", 1, success) ! 1=on, 2=off
@@ -159,7 +159,7 @@
 !>   ! should automatically assign each MPI task to a certain GPU
 !>   ! (this is default) or whether you want to set this assignment
 !>   ! for _each_ task yourself
-!>   ! set assignment your self (only using one task here and assigning it 
+!>   ! set assignment your self (only using one task here and assigning it
 !>   ! to GPU id 1)
 !>   if (my_rank .eq. 0) call elpaInstance%set("use_gpu_id", 1, success)
 !>
@@ -210,7 +210,7 @@
 !>     exit(1);
 !>   }
 !>
-!>   
+!>
 !>   handle = elpa_allocate(&error);
 !>   if (error != ELPA_OK) {
 !>   /* do sth. */
@@ -242,7 +242,7 @@
 !>      should automatically assign each MPI task to a certain GPU
 !>      (this is default) or whether you want to set this assignment
 !>      for _each_ task yourself
-!>      set assignment your self (only using one task here and assigning it 
+!>      set assignment your self (only using one task here and assigning it
 !>      to GPU id 1) */
 !>   if (my_rank == 0) elpa_set(handle, "use_gpu_id", 1, &error);
 !>
@@ -328,7 +328,7 @@
 !>
 !>   !set and print the finished autotuning
 !>   call elpa%autotune_set_best(tune_state, success)
-!>   
+!>
 !>   ! store _TUNED_ ELPA object, if needed
 !>   call elpa%store("autotuned_object.txt", success)
 !>
@@ -409,15 +409,15 @@ module elpa
       integer, intent(out)           :: error
 #endif
       integer                        :: error2
-        
+
       call obj%destroy(error2)
 #ifdef USE_FORTRAN2008
       if (present(error)) then
 #endif
         error = error2
         if (error .ne. ELPA_OK) then
-          write(*,*) "Cannot destroy the ELPA object!"  
-          write(*,*) "This is a critical error!"  
+          write(*,*) "Cannot destroy the ELPA object!"
+          write(*,*) "This is a critical error!"
           write(*,*) "This might lead to a memory leak in your application!"
           error = ELPA_ERROR_CRITICAL
           return
@@ -435,8 +435,8 @@ module elpa
 #endif
       deallocate(obj, stat=error2)
       if (error2 .ne. 0) then
-        write(*,*) "Cannot deallocate the ELPA object!"  
-        write(*,*) "This is a critical error!"  
+        write(*,*) "Cannot deallocate the ELPA object!"
+        write(*,*) "This is a critical error!"
         write(*,*) "This might lead to a memory leak in your application!"
 #ifdef USE_FORTRAN2008
         if (present(error)) then
@@ -489,8 +489,8 @@ module elpa
 #endif
       deallocate(obj, stat=error2)
       if (error2 .ne. 0) then
-        write(*,*) "Cannot deallocate the ELPA autotuning object!"  
-        write(*,*) "This is a critical error!"  
+        write(*,*) "Cannot deallocate the ELPA autotuning object!"
+        write(*,*) "This is a critical error!"
         write(*,*) "This might lead to a memory leak in your application!"
 #ifdef USE_FORTRAN2008
         if (present(error)) then

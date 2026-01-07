@@ -91,7 +91,7 @@ struct is_pointer<T*> { static const bool value = true; };
 
 template <typename T, typename T_real>
 void sycl_copy_and_set_zeros (T *v_row_dev, T *a_dev, int l_rows, int l_cols, int matrixRows, int istep,
-                                         T *aux1_dev, T *vav_dev, T_real *d_vec_dev, 
+                                         T *aux1_dev, T *vav_dev, T_real *d_vec_dev,
                                          int isOurProcessRow, int isOurProcessCol, int isOurProcessCol_prev, int isSkewsymmetric, int useCCL,
                                          sycl::nd_item<1> item_ct1){
   int tid = item_ct1.get_local_id(0) +
@@ -133,8 +133,8 @@ void sycl_copy_and_set_zeros_FromC(T *v_row_dev, T *a_dev, int *l_rows_in,
                                    int *isOurProcessCol_prev_in,
                                    int *isSkewsymmetric_in, int *useCCL_in,
                                    int *wantDebug_in, QueueData *my_stream) {
-  int l_rows = *l_rows_in;   
-  int l_cols = *l_cols_in;   
+  int l_rows = *l_rows_in;
+  int l_cols = *l_cols_in;
   int matrixRows = *matrixRows_in;
   int istep = *istep_in;
   int isOurProcessRow = *isOurProcessRow_in;
@@ -451,7 +451,7 @@ extern "C" void sycl_dot_product_and_assign_float_complex_FromC(
 //________________________________________________________________
 
 template <typename T, typename T_real, typename T_value_or_pointer>
-void sycl_set_e_vec_scale_set_one_store_v_row_kernel(T_real *e_vec_dev, T *vrl_dev, T *a_dev, T *v_row_dev, T *tau_dev, T_value_or_pointer xf_host_or_dev, 
+void sycl_set_e_vec_scale_set_one_store_v_row_kernel(T_real *e_vec_dev, T *vrl_dev, T *a_dev, T *v_row_dev, T *tau_dev, T_value_or_pointer xf_host_or_dev,
                                                       int l_rows, int l_cols,  int matrixRows, int istep, int isOurProcessRow, int useCCL,
                                                       sycl::nd_item<1> it){
   int tid = it.get_local_id(0) +
@@ -698,19 +698,19 @@ void sycl_store_u_v_in_uv_vu_kernel(T *vu_stored_rows_dev, T *uv_stored_cols_dev
 template <typename T>
 void sycl_store_u_v_in_uv_vu_FromC(
     T *vu_stored_rows_dev, T *uv_stored_cols_dev, T *v_row_dev, T *u_row_dev,
-    T *v_col_dev, T *u_col_dev, T *tau_dev, T *aux_complex_dev, T *vav_host_or_dev, T *tau_host_or_dev, 
-    int *l_rows_in, int *l_cols_in, int *n_stored_vecs_in, int *max_local_rows_in, int *max_local_cols_in, int *istep_in, 
+    T *v_col_dev, T *u_col_dev, T *tau_dev, T *aux_complex_dev, T *vav_host_or_dev, T *tau_host_or_dev,
+    int *l_rows_in, int *l_cols_in, int *n_stored_vecs_in, int *max_local_rows_in, int *max_local_cols_in, int *istep_in,
     int *useCCL_in, int *wantDebug_in, QueueData *my_stream) {
 
   int l_rows = *l_rows_in;
   int l_cols = *l_cols_in;
   int n_stored_vecs  = *n_stored_vecs_in;
-  int max_local_rows = *max_local_rows_in;   
-  int max_local_cols = *max_local_cols_in;   
-  int istep = *istep_in;   
+  int max_local_rows = *max_local_rows_in;
+  int max_local_cols = *max_local_cols_in;
+  int istep = *istep_in;
   int useCCL = *useCCL_in;
   int wantDebug = *wantDebug_in;
-  
+
   sycl::queue queue = getQueueOrDefault(my_stream);
   int maxWgSize = maxWorkgroupSize<1>(queue)[0];
   int threads = maxWgSize/2; // the kernel has many local variables, for which we need memory registers. So we use less threads here to save memory.
@@ -767,7 +767,7 @@ extern "C" void sycl_store_u_v_in_uv_vu_double_FromC(
     int *l_rows_in, int *l_cols_in, int *n_stored_vecs_in,
     int *max_local_rows_in, int *max_local_cols_in, int *istep_in,
     int *useCCL_in, int *wantDebug_in, QueueData *my_stream) {
-  sycl_store_u_v_in_uv_vu_FromC(vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, v_col_dev, u_col_dev, tau_dev, aux_complex_dev, vav_host_or_dev, tau_host_or_dev, 
+  sycl_store_u_v_in_uv_vu_FromC(vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, v_col_dev, u_col_dev, tau_dev, aux_complex_dev, vav_host_or_dev, tau_host_or_dev,
                                 l_rows_in, l_cols_in, n_stored_vecs_in, max_local_rows_in, max_local_cols_in, istep_in, useCCL_in, wantDebug_in, my_stream);
 }
 
@@ -808,10 +808,10 @@ extern "C" void sycl_store_u_v_in_uv_vu_float_complex_FromC(
 //________________________________________________________________
 
 template <typename T, typename T_real>
-void sycl_update_matrix_element_add_kernel(T *vu_stored_rows_dev, T *uv_stored_cols_dev, T *a_dev, T_real *d_vec_dev, 
+void sycl_update_matrix_element_add_kernel(T *vu_stored_rows_dev, T *uv_stored_cols_dev, T *a_dev, T_real *d_vec_dev,
                                                       int l_rows, int l_cols, int matrixRows, int max_local_rows, int max_local_cols, int istep, int n_stored_vecs, int isSkewsymmetric,
                                                       sycl::nd_item<1> it, local_buffer<T>  cache){
-  
+
   const int threadsPerBlock = it.get_local_range(0);
 
   int tid = it.get_local_id(0) + it.get_group(0) * it.get_local_range(0);
@@ -899,14 +899,14 @@ void sycl_update_matrix_element_add_FromC(
     int *l_rows_in, int *l_cols_in, int *matrixRows_in, int *max_local_rows_in,
     int *max_local_cols_in, int *istep_in, int *n_stored_vecs_in,
     int *isSkewsymmetric_in, int *wantDebug_in, QueueData *my_stream) {
-  int l_rows = *l_rows_in;   
+  int l_rows = *l_rows_in;
   int l_cols = *l_cols_in;
   int matrixRows = *matrixRows_in;
   int max_local_rows = *max_local_rows_in;
   int max_local_cols = *max_local_cols_in;
-  int istep = *istep_in;   
-  int n_stored_vecs = *n_stored_vecs_in; 
-  int isSkewsymmetric = *isSkewsymmetric_in;   
+  int istep = *istep_in;
+  int n_stored_vecs = *n_stored_vecs_in;
+  int isSkewsymmetric = *isSkewsymmetric_in;
   int wantDebug = *wantDebug_in;
 
   sycl::queue queue = getQueueOrDefault(my_stream);
@@ -1191,8 +1191,8 @@ extern "C" void sycl_hh_transform_float_complex_FromC(
 //________________________________________________________________
 
 template <typename T>
-void sycl_transpose_reduceadd_vectors_copy_block_kernel(T *aux_transpose_dev, T *vmat_st_dev, 
-                                              int nvc, int nvr, int n_block, int nblks_skip, int nblks_tot, 
+void sycl_transpose_reduceadd_vectors_copy_block_kernel(T *aux_transpose_dev, T *vmat_st_dev,
+                                              int nvc, int nvr, int n_block, int nblks_skip, int nblks_tot,
                                               int lcm_s_t, int nblk, int auxstride, int np_st, int ld_st, int direction, int isSkewsymmetric, int isReduceadd,
                                               sycl::nd_item<1> it){
   int tid_x = it.get_local_id(0) + it.get_group(0) * it.get_local_range(0);

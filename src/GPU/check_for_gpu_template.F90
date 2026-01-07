@@ -253,7 +253,7 @@
           if (use_gpu_id == -99) then
             write(error_unit,*) "Problem you did not set which gpu id this task should use"
           endif
- 
+
           ! check whether gpu id has been set for each proces
 #ifdef WITH_MPI
           call mpi_allreduce(use_gpu_id, min_use_gpu_id, 1, MPI_INTEGER, MPI_MAX, mpi_comm_all, mpierr)
@@ -289,7 +289,7 @@
 #include "./ccl_communicators_template.F90"
 #endif
           endif
-        endif ! .not.(OBJECT%gpu_setup%gpuAlreadySet)) 
+        endif ! .not.(OBJECT%gpu_setup%gpuAlreadySet))
       else ! useGPUid not set (by user)
 
         ! make sure GPU setup is only done once (per ELPA OBJECTect)
@@ -335,7 +335,7 @@
             write(error_unit,*) "SYCL: numberOfDevices =  ", numberOfDevices
             call sycl_printdevices()
           endif
-          !TODO  I'd also like to check that all the chosen devices have the same platform, 
+          !TODO  I'd also like to check that all the chosen devices have the same platform,
           !TODO  as mixing platforms and thus also different devices will probably performace
           !TODO  extremely poorly. This will need another Function in syclCommon, and the
           !TODO  interfaces that that brings with it.
@@ -393,7 +393,7 @@
             OBJECT%mpi_setup%nRanks_comm_parent_per_node = int(np_total_per_nodeMPI, kind=ik)
 
 
-            OBJECT%gpu_setup%useCCL=.false.            
+            OBJECT%gpu_setup%useCCL=.false.
 #if defined(WITH_NVIDIA_NCCL) || defined(WITH_AMD_RCCL) || defined(WITH_ONEAPI_ONECCL)
             if (OBJECT%gpu_setup%gpusPerNode/OBJECT%mpi_setup%nRanks_comm_parent_per_node .eq. 1) then
               call OBJECT%get("use_ccl", useCCLCOMM, error)
@@ -436,13 +436,13 @@
               write(error_unit,*) "Cannot set use_gpu_id. Aborting..."
               stop 1
             endif
- 
+
 #include "./handle_creation_template.F90"
-          
+
             OBJECT%gpu_setup%gpuAlreadySet = .true.
 
 
-            
+
             if (OBJECT%gpu_setup%useCCL) then
 #if defined(WITH_NVIDIA_NCCL) || defined(WITH_AMD_RCCL) || defined(WITH_ONEAPI_ONECCL)
 #include "./ccl_communicators_template.F90"
@@ -734,7 +734,7 @@
       OBJECT%gpu_setup%syclDevMaxGridDimZ = value
       OBJECT%gpu_setup%gpuDevMaxGridDimZ  = value
 
-      
+
       attribute = OBJECT%gpu_setup%gpuDevAttrMultiProcessorCount
       success = sycl_device_get_attributes(value, attribute)
       if (.not.(success)) then
@@ -757,7 +757,7 @@
         write(error_unit,*) "gpuDevMaxGridDimX : ",   OBJECT%gpu_setup%gpuDevMaxGridDimX
         write(error_unit,*) "gpuDevMaxGridDimY : ",   OBJECT%gpu_setup%gpuDevMaxGridDimY
         write(error_unit,*) "gpuDevMaxGridDimZ : ",   OBJECT%gpu_setup%gpuDevMaxGridDimZ
-        write(error_unit,*) "gpuSMcount: ",           OBJECT%gpu_setup%gpuSMcount   
+        write(error_unit,*) "gpuSMcount: ",           OBJECT%gpu_setup%gpuSMcount
       endif
 #endif /* defined(WITH_NVIDIA_GPU_VERSION) || defined(WITH_AMD_GPU_VERSION) || defined(WITH_SYCL_GPU_VERSION) */
 

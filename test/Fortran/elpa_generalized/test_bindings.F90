@@ -91,7 +91,7 @@ program test_bindings
    endif
 
    allocate(a (na_rows,na_cols))
-   allocate(res(na_rows,na_cols))   
+   allocate(res(na_rows,na_cols))
 
    e => elpa_allocate(error)
    assert_elpa_ok(error)

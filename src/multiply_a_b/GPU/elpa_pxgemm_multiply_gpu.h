@@ -169,7 +169,7 @@ __global__ void gpu_copy_and_set_zeros_aux_a_full_kernel(T *a_dev, T *aux_a_full
 
   // Loop through full blocks
   int j_block_loc_fine = 0;
-  for (; j_block_loc_fine < nblk_mult_cols/nblk; j_block_loc_fine++) 
+  for (; j_block_loc_fine < nblk_mult_cols/nblk; j_block_loc_fine++)
     {
     int j_block_loc = (np_bc_fine + j_block_loc_fine*np_cols_fine)/np_cols;
     for (int dj = dj0; dj < nblk ; dj += gridDim.x)
@@ -182,10 +182,10 @@ __global__ void gpu_copy_and_set_zeros_aux_a_full_kernel(T *a_dev, T *aux_a_full
     }
 
   // Handle the last incomplete block if it exists
-  if (nblk_mult_cols%nblk != 0) 
+  if (nblk_mult_cols%nblk != 0)
     {
     int j_block_loc = (np_bc_fine + j_block_loc_fine*np_cols_fine)/np_cols;
-      for (int dj = dj0; dj < nblk_mult_cols%nblk ; dj += gridDim.x) 
+      for (int dj = dj0; dj < nblk_mult_cols%nblk ; dj += gridDim.x)
         {
         for (int i = i0; i < l_rows; i += blockDim.x)
           {
@@ -197,8 +197,8 @@ __global__ void gpu_copy_and_set_zeros_aux_a_full_kernel(T *a_dev, T *aux_a_full
 
 
 template <typename T>
-void gpu_copy_and_set_zeros_aux_a_full(T *mat_dev, T *aux_mat_full_dev, int l_rows, int nblk_mult_cols, 
-                                        int nblk, int np_bc_fine, int np_cols_fine, int np_cols, 
+void gpu_copy_and_set_zeros_aux_a_full(T *mat_dev, T *aux_mat_full_dev, int l_rows, int nblk_mult_cols,
+                                        int nblk, int np_bc_fine, int np_cols_fine, int np_cols,
                                         int debug, gpuStream_t my_stream){
 
   dim3 blocks = dim3(nblk, 1, 1);
@@ -233,7 +233,7 @@ extern "C" void CONCATENATE(ELPA_GPU,  _copy_and_set_zeros_aux_a_full_FromC) (ch
 //________________________________________________________________
 
 template <typename T>
-__global__ void gpu_copy_and_set_zeros_aux_b_full_kernel(T *b_dev, T *aux_b_full_dev, int l_rows, int l_cols, int nblk_mult, 
+__global__ void gpu_copy_and_set_zeros_aux_b_full_kernel(T *b_dev, T *aux_b_full_dev, int l_rows, int l_cols, int nblk_mult,
                                                           int nblk_mult_rows, int nblk, int np_fine, int np_rows_fine, int np_rows) {
 
   // do i_block_loc_fine = 0, nblk_mult_rows/nblk-1
@@ -252,7 +252,7 @@ __global__ void gpu_copy_and_set_zeros_aux_b_full_kernel(T *b_dev, T *aux_b_full
 
   // Loop through full blocks
   int i_block_loc_fine = 0;
-  for (; i_block_loc_fine < nblk_mult_rows/nblk; i_block_loc_fine++) 
+  for (; i_block_loc_fine < nblk_mult_rows/nblk; i_block_loc_fine++)
     {
     int i_block_loc = (np_fine + i_block_loc_fine*np_rows_fine)/np_rows;
     for (int j = j0; j < l_cols; j += gridDim.x)
@@ -279,7 +279,7 @@ __global__ void gpu_copy_and_set_zeros_aux_b_full_kernel(T *b_dev, T *aux_b_full
 }
 
 template <typename T>
-void gpu_copy_and_set_zeros_aux_b_full(T *mat_dev, T *aux_mat_full_dev, int l_rows, int l_cols, int nblk_mult, 
+void gpu_copy_and_set_zeros_aux_b_full(T *mat_dev, T *aux_mat_full_dev, int l_rows, int l_cols, int nblk_mult,
                                         int nblk_mult_rows, int nblk, int np_fine, int np_rows_fine, int np_rows,
                                         int SM_count, int debug, gpuStream_t my_stream){
 
@@ -287,13 +287,13 @@ void gpu_copy_and_set_zeros_aux_b_full(T *mat_dev, T *aux_mat_full_dev, int l_ro
   dim3 threadsPerBlock = dim3(MAX_THREADS_PER_BLOCK, 1, 1);
 
 #ifdef WITH_GPU_STREAMS
-  gpu_copy_and_set_zeros_aux_b_full_kernel<<<blocks,threadsPerBlock,0,my_stream>>>(mat_dev, aux_mat_full_dev, l_rows, l_cols, nblk_mult, 
+  gpu_copy_and_set_zeros_aux_b_full_kernel<<<blocks,threadsPerBlock,0,my_stream>>>(mat_dev, aux_mat_full_dev, l_rows, l_cols, nblk_mult,
                                                                                     nblk_mult_rows, nblk, np_fine, np_rows_fine, np_rows);
 #else
-  gpu_copy_and_set_zeros_aux_b_full_kernel<<<blocks,threadsPerBlock>>>            (mat_dev, aux_mat_full_dev, l_rows, l_cols, nblk_mult, 
+  gpu_copy_and_set_zeros_aux_b_full_kernel<<<blocks,threadsPerBlock>>>            (mat_dev, aux_mat_full_dev, l_rows, l_cols, nblk_mult,
                                                                                     nblk_mult_rows, nblk, np_fine, np_rows_fine, np_rows);
 #endif
-  
+
     if (debug){
       gpuDeviceSynchronize();
       gpuError_t gpuerr = gpuGetLastError();
@@ -304,7 +304,7 @@ void gpu_copy_and_set_zeros_aux_b_full(T *mat_dev, T *aux_mat_full_dev, int l_ro
   }
 
 extern "C" void CONCATENATE(ELPA_GPU,  _copy_and_set_zeros_aux_b_full_FromC) (char dataType, intptr_t mat_dev, intptr_t aux_mat_full_dev,
-                                                       int l_rows, int l_cols, int nblk_mult, 
+                                                       int l_rows, int l_cols, int nblk_mult,
                                                        int nblk_mult_rows, int nblk, int np_fine, int np_rows_fine, int np_rows,
                                                        int SM_count, int debug, gpuStream_t my_stream){
   if      (dataType=='D') gpu_copy_and_set_zeros_aux_b_full<double>((double *) mat_dev, (double *) aux_mat_full_dev, l_rows, l_cols, nblk_mult, nblk_mult_rows, nblk, np_fine, np_rows_fine, np_rows, SM_count, debug, my_stream);
@@ -318,9 +318,9 @@ extern "C" void CONCATENATE(ELPA_GPU,  _copy_and_set_zeros_aux_b_full_FromC) (ch
 
 template <typename T>
 __global__ void gpu_ccl_copy_buf_send_kernel(T *a_dev, T *buf_send_dev, int l_rows, int l_cols, int lld_buf, int nblk,
-                                              int i_block_loc_fine_max, int j_block_loc_fine_max, int np_fine, int np_bc_fine, 
+                                              int i_block_loc_fine_max, int j_block_loc_fine_max, int np_fine, int np_bc_fine,
                                               int np_rows_fine, int np_cols_fine, int np_rows, int np_cols) {
-                                           
+
   // ! The nested loop is symmetric wrt to i,j, so we use the rigid order of indices for convenience of copying
   // do j_block_loc_fine = 0, j_block_loc_fine_max
   //   j_block_loc = (np_t + j_block_loc_fine*np_cols_fine)/np_cols
@@ -343,22 +343,22 @@ __global__ void gpu_ccl_copy_buf_send_kernel(T *a_dev, T *buf_send_dev, int l_ro
   int i_block_loc, j_block_loc, nblk_cut_row, nblk_cut_col;
 
   int j_block_loc_fine = 0;
-  for (; j_block_loc_fine <= j_block_loc_fine_max; j_block_loc_fine++) 
+  for (; j_block_loc_fine <= j_block_loc_fine_max; j_block_loc_fine++)
     {
     j_block_loc = (np_bc_fine + j_block_loc_fine*np_cols_fine)/np_cols;
     nblk_cut_col = min(nblk, l_cols-j_block_loc*nblk);
 
     int i_block_loc_fine = 0;
-    for (; i_block_loc_fine <= i_block_loc_fine_max; i_block_loc_fine++) 
+    for (; i_block_loc_fine <= i_block_loc_fine_max; i_block_loc_fine++)
       {
       i_block_loc = (np_fine + i_block_loc_fine*np_rows_fine)/np_rows;
       nblk_cut_row = min(nblk, l_rows-i_block_loc*nblk);
-      
+
       for (int dj = dj0; dj < nblk_cut_col; dj += gridDim.x)
         {
         for (int di = di0; di < nblk_cut_row; di += blockDim.x)
           {
-          buf_send_dev[(di+i_block_loc_fine*nblk) + (dj+j_block_loc_fine*nblk)*lld_buf] 
+          buf_send_dev[(di+i_block_loc_fine*nblk) + (dj+j_block_loc_fine*nblk)*lld_buf]
                = a_dev[(di+i_block_loc*     nblk) + (dj+j_block_loc     *nblk)*l_rows];
           }
         }
@@ -368,7 +368,7 @@ __global__ void gpu_ccl_copy_buf_send_kernel(T *a_dev, T *buf_send_dev, int l_ro
 
 template <typename T>
 void gpu_ccl_copy_buf_send(T *a_dev, T *buf_send_dev, int l_rows, int l_cols, int lld_buf, int nblk,
-                            int i_block_loc_fine_max, int j_block_loc_fine_max, int np_fine, int np_bc_fine, 
+                            int i_block_loc_fine_max, int j_block_loc_fine_max, int np_fine, int np_bc_fine,
                             int np_rows_fine, int np_cols_fine, int np_rows, int np_cols, int SM_count, int debug, gpuStream_t my_stream){
 
   dim3 blocks = dim3(SM_count, 1, 1);
@@ -376,11 +376,11 @@ void gpu_ccl_copy_buf_send(T *a_dev, T *buf_send_dev, int l_rows, int l_cols, in
 
 #ifdef WITH_GPU_STREAMS
   gpu_ccl_copy_buf_send_kernel<<<blocks,threadsPerBlock,0,my_stream>>>(a_dev, buf_send_dev, l_rows, l_cols, lld_buf, nblk,
-                                                                        i_block_loc_fine_max, j_block_loc_fine_max, np_fine, np_bc_fine, 
+                                                                        i_block_loc_fine_max, j_block_loc_fine_max, np_fine, np_bc_fine,
                                                                         np_rows_fine, np_cols_fine, np_rows, np_cols);
 #else
   gpu_ccl_copy_buf_send_kernel<<<blocks,threadsPerBlock>>>(a_dev, buf_send_dev, l_rows, l_cols, lld_buf, nblk,
-                                                            i_block_loc_fine_max, j_block_loc_fine_max, np_fine, np_bc_fine, 
+                                                            i_block_loc_fine_max, j_block_loc_fine_max, np_fine, np_bc_fine,
                                                             np_rows_fine, np_cols_fine, np_rows, np_cols);
 #endif
 
@@ -393,18 +393,18 @@ void gpu_ccl_copy_buf_send(T *a_dev, T *buf_send_dev, int l_rows, int l_cols, in
   }
 }
 
-extern "C" void CONCATENATE(ELPA_GPU,  _ccl_copy_buf_send_FromC) (char dataType, intptr_t a_dev, intptr_t buf_send_dev, 
+extern "C" void CONCATENATE(ELPA_GPU,  _ccl_copy_buf_send_FromC) (char dataType, intptr_t a_dev, intptr_t buf_send_dev,
                                              int l_rows, int l_cols, int lld_buf, int nblk,
-                                             int i_block_loc_fine, int j_block_loc_fine, int np_fine, int np_bc_fine, 
+                                             int i_block_loc_fine, int j_block_loc_fine, int np_fine, int np_bc_fine,
                                              int np_rows_fine, int np_cols_fine, int np_rows, int np_cols, int SM_count, int debug, gpuStream_t my_stream){
   if      (dataType=='D') gpu_ccl_copy_buf_send<double>((double *) a_dev, (double *) buf_send_dev, l_rows, l_cols, lld_buf, nblk,
-                                                    i_block_loc_fine, j_block_loc_fine, np_fine, np_bc_fine, 
+                                                    i_block_loc_fine, j_block_loc_fine, np_fine, np_bc_fine,
                                                     np_rows_fine, np_cols_fine, np_rows, np_cols, SM_count, debug, my_stream);
   else if (dataType=='S') gpu_ccl_copy_buf_send<float> ((float  *) a_dev, (float  *) buf_send_dev, l_rows, l_cols, lld_buf, nblk,
-                                                    i_block_loc_fine, j_block_loc_fine, np_fine, np_bc_fine, 
+                                                    i_block_loc_fine, j_block_loc_fine, np_fine, np_bc_fine,
                                                     np_rows_fine, np_cols_fine, np_rows, np_cols, SM_count, debug, my_stream);
   else if (dataType=='Z') gpu_ccl_copy_buf_send<gpuDoubleComplex>((gpuDoubleComplex *) a_dev, (gpuDoubleComplex *) buf_send_dev, l_rows, l_cols, lld_buf, nblk,
-                                                    i_block_loc_fine, j_block_loc_fine, np_fine, np_bc_fine, 
+                                                    i_block_loc_fine, j_block_loc_fine, np_fine, np_bc_fine,
                                                     np_rows_fine, np_cols_fine, np_rows, np_cols, SM_count, debug, my_stream);
   else if (dataType=='C') gpu_ccl_copy_buf_send<gpuFloatComplex> ((gpuFloatComplex  *) a_dev, (gpuFloatComplex  *) buf_send_dev, l_rows, l_cols, lld_buf, nblk,
                                                     i_block_loc_fine, j_block_loc_fine, np_fine, np_bc_fine,
@@ -416,7 +416,7 @@ extern "C" void CONCATENATE(ELPA_GPU,  _ccl_copy_buf_send_FromC) (char dataType,
 
 template <typename T>
 __global__ void gpu_ccl_copy_buf_recv_kernel(T *at_col_dev, T *buf_recv_dev, int l_rows, int l_cols, int lld_buf, int nblk,
-                                              int i_block_loc_fine_max, int j_block_loc_fine_max, int np_fine, int np_bc_fine, 
+                                              int i_block_loc_fine_max, int j_block_loc_fine_max, int np_fine, int np_bc_fine,
                                               int np_rows_fine, int np_cols_fine, int np_rows, int np_cols) {
 
   // do i_block_loc_fine = 0, i_block_loc_fine_max
@@ -426,7 +426,7 @@ __global__ void gpu_ccl_copy_buf_recv_kernel(T *at_col_dev, T *buf_recv_dev, int
   //   do j_block_loc_fine = 0, j_block_loc_fine_max
   //     j_block_loc = (np_t + j_block_loc_fine*np_cols_fine)/np_cols
   //     nblk_cut_col = min(nblk, l_cols-j_block_loc*nblk)
-      
+
   //     at(1+ i_block_loc     *nblk: nblk_cut_row + i_block_loc     *nblk,   &
   //        1+ j_block_loc     *nblk: nblk_cut_col + j_block_loc     *nblk) = &
   //     transpose(buf_recv(1+ j_block_loc_fine*nblk: nblk_cut_col + j_block_loc_fine*nblk,   &
@@ -440,17 +440,17 @@ __global__ void gpu_ccl_copy_buf_recv_kernel(T *at_col_dev, T *buf_recv_dev, int
   int i_block_loc, j_block_loc, nblk_cut_row, nblk_cut_col;
 
   int i_block_loc_fine = 0;
-  for (; i_block_loc_fine <= i_block_loc_fine_max; i_block_loc_fine++) 
+  for (; i_block_loc_fine <= i_block_loc_fine_max; i_block_loc_fine++)
     {
     i_block_loc = (np_fine + i_block_loc_fine*np_rows_fine)/np_rows;
     nblk_cut_row = min(nblk, l_rows-i_block_loc*nblk);
 
     int j_block_loc_fine = 0;
-    for (; j_block_loc_fine <= j_block_loc_fine_max; j_block_loc_fine++) 
+    for (; j_block_loc_fine <= j_block_loc_fine_max; j_block_loc_fine++)
       {
       j_block_loc = (np_bc_fine + j_block_loc_fine*np_cols_fine)/np_cols;
       nblk_cut_col = min(nblk, l_cols-j_block_loc*nblk);
-      
+
       for (int dj = dj0; dj < nblk_cut_col; dj += gridDim.x)
         {
         for (int di = di0; di < nblk_cut_row; di += blockDim.x)
@@ -466,7 +466,7 @@ __global__ void gpu_ccl_copy_buf_recv_kernel(T *at_col_dev, T *buf_recv_dev, int
 
 template <typename T>
 void gpu_ccl_copy_buf_recv(T *at_col_dev, T *buf_recv_dev, int l_rows, int l_cols, int lld_buf, int nblk,
-                            int i_block_loc_fine_max, int j_block_loc_fine_max, int np_fine, int np_bc_fine, 
+                            int i_block_loc_fine_max, int j_block_loc_fine_max, int np_fine, int np_bc_fine,
                             int np_rows_fine, int np_cols_fine, int np_rows, int np_cols, int SM_count, int debug, gpuStream_t my_stream){
 
   dim3 blocks = dim3(SM_count, 1, 1);
@@ -474,14 +474,14 @@ void gpu_ccl_copy_buf_recv(T *at_col_dev, T *buf_recv_dev, int l_rows, int l_col
 
 #ifdef WITH_GPU_STREAMS
   gpu_ccl_copy_buf_recv_kernel<<<blocks,threadsPerBlock,0,my_stream>>>(at_col_dev, buf_recv_dev, l_rows, l_cols, lld_buf, nblk,
-                                                                       i_block_loc_fine_max, j_block_loc_fine_max, np_fine, np_bc_fine, 
+                                                                       i_block_loc_fine_max, j_block_loc_fine_max, np_fine, np_bc_fine,
                                                                        np_rows_fine, np_cols_fine, np_rows, np_cols);
 #else
   gpu_ccl_copy_buf_recv_kernel<<<blocks,threadsPerBlock>>>(at_col_dev, buf_recv_dev, l_rows, l_cols, lld_buf, nblk,
-                                                           i_block_loc_fine_max, j_block_loc_fine_max, np_fine, np_bc_fine, 
+                                                           i_block_loc_fine_max, j_block_loc_fine_max, np_fine, np_bc_fine,
                                                            np_rows_fine, np_cols_fine, np_rows, np_cols);
 #endif
-  
+
     if (debug) {
       gpuDeviceSynchronize();
       gpuError_t gpuerr = gpuGetLastError();
@@ -491,18 +491,18 @@ void gpu_ccl_copy_buf_recv(T *at_col_dev, T *buf_recv_dev, int l_rows, int l_col
     }
   }
 
-extern "C" void CONCATENATE(ELPA_GPU,  _ccl_copy_buf_recv_FromC) (char dataType, intptr_t at_col_dev, intptr_t buf_recv_dev, 
+extern "C" void CONCATENATE(ELPA_GPU,  _ccl_copy_buf_recv_FromC) (char dataType, intptr_t at_col_dev, intptr_t buf_recv_dev,
                                              int l_rows, int l_cols, int lld_buf, int nblk,
-                                             int i_block_loc_fine_max, int j_block_loc_fine_max, int np_fine, int np_bc_fine, 
+                                             int i_block_loc_fine_max, int j_block_loc_fine_max, int np_fine, int np_bc_fine,
                                              int np_rows_fine, int np_cols_fine, int np_rows, int np_cols, int SM_count, int debug, gpuStream_t my_stream){
   if      (dataType=='D') gpu_ccl_copy_buf_recv<double>((double *) at_col_dev, (double *) buf_recv_dev, l_rows, l_cols, lld_buf, nblk,
-                                                    i_block_loc_fine_max, j_block_loc_fine_max, np_fine, np_bc_fine, 
+                                                    i_block_loc_fine_max, j_block_loc_fine_max, np_fine, np_bc_fine,
                                                     np_rows_fine, np_cols_fine, np_rows, np_cols, SM_count, debug, my_stream);
   else if (dataType=='S') gpu_ccl_copy_buf_recv<float> ((float  *) at_col_dev, (float  *) buf_recv_dev, l_rows, l_cols, lld_buf, nblk,
-                                                    i_block_loc_fine_max, j_block_loc_fine_max, np_fine, np_bc_fine, 
+                                                    i_block_loc_fine_max, j_block_loc_fine_max, np_fine, np_bc_fine,
                                                     np_rows_fine, np_cols_fine, np_rows, np_cols, SM_count, debug, my_stream);
   else if (dataType=='Z') gpu_ccl_copy_buf_recv<gpuDoubleComplex>((gpuDoubleComplex *) at_col_dev, (gpuDoubleComplex *) buf_recv_dev, l_rows, l_cols, lld_buf, nblk,
-                                                    i_block_loc_fine_max, j_block_loc_fine_max, np_fine, np_bc_fine, 
+                                                    i_block_loc_fine_max, j_block_loc_fine_max, np_fine, np_bc_fine,
                                                     np_rows_fine, np_cols_fine, np_rows, np_cols, SM_count, debug, my_stream);
   else if (dataType=='C') gpu_ccl_copy_buf_recv<gpuFloatComplex> ((gpuFloatComplex  *) at_col_dev, (gpuFloatComplex  *) buf_recv_dev, l_rows, l_cols, lld_buf, nblk,
                                                     i_block_loc_fine_max, j_block_loc_fine_max, np_fine, np_bc_fine,
@@ -522,10 +522,10 @@ __global__ void gpu_copy_and_set_zeros_aux_ab_full_tn_kernel(T *a_dev, T *b_dev,
   // if (mod(np_t_fine,np_cols) == my_pcol) then
   //   do j_block_loc_fine = 0, nblk_mult_max/nblk-1
   //     j_block_loc = (np_t_fine + j_block_loc_fine*np_cols_fine)/np_cols
-  //  
+  //
   //     do i_block_loc_fine = 0, nblk_mult/nblk-1
   //       i_block_loc = (np_ab_fine + i_block_loc_fine*np_rows_fine)/np_rows
-  //    
+  //
   //       nblk_cols_cut = min(nblk, l_cols - j_block_loc*nblk)
   //       nblk_rows_cut = min(nblk, l_rows - i_block_loc*nblk)
   //
@@ -554,24 +554,24 @@ __global__ void gpu_copy_and_set_zeros_aux_ab_full_tn_kernel(T *a_dev, T *b_dev,
 
   int i_block_loc, j_block_loc, i_block_loc_fine, j_block_loc_fine,  nblk_rows_cut, nblk_cols_cut, di, dj;
 
-  if (np_t_fine%np_cols == my_pcol) 
+  if (np_t_fine%np_cols == my_pcol)
     {
-    for (j_block_loc_fine=0; j_block_loc_fine<nblk_mult_max/nblk; j_block_loc_fine++) 
+    for (j_block_loc_fine=0; j_block_loc_fine<nblk_mult_max/nblk; j_block_loc_fine++)
       {
       j_block_loc = (np_t_fine + j_block_loc_fine*np_dirs_fine)/np_cols;
-      
-      for (i_block_loc_fine=0; i_block_loc_fine<nblk_mult/nblk; i_block_loc_fine++) 
+
+      for (i_block_loc_fine=0; i_block_loc_fine<nblk_mult/nblk; i_block_loc_fine++)
         {
         i_block_loc = (np_ab_fine + i_block_loc_fine*np_dirs_fine)/np_rows;
-        
+
         nblk_cols_cut = min(nblk, l_cols - j_block_loc*nblk);
         nblk_rows_cut = min(nblk, l_rows - i_block_loc*nblk);
 
-        if (nblk_rows_cut>0 && nblk_cols_cut>0) 
+        if (nblk_rows_cut>0 && nblk_cols_cut>0)
           {
           for (dj=dj0; dj<nblk_cols_cut; dj += gridDim.x)
             for (di=di0; di<nblk_rows_cut; di += blockDim.x)
-              aux_a_full_dev[di + i_block_loc_fine*nblk + (dj + j_block_loc_fine*nblk)*nblk_mult] 
+              aux_a_full_dev[di + i_block_loc_fine*nblk + (dj + j_block_loc_fine*nblk)*nblk_mult]
                      = a_dev[di + i_block_loc*nblk + (dj + j_block_loc*nblk)*l_rows];
           }
 
@@ -605,13 +605,13 @@ __global__ void gpu_copy_and_set_zeros_aux_ab_full_tn_kernel(T *a_dev, T *b_dev,
 
     //   do j_block_loc_fine = 0, nblk_mult_max/nblk-1
     //     j_block_loc = (np_ab_t_fine + j_block_loc_fine*np_cols_fine)/np_cols
-        
+
     //     do i_block_loc_fine = 0, nblk_mult/nblk-1
     //       i_block_loc = (np_ab_fine + i_block_loc_fine*np_rows_fine)/np_rows
 
     //       nblk_rows_cut = min(nblk, l_rows - i_block_loc*nblk)
     //       nblk_cols_cut = min(nblk, l_cols - j_block_loc*nblk)
-          
+
     //       if (nblk_rows_cut>0 .and. nblk_cols_cut>0) then
     //         aux_b_full(1+i_block_loc_fine*nblk : nblk_rows_cut+i_block_loc_fine*nblk, &
     //                    1            +j_block_loc_fine*nblk+dnp_ab_t*nblk_mult_max : &
@@ -650,7 +650,7 @@ __global__ void gpu_copy_and_set_zeros_aux_ab_full_tn_kernel(T *a_dev, T *b_dev,
           {
           for (dj = dj0; dj < nblk_cols_cut; dj += gridDim.x)
             for (di = di0; di < nblk_rows_cut; di += blockDim.x)
-              aux_b_full_dev[di + i_block_loc_fine*nblk + (dj + j_block_loc_fine*nblk + dnp_ab_t*nblk_mult_max)*nblk_mult] 
+              aux_b_full_dev[di + i_block_loc_fine*nblk + (dj + j_block_loc_fine*nblk + dnp_ab_t*nblk_mult_max)*nblk_mult]
                      = b_dev[di + i_block_loc*nblk + (dj + j_block_loc*nblk)*l_rows];
           }
 
@@ -695,13 +695,13 @@ __global__ void gpu_copy_and_set_zeros_aux_ab_full_nt_kernel(T *a_dev, T *b_dev,
   int i_block_loc, j_block_loc, i_block_loc_fine, j_block_loc_fine, nblk_rows_cut, nblk_cols_cut, di, dj;
   int dnp_ab_t, np_ab_t_fine;
 
-  if (np_t_fine%np_rows == my_prow) 
+  if (np_t_fine%np_rows == my_prow)
     {
-    for (i_block_loc_fine=0; i_block_loc_fine<nblk_mult_max/nblk; i_block_loc_fine++) 
+    for (i_block_loc_fine=0; i_block_loc_fine<nblk_mult_max/nblk; i_block_loc_fine++)
       {
       i_block_loc = (np_t_fine + i_block_loc_fine*np_dirs_fine)/np_rows;
 
-      for (j_block_loc_fine=0; j_block_loc_fine<nblk_mult/nblk; j_block_loc_fine++) 
+      for (j_block_loc_fine=0; j_block_loc_fine<nblk_mult/nblk; j_block_loc_fine++)
         {
         j_block_loc = (np_ab_fine + j_block_loc_fine*np_dirs_fine)/np_cols;
 
@@ -711,7 +711,7 @@ __global__ void gpu_copy_and_set_zeros_aux_ab_full_nt_kernel(T *a_dev, T *b_dev,
         if (nblk_rows_cut> 0 && nblk_cols_cut> 0)
           {
           for (dj=dj0; dj<nblk_cols_cut; dj += gridDim.x)
-            for (di=di0; di<nblk_rows_cut; di += blockDim.x)          
+            for (di=di0; di<nblk_rows_cut; di += blockDim.x)
               aux_b_full_dev[di + i_block_loc_fine*nblk + (dj + j_block_loc_fine*nblk)*nblk_mult] =
                        b_dev[di + i_block_loc*nblk + (dj + j_block_loc*nblk)*l_rows];
           }
@@ -757,13 +757,13 @@ __global__ void gpu_copy_and_set_zeros_aux_ab_full_nt_kernel(T *a_dev, T *b_dev,
 
         nblk_rows_cut = min(nblk, l_rows - i_block_loc*nblk);
         nblk_cols_cut = min(nblk, l_cols - j_block_loc*nblk);
-        
+
         if (nblk_rows_cut > 0 && nblk_cols_cut > 0)
           {
           for (dj = dj0; dj < nblk_cols_cut; dj += gridDim.x)
             for (di = di0; di < nblk_rows_cut; di += blockDim.x)
               aux_a_full_dev[di + i_block_loc_fine*nblk + dnp_ab_t*nblk_mult_max + (dj + j_block_loc_fine*nblk)*lda] =
-                       a_dev[di + i_block_loc*nblk + (dj + j_block_loc*nblk)*l_rows];  
+                       a_dev[di + i_block_loc*nblk + (dj + j_block_loc*nblk)*l_rows];
           }
 
         // nullify the unused part of the block in a
@@ -801,7 +801,7 @@ void gpu_copy_and_set_zeros_aux_ab_full_tn_nt(int a_transoposed, T *a_dev, T *b_
                                             int np_dirs_fine,int SM_count,
                                             int debug, gpuStream_t my_stream){
 
-  dim3 blocksPerGrid(SM_count, 1, 1); 
+  dim3 blocksPerGrid(SM_count, 1, 1);
   dim3 threadsPerBlock(min(nblk, MAX_THREADS_PER_BLOCK/2), 1, 1); // use only half of the max threads due to high register usage
 
   if (a_transoposed)
@@ -822,7 +822,7 @@ void gpu_copy_and_set_zeros_aux_ab_full_tn_nt(int a_transoposed, T *a_dev, T *b_
         np_dirs_fine);
 #endif
     }
-  else 
+  else
     {
 #ifdef WITH_GPU_STREAMS
     gpu_copy_and_set_zeros_aux_ab_full_nt_kernel<<<blocksPerGrid, threadsPerBlock, 0, my_stream>>>(
@@ -889,7 +889,7 @@ extern "C" void CONCATENATE(ELPA_GPU,  _copy_and_set_zeros_aux_ab_full_tn_nt_Fro
 template <typename T>
 __global__ void gpu_update_c_tn_nt_kernel(int a_transposed, T *c_dev, T *tmp1_full_dev, int beta_int,
                                           int l_rows, int l_cols, int nblk_mult_max, int nblk_mult, int nblk,
-                                          int np_rows, int np_cols, int np_dirs_fine, 
+                                          int np_rows, int np_cols, int np_dirs_fine,
                                           int np_dirs_t, int my_pdir_t, int np_fine,
                                           T beta) {
   int di0 = threadIdx.x;
@@ -916,9 +916,9 @@ __global__ void gpu_update_c_tn_nt_kernel(int a_transposed, T *c_dev, T *tmp1_fu
                   c_idx = di + i_block_loc*nblk + (dj + j_block_loc*nblk)*l_rows;
                   if (beta_int==0) {
                     c_dev[c_idx] = tmp1_full_dev[di + i_block_loc_fine*nblk + (dj + j_block_loc_fine*nblk + dnp_ab_t*nblk_mult_max)*nblk_mult];
-                  } 
+                  }
                   else {
-                    c_dev[c_idx] = elpaDeviceAdd(elpaDeviceMultiply(beta, c_dev[c_idx]), 
+                    c_dev[c_idx] = elpaDeviceAdd(elpaDeviceMultiply(beta, c_dev[c_idx]),
                                     tmp1_full_dev[di + i_block_loc_fine*nblk + (dj + j_block_loc_fine*nblk + dnp_ab_t*nblk_mult_max)*nblk_mult]);
                   }
               }
@@ -927,7 +927,7 @@ __global__ void gpu_update_c_tn_nt_kernel(int a_transposed, T *c_dev, T *tmp1_fu
         }
       }
     }
-  } 
+  }
   else { // b_transposed
     int ld_tmp1 = nblk_mult_max*(np_dirs_fine/np_rows);
     for (dnp_ab_t = 0; dnp_ab_t < np_dirs_fine/np_dirs_t; dnp_ab_t++) {
@@ -959,7 +959,7 @@ __global__ void gpu_update_c_tn_nt_kernel(int a_transposed, T *c_dev, T *tmp1_fu
 }
 
 template <typename T>
-void gpu_update_c_tn_nt(int a_transposed, 
+void gpu_update_c_tn_nt(int a_transposed,
                          T *c_dev, T *tmp1_full_dev, int beta_int,
                          int l_rows, int l_cols, int nblk_mult_max, int nblk_mult, int nblk,
                          int np_rows, int np_cols, int np_dirs_fine,
@@ -996,32 +996,32 @@ void gpu_update_c_tn_nt(int a_transposed,
 }
 
 extern "C" void CONCATENATE(ELPA_GPU, _update_c_tn_nt_FromC) (char dataType,
-                                          int a_transposed, 
+                                          int a_transposed,
                                           intptr_t c_dev, intptr_t tmp1_full_dev, int beta_int,
                                           int l_rows, int l_cols, int nblk_mult_max, int nblk_mult, int nblk,
                                           int np_rows, int np_cols, int np_dirs_fine,
                                           int np_dirs_t, int my_pdir_t, int np_fine,
                                           int SM_count, int debug, gpuStream_t my_stream) {
 
-  if      (dataType == 'D') gpu_update_c_tn_nt<double>(a_transposed, 
+  if      (dataType == 'D') gpu_update_c_tn_nt<double>(a_transposed,
                                 (double *)c_dev, (double *)tmp1_full_dev, beta_int,
                                 l_rows, l_cols, nblk_mult_max, nblk_mult, nblk,
                                 np_rows, np_cols, np_dirs_fine,
                                 np_dirs_t, my_pdir_t, np_fine,
                                 SM_count, debug, my_stream);
-  else if (dataType == 'S') gpu_update_c_tn_nt<float>(a_transposed, 
+  else if (dataType == 'S') gpu_update_c_tn_nt<float>(a_transposed,
                                 (float *)c_dev, (float *)tmp1_full_dev, beta_int,
                                 l_rows, l_cols, nblk_mult_max, nblk_mult, nblk,
                                 np_rows, np_cols, np_dirs_fine,
                                 np_dirs_t, my_pdir_t, np_fine,
                                 SM_count, debug, my_stream);
-  else if (dataType == 'Z') gpu_update_c_tn_nt<gpuDoubleComplex>(a_transposed, 
+  else if (dataType == 'Z') gpu_update_c_tn_nt<gpuDoubleComplex>(a_transposed,
                                           (gpuDoubleComplex *)c_dev, (gpuDoubleComplex *)tmp1_full_dev, beta_int,
                                           l_rows, l_cols, nblk_mult_max, nblk_mult, nblk,
                                           np_rows, np_cols, np_dirs_fine,
                                           np_dirs_t, my_pdir_t, np_fine,
                                           SM_count, debug, my_stream);
-  else if (dataType == 'C') gpu_update_c_tn_nt<gpuFloatComplex>(a_transposed, 
+  else if (dataType == 'C') gpu_update_c_tn_nt<gpuFloatComplex>(a_transposed,
                                         (gpuFloatComplex *)c_dev, (gpuFloatComplex *)tmp1_full_dev, beta_int,
                                         l_rows, l_cols, nblk_mult_max, nblk_mult, nblk,
                                         np_rows, np_cols, np_dirs_fine,

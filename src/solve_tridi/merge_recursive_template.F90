@@ -28,7 +28,7 @@ recursive subroutine merge_recursive_cpu_&
   use cuda_functions ! for NVTX labels
 #elif defined(WITH_AMD_GPU_VERSION) && defined(WITH_ROCTX)
   use hip_functions  ! for ROCTX labels
-#endif   
+#endif
   implicit none
 
    ! noff is always a multiple of nblk_ev
@@ -57,7 +57,7 @@ recursive subroutine merge_recursive_cpu_&
   integer(kind=MPI_KIND)                      :: mpierr, my_pcolMPI
 #endif
   integer(kind=ik)                            :: my_pcol
-  real(kind=REAL_DATATYPE), intent(inout)     :: d(na), e(na)           
+  real(kind=REAL_DATATYPE), intent(inout)     :: d(na), e(na)
   integer(kind=ik)                            :: np_off, nprocs
   integer(kind=ik)                            :: np1, np2, noff, nlen, nmid, n
   logical, intent(in)                         :: useGPU, wantDebug
@@ -133,7 +133,7 @@ recursive subroutine merge_recursive_cpu_&
    if (.not.(success)) then
      write(error_unit,*) "Error in merge_recursice. Aborting..."
      return
-   endif             
+   endif
 
    noff = limits(np_off)
    nmid = limits(np_off+np1) - noff
@@ -235,7 +235,7 @@ recursive subroutine merge_recursive_cpu_&
      if (.not.(success)) then
        write(error_unit,*) "Error in merge_systems: Aborting..."
        return
-     endif             
+     endif
    endif
 
 end

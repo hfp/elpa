@@ -160,7 +160,7 @@ program test
   ! The Matrix
   MATRIX_TYPE, allocatable, target       :: a(:,:), as(:,:)
   MATRIX_TYPE, allocatable               :: c(:,:) ! = a^{-1}*as - should be a unit matrix
-  
+
 
   TEST_INT_TYPE                          :: status, i, j
   integer(kind=c_int)                    :: error_elpa
@@ -180,7 +180,7 @@ program test
   TEST_INT_TYPE                          :: numberOfDevices
   TEST_INT_TYPE                          :: gpuID
 #endif
-   
+
    logical                                :: skip_check_correctness
 
 ! for gpu_malloc
@@ -234,7 +234,7 @@ program test
     print *, "ELPA API version not supported"
     stop 1
   endif
-! 
+!
   layout = 'C'
   do np_cols = NINT(SQRT(REAL(nprocs))),2,-1
     if(mod(nprocs,np_cols) == 0 ) exit
@@ -276,23 +276,23 @@ program test
     stop 1
   endif
 
-	! Allocate the matrices needed for elpa 
-   
+	! Allocate the matrices needed for elpa
+
   allocate(a (na_rows,na_cols))
   allocate(as(na_rows,na_cols))
   allocate(c (na_rows,na_cols))
-  
+
   a(:,:) = 0.0
   c(:,:) = 0.0
-  
+
   call prepare_matrix_random_triangular (na, a, nblk, myid, na_rows, na_cols, np_rows, np_cols, my_prow, my_pcol)
   !call print_matrix(myid, na_rows, a, "a") ! DEBUG; print_matrix prints only for myid=0 and works only for square local matrices
   as(:,:) = a(:,:)
-  
+
   call prepare_matrix_unit (na, c, nblk, myid, na_rows, na_cols, np_rows, np_cols, my_prow, my_pcol)
   !call print_matrix(myid, na_rows, c, "c")
-  
-  
+
+
   e => elpa_allocate(error_elpa)
   assert_elpa_ok(error_elpa)
 
@@ -308,7 +308,7 @@ program test
   assert_elpa_ok(error_elpa)
   call e%set("nblk", int(nblk,kind=c_int), error_elpa)
   assert_elpa_ok(error_elpa)
-   
+
 #ifdef WITH_MPI
   call e%set("mpi_comm_parent", int(MPI_COMM_WORLD,kind=c_int), error_elpa)
   assert_elpa_ok(error_elpa)
@@ -341,7 +341,7 @@ program test
 
 #if defined(TEST_NVIDIA_GPU) || defined(TEST_AMD_GPU) || defined(TEST_INTEL_GPU) || defined(TEST_INTEL_GPU_OPENMP) || defined(TEST_INTEL_GPU_SYCL)
   assert_elpa_ok(e%setup_gpu())
-#endif 
+#endif
 
 #if TEST_GPU_SET_ID == 1 && (TEST_INTEL_GPU == 0) && (TEST_INTEL_GPU_OPENMP == 0) && (TEST_INTEL_GPU_SYCL == 0)
 #ifdef DEBUG_SYCL_ON_CPU
@@ -354,7 +354,7 @@ program test
 
   if (gpu_vendor() /= no_gpu) then
     call set_gpu_parameters()
-  else 
+  else
     print *,"Cannot set gpu vendor!"
     stop 1
   endif
@@ -371,7 +371,7 @@ program test
     if (myid==0) print *, "No GPU devices found! Aborting..."
     stop 1
   endif
-  
+
   gpuID = mod(myid, numberOfDevices)
 
   call e%set("use_gpu_id", int(gpuID,kind=c_int), error_elpa)
@@ -384,7 +384,7 @@ program test
   ! Set gpuMemcpyHostToDevice, gpuMemcpyDeviceToHost
   if (gpu_vendor() /= no_gpu) then
     call set_gpu_parameters()
-  else 
+  else
     print *,"Cannot set gpu vendor!"
     stop 1
   endif
@@ -404,14 +404,14 @@ program test
     print *,"Cannot allocate matrix a on GPU! Aborting..."
     stop 1
   endif
-  
+
   successGPU = gpu_memcpy(a_dev, c_loc(a), na_rows*na_cols*size_of_datatype, &
                           gpuMemcpyHostToDevice)
   if (.not.(successGPU)) then
     print *,"Cannot copy matrix a to GPU! Aborting..."
     stop 1
   endif
-   
+
 #endif /* TEST_GPU_DEVICE_POINTER_API */
 
 ! _________________________________________________________________________________________________________________________________
@@ -490,7 +490,7 @@ program test
   !call print_matrix(myid, na_rows, a, "a_inverted")
 
 ! _________________________________________________________________________________________________________________________________
-   
+
   ! TEST_GPU == 1: copy for testing from device to host, deallocate device pointers
 #if TEST_GPU_DEVICE_POINTER_API == 1
 
@@ -514,7 +514,7 @@ program test
 ! _________________________________________________________________________________________________________________________________
 
   ! Check the results
-  
+
   if (.not. skip_check_correctness) then
     status = check_correctness_multiply('N', 'N', 'F', 'F', &
                                         na, a, as, c, na_rows, na_cols, sc_desc, &
@@ -525,14 +525,14 @@ program test
 ! _________________________________________________________________________________________________________________________________
 
   ! Deallocate
-   
+
   call elpa_deallocate(e, error_elpa)
   assert_elpa_ok(error_elpa)
-  
+
   deallocate(a)
   deallocate(as)
   deallocate(c)
-  
+
 
   call elpa_uninit(error_elpa)
 
@@ -551,7 +551,7 @@ program test
 ! _________________________________________________________________________________________________________________________________
 
   contains
-   
+
     subroutine check_status(status, myid)
       implicit none
       TEST_INT_TYPE, intent(in) :: status, myid
@@ -564,5 +564,5 @@ program test
         call exit(status)
       endif
     end subroutine
-   
+
 end program

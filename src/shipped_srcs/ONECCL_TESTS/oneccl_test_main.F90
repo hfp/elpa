@@ -9,7 +9,7 @@ program hh_test
   type(onecclUniqueId) :: ccl_unique_id
   integer(kind=c_intptr_t) :: ccl_comm, ccl_stream
   integer(kind=c_int) :: ierr, mpi_provided_thread_level
-  
+
   call mpi_init_thread(mpi_thread_multiple, mpi_provided_thread_level, ierr)
   call test_ccl_setup(ccl_unique_id, ccl_comm, ccl_stream)
   call test_ccl_allreduce(ccl_comm, num_elements, ccl_stream)

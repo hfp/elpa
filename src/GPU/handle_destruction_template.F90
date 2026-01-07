@@ -16,21 +16,21 @@
 !      Leipzig, Abt. Komplexe Strukutren in Biologie und Kognition,
 !      and
 !    - IBM Deutschland GmbH
-!           
-!           
-!    More information can be found here: 
+!
+!
+!    More information can be found here:
 !    http://elpa.mpcdf.mpg.de/
-!             
+!
 !    ELPA is free software: you can redistribute it and/or modify
 !    it under the terms of the version 3 of the license of the
 !    GNU Lesser General Public License as published by the Free
 !    Software Foundation.
-!             
+!
 !    ELPA is distributed in the hope that it will be useful,
 !    but WITHOUT ANY WARRANTY; without even the implied warranty of
 !    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 !    GNU Lesser General Public License for more details.
-!           
+!
 !    You should have received a copy of the GNU Lesser General Public License
 !    along with ELPA.  If not, see <http://www.gnu.org/licenses/>
 !
@@ -101,17 +101,17 @@
               stop 1
             endif
           enddo
-          
+
 
 #ifdef WITH_NVIDIA_GPU_VERSION
 #ifdef WITH_NVIDIA_CUSOLVER
           do thread=0, maxThreads-1
             success = cusolver_destroy(self%gpu_setup%cusolverHandleArray(thread))
-            
+
             if (.not.(success)) then
               print *,"Cannot destroy cusolver handle"
               stop 1
-            endif 
+            endif
           enddo
 #endif
 #endif
@@ -120,11 +120,11 @@
 #ifdef WITH_AMD_ROCSOLVER
           do thread=0, maxThreads-1
             success = rocsolver_destroy(self%gpu_setup%rocsolverHandleArray(thread))
-            
+
             if (.not.(success)) then
               print *,"Cannot destroy rocsolver handle"
               stop 1
-            endif 
+            endif
           enddo
 #endif
 #endif
@@ -133,7 +133,7 @@
 #ifdef WITH_OPENMP_OFFLOAD_SOLVER
           do thread=0, maxThreads-1
             success = openmp_offload_solver_destroy(self%gpu_setup%openmpOffloadsolverHandleArray(thread))
-            
+
             if (.not.(success)) then
               print *,"Cannot destroy openmpOffloadsolver handle"
               stop 1
@@ -145,11 +145,11 @@
 #ifdef WITH_SYCL_SOLVER
           do thread=0, maxThreads-1
             success = sycl_solver_destroy(self%gpu_setup%syclsolverHandleArray(thread))
-            
+
             if (.not.(success)) then
               print *,"Cannot destroy syclsolver handle"
               stop 1
-            endif 
+            endif
           enddo
 #endif
 #endif

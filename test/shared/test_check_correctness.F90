@@ -55,7 +55,7 @@ module test_check_correctness
     module procedure check_correctness_evp_numeric_residuals_complex_single
 #endif
   end interface
-  
+
   interface check_correctness_evp_numeric_residuals_ss
 !     module procedure check_correctness_evp_numeric_residuals_ss_complex_double
     module procedure check_correctness_evp_numeric_residuals_ss_real_double

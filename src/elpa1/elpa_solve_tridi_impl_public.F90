@@ -91,7 +91,7 @@
 
   integer                  :: debug, error
   integer                  :: nrThreads, limitThreads
-  
+
   logical                  :: useGPU, successGPU
   integer(kind=c_int)      :: numGPU
   integer(kind=c_intptr_t) :: d_dev, e_dev, q_dev
@@ -119,7 +119,7 @@
 
 #ifdef WITH_OPENMP_TRADITIONAL
   ! store the number of OpenMP threads used in the calling function
-  ! restore this at the end of ELPA 2 
+  ! restore this at the end of ELPA 2
   omp_threads_caller = omp_get_max_threads()
 
   ! check the number of threads that ELPA should use internally
@@ -173,7 +173,7 @@
     endif
     call obj%timer%stop("check_for_gpu")
   endif
-        
+
       if (useGPU) then
         num = na * size_of_datatype_real
         successGPU = gpu_malloc(d_dev, num)
@@ -186,7 +186,7 @@
         num = (matrixRows* matrixCols) * size_of_datatype_real
         successGPU = gpu_malloc(q_dev, num)
         check_alloc_gpu("elpa_solve_tridi_impl q_dev", successGPU)
-        
+
 
         num = na * size_of_datatype_real
 #ifdef WITH_GPU_STREAMS

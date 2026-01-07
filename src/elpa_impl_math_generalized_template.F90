@@ -78,7 +78,7 @@
 !>                                              each subsequent call with the same b, since b then already contains
 !>                                              decomposition and thus the decomposing step is skipped
 !>
-!>  \param error                                integer, optional: returns an error code, which can be queried with elpa_strerr 
+!>  \param error                                integer, optional: returns an error code, which can be queried with elpa_strerr
 subroutine elpa_generalized_eigenvectors_a_h_a_&
                 &ELPA_IMPL_SUFFIX&
                 & (self, a, b, ev, q, is_already_decomposed, error)
@@ -158,7 +158,7 @@ subroutine elpa_generalized_eigenvectors_a_h_a_&
     call self%timer%stop("check_for_gpu")
   endif ! useGPU
 
-  
+
   if (useGPU) then
     successGPU = gpu_malloc(aDev, self%local_nrows*self%local_ncols * size_of_datatype)
     check_alloc_gpu("elpa_generalized_eigenvectors_a_h_a: aDev", successGPU)
@@ -213,7 +213,7 @@ subroutine elpa_generalized_eigenvectors_a_h_a_&
     successGPU = gpu_memcpy      (int(loc(q(1,1)),kind=c_intptr_t), qDev, num, gpuMemcpyDeviceToHost)
 #endif
     check_memcpy_gpu ("elpa_generalized_eigenvectors_a_h_a: qDev", successGPU)
-    
+
     num = self%na * size_of_real_datatype
 #ifdef WITH_GPU_STREAMS
     successGPU = gpu_memcpy_async(int(loc(ev(1)),kind=c_intptr_t), evDev, num, gpuMemcpyDeviceToHost, my_stream)
@@ -321,11 +321,11 @@ end subroutine
   !c> // /src/elpa_impl_math_generalized_template.F90
 
 #ifdef REALCASE
-#ifdef DOUBLE_PRECISION_REAL  
+#ifdef DOUBLE_PRECISION_REAL
   !c> void elpa_generalized_eigenvectors_a_h_a_d(elpa_t handle, double *a, double *b, double *ev, double *q,
   !c> int is_already_decomposed, int *error);
 #endif
-#ifdef SINGLE_PRECISION_REAL  
+#ifdef SINGLE_PRECISION_REAL
   !c> void elpa_generalized_eigenvectors_a_h_a_f(elpa_t handle, float *a, float *b, float *ev, float *q,
   !c> int is_already_decomposed, int *error);
 #endif
@@ -344,7 +344,7 @@ end subroutine
                   &ELPA_IMPL_SUFFIX&
                   &_c(handle, a_p, b_p, ev_p, q_p, is_already_decomposed, error) &
 #ifdef REALCASE
-#ifdef DOUBLE_PRECISION_REAL 
+#ifdef DOUBLE_PRECISION_REAL
                               bind(C, name="elpa_generalized_eigenvectors_a_h_a_d")
 #endif
 #ifdef SINGLE_PRECISION_REAL
@@ -387,7 +387,7 @@ end subroutine
             & (self, a, b, ev, q, is_already_decomposed_fortran, error)
   end subroutine
 
-!__________________________________________________________________________________________________    
+!__________________________________________________________________________________________________
 
 !>  \brief elpa_generalized_eigenvectors_d_ptr: class method to solve the eigenvalue problem, using device pointers
 !>
@@ -422,7 +422,7 @@ end subroutine
 !>                                              each subsequent call with the same b, since b then already contains
 !>                                              decomposition and thus the decomposing step is skipped
 !>
-!>  \param error                                integer, optional: returns an error code, which can be queried with elpa_strerr 
+!>  \param error                                integer, optional: returns an error code, which can be queried with elpa_strerr
 subroutine elpa_generalized_eigenvectors_d_ptr_&
                 &ELPA_IMPL_SUFFIX&
                 & (self, aDev, bDev, evDev, qDev, is_already_decomposed, error)
@@ -437,7 +437,7 @@ subroutine elpa_generalized_eigenvectors_d_ptr_&
   class(elpa_impl_t)         :: self
 
   type(c_ptr)                :: aDev, bDev, evDev, qDev
-  
+
   logical                    :: is_already_decomposed
   integer, optional          :: error
   integer                    :: error_l
@@ -551,11 +551,11 @@ subroutine elpa_generalized_eigenvectors_d_ptr_&
 end subroutine
 
 #ifdef REALCASE
-#ifdef DOUBLE_PRECISION_REAL  
+#ifdef DOUBLE_PRECISION_REAL
   !c> void elpa_generalized_eigenvectors_d_ptr_d(elpa_t handle, double *a, double *b, double *ev, double *q,
   !c> int is_already_decomposed, int *error);
 #endif
-#ifdef SINGLE_PRECISION_REAL  
+#ifdef SINGLE_PRECISION_REAL
   !c> void elpa_generalized_eigenvectors_d_ptr_f(elpa_t handle, float *a, float *b, float *ev, float *q,
   !c> int is_already_decomposed, int *error);
 #endif
@@ -574,7 +574,7 @@ end subroutine
                   &ELPA_IMPL_SUFFIX&
                   &_c(handle, a_p, b_p, ev_p, q_p, is_already_decomposed, error) &
 #ifdef REALCASE
-#ifdef DOUBLE_PRECISION_REAL 
+#ifdef DOUBLE_PRECISION_REAL
                               bind(C, name="elpa_generalized_eigenvectors_d_ptr_d")
 #endif
 #ifdef SINGLE_PRECISION_REAL
@@ -617,7 +617,7 @@ end subroutine
             & (self, a_p, b_p, ev_p, q_p, is_already_decomposed_fortran, error)
   end subroutine
 
-!__________________________________________________________________________________________________    
+!__________________________________________________________________________________________________
 
 !>  \brief elpa_generalized_eigenvalues_a_h_a: class method to solve the eigenvalue problem, using host arrays
 !>
@@ -701,7 +701,7 @@ subroutine elpa_generalized_eigenvalues_a_h_a_&
   if (present(error)) then
     error = error_l
   endif
-  
+
   call self%get("debug", debug, error_l)
   if (error_l .ne. ELPA_OK) then
     write(error_unit,*) "elpa_generalized_eigenvectors_a_h_a: Problem getting option for debug settings. Aborting..."
@@ -714,11 +714,11 @@ subroutine elpa_generalized_eigenvalues_a_h_a_&
       write(error_unit,*) "elpa_generalized_eigenvectors_d_ptr: Problem getting options for GPU. Aborting..."
       return
     endif
-  
+
     if (useGPU) then
       myid = self%mpi_setup%myRank_comm_parent
       call self%timer%start("check_for_gpu")
-  
+
       if (check_for_gpu(self, myid, numberOfGPUDevices, wantDebug)) then
         call set_gpu_parameters()
       else
@@ -729,7 +729,7 @@ subroutine elpa_generalized_eigenvalues_a_h_a_&
       call self%timer%stop("check_for_gpu")
     endif ! useGPU
 
-     
+
     if (useGPU) then
       successGPU = gpu_malloc(aDev, self%local_nrows*self%local_ncols * size_of_datatype)
       check_alloc_gpu("elpa_generalized_eigenvalues_a_h_a: aDev", successGPU)
@@ -763,7 +763,7 @@ subroutine elpa_generalized_eigenvalues_a_h_a_&
 
     if (wantDebug) successGPU = gpu_DeviceSynchronize()
     call self%timer%stop("gpu_memcpy_host_to_dev")
-          
+
     call elpa_generalized_eigenvalues_d_ptr_&
                             &ELPA_IMPL_SUFFIX&
                             & (self, aDev, bDev, evDev, is_already_decomposed, error_l)
@@ -873,11 +873,11 @@ subroutine elpa_generalized_eigenvalues_a_h_a_&
     end subroutine
 
 #ifdef REALCASE
-#ifdef DOUBLE_PRECISION_REAL  
+#ifdef DOUBLE_PRECISION_REAL
     !c> void elpa_generalized_eigenvalues_a_h_a_d(elpa_t handle, double *a, double *b, double *ev,
     !c> int is_already_decomposed, int *error);
 #endif
-#ifdef SINGLE_PRECISION_REAL  
+#ifdef SINGLE_PRECISION_REAL
     !c> void elpa_generalized_eigenvalues_a_h_a_f(elpa_t handle, float *a, float *b, float *ev,
     !c> int is_already_decomposed, int *error);
 #endif
@@ -896,7 +896,7 @@ subroutine elpa_generalized_eigenvalues_a_h_a_&
                     &ELPA_IMPL_SUFFIX&
                     &_c(handle, a_p, b_p, ev_p, is_already_decomposed, error) &
 #ifdef REALCASE
-#ifdef DOUBLE_PRECISION_REAL 
+#ifdef DOUBLE_PRECISION_REAL
                               bind(C, name="elpa_generalized_eigenvalues_a_h_a_d")
 #endif
 #ifdef SINGLE_PRECISION_REAL
@@ -988,7 +988,7 @@ subroutine elpa_generalized_eigenvalues_d_ptr_&
   logical                   :: is_already_decomposed
   integer, optional         :: error
   integer                   :: error_l
-  
+
   logical                   :: success_l, wantDebug
   integer(kind=c_int)       :: solver, debug
 
@@ -1035,7 +1035,7 @@ subroutine elpa_generalized_eigenvalues_d_ptr_&
     call self%timer%stop("check_for_gpu")
   endif ! useGPU
 #endif
-  
+
   successGPU = gpu_malloc(tmpDev, self%local_ncols*self%local_nrows * size_of_datatype)
   check_alloc_gpu("elpa_generalized_eigenvalues_d_ptr tmpDev", successGPU)
 
@@ -1099,11 +1099,11 @@ subroutine elpa_generalized_eigenvalues_d_ptr_&
 end subroutine
 
 #ifdef REALCASE
-#ifdef DOUBLE_PRECISION_REAL  
+#ifdef DOUBLE_PRECISION_REAL
     !c> void elpa_generalized_eigenvalues_d_ptr_d(elpa_t handle, double *a, double *b, double *ev,
     !c> int is_already_decomposed, int *error);
 #endif
-#ifdef SINGLE_PRECISION_REAL  
+#ifdef SINGLE_PRECISION_REAL
     !c> void elpa_generalized_eigenvalues_d_ptr_f(elpa_t handle, float *a, float *b, float *ev,
     !c> int is_already_decomposed, int *error);
 #endif
@@ -1122,7 +1122,7 @@ end subroutine
                     &ELPA_IMPL_SUFFIX&
                     &_c(handle, a_p, b_p, ev_p, is_already_decomposed, error) &
 #ifdef REALCASE
-#ifdef DOUBLE_PRECISION_REAL 
+#ifdef DOUBLE_PRECISION_REAL
                               bind(C, name="elpa_generalized_eigenvalues_d_ptr_d")
 #endif
 #ifdef SINGLE_PRECISION_REAL

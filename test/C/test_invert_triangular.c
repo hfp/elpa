@@ -153,10 +153,10 @@ int main(int argc, char** argv) {
    C_INT_TYPE numberOfDevices;
    C_INT_TYPE successGPU;
 #endif
-   
+
    C_INT_TYPE status;
    int error_elpa;
-  
+
    elpa_t handle;
 
 #ifdef WITH_MPI
@@ -198,7 +198,7 @@ int main(int argc, char** argv) {
    return 77;
 #endif
 
-   
+
    if (argc == 4) {
      na = atoi(argv[1]);
      nev = atoi(argv[2]);
@@ -212,7 +212,7 @@ int main(int argc, char** argv) {
      na = 500;
      nev = 250;
      nblk = 16;
-#endif 
+#endif
    }
 
    for (np_cols = (C_INT_TYPE) sqrt((double) nprocs); np_cols > 1; np_cols--) {
@@ -247,24 +247,24 @@ int main(int argc, char** argv) {
    a  = (MATRIX_TYPE *) calloc(na_rows*na_cols, sizeof(MATRIX_TYPE));
    as = (MATRIX_TYPE *) calloc(na_rows*na_cols, sizeof(MATRIX_TYPE));
    c  = (MATRIX_TYPE *) calloc(na_rows*na_cols, sizeof(MATRIX_TYPE));
-   
+
    PREPARE_MATRIX_RANDOM_TRIANGULAR (na, a, nblk, myid, na_rows, na_cols, np_rows, np_cols, my_prow, my_pcol);
    memcpy(as, a, na_rows*na_cols*sizeof(MATRIX_TYPE));
    //PRINT_MATRIX(myid, na_rows, a, "a");
-   
+
    PREPARE_MATRIX_UNIT (na, c, nblk, myid, na_rows, na_cols, np_rows, np_cols, my_prow, my_pcol);
    //PRINT_MATRIX(myid, na_rows, c, "c");
-   
+
    if (elpa_init(CURRENT_API_VERSION) != ELPA_OK) {
      fprintf(stderr, "Error: ELPA API version not supported");
      exit(1);
    }
-   
+
    handle = elpa_allocate(&error_elpa);
    assert_elpa_ok(error_elpa);
 
    /* Set parameters */
-   
+
    elpa_set(handle, "na", (int) na, &error_elpa);
    assert_elpa_ok(error_elpa);
 
@@ -290,7 +290,7 @@ int main(int argc, char** argv) {
    elpa_set(handle, "process_col", (int) my_pcol, &error_elpa);
    assert_elpa_ok(error_elpa);
 #endif
-   
+
    elpa_set(handle, "debug", 1, &error_elpa);
    assert_elpa_ok(error_elpa);
 
@@ -328,8 +328,8 @@ int main(int argc, char** argv) {
     exit(1);
   }
 
-   gpuID = myid%numberOfDevices; 
-   
+   gpuID = myid%numberOfDevices;
+
    elpa_set(handle, "use_gpu_id", gpuID, &error_elpa);
    assert_elpa_ok(error_elpa);
 #endif
@@ -345,7 +345,7 @@ int main(int argc, char** argv) {
 
 #if (TEST_INTEL_GPU == 0) && (TEST_INTEL_GPU_OPENMP == 0) && (TEST_INTEL_GPU_SYCL == 0)
    successGPU = gpuSetDevice_tests(gpuID);
-   if (!successGPU){    
+   if (!successGPU){
       printf("Error in gpuSetDevice\n");
       exit(1);
       }
@@ -354,25 +354,25 @@ int main(int argc, char** argv) {
    // create device pointer for a_dev; copy a -> a_dev
    // malloc
    successGPU = gpuMalloc_tests((intptr_t *) &a_dev , na_rows*na_cols*sizeof(MATRIX_TYPE));
-   if (!successGPU){    
+   if (!successGPU){
       fprintf(stderr, "Error in gpuMalloc(a_dev)\n");
       exit(1);
       }
-      
+
    // copy
    successGPU = gpuMemcpy_tests((intptr_t *) a_dev, (intptr_t *) a, na_rows*na_cols*sizeof(MATRIX_TYPE), gpuMemcpyHostToDevice);
-   if (!successGPU){    
+   if (!successGPU){
       fprintf(stderr, "Error in gpuMemcpy(a_dev, a)\n");
       exit(1);
       }
-#endif /* TEST_GPU_DEVICE_POINTER_API */   
-   
+#endif /* TEST_GPU_DEVICE_POINTER_API */
+
    //-----------------------------------------------------------------------------------------------------------------------------
    // The actual solve step
 
 #if defined(TEST_EXPLICIT_NAME)
      printf("Inverting with TEST_EXPLICIT_NAME\n");
-   
+
 #if defined(TEST_REAL)
 #if defined(TEST_DOUBLE)
 #if TEST_GPU == 1
@@ -401,7 +401,7 @@ int main(int argc, char** argv) {
 #if defined(TEST_COMPLEX)
 #if defined(TEST_DOUBLE)
 #if TEST_GPU == 1
-     printf("Inverting with device API\n");   
+     printf("Inverting with device API\n");
      elpa_invert_triangular_double_complex(handle, a_dev, &error_elpa);
      assert_elpa_ok(error_elpa);
 #else
@@ -428,34 +428,34 @@ int main(int argc, char** argv) {
    elpa_invert_triangular (handle, a, &error_elpa);
    assert_elpa_ok(error_elpa);
 #endif /* TEST_EXPLICIT_NAME */
-   
+
    //PRINT_MATRIX(myid, na_rows, a, "a_inverted");
 
-   //-----------------------------------------------------------------------------------------------------------------------------     
+   //-----------------------------------------------------------------------------------------------------------------------------
    // TEST_GPU == 1: copy for testing from device to host, deallocate device pointers
 #if TEST_GPU == 1
    // copy for testing
    successGPU = gpuMemcpy_tests((intptr_t *) a , (intptr_t *) a_dev , na_rows*na_cols*sizeof(MATRIX_TYPE), gpuMemcpyDeviceToHost);
-   if (!successGPU){    
+   if (!successGPU){
       fprintf(stderr, "Error in gpuMemcpy(a, a_dev)\n");
       exit(1);
       }
 
    // and deallocate device pointer
    successGPU = gpuFree_tests((intptr_t *) a_dev);
-   if (!successGPU){    
+   if (!successGPU){
       fprintf(stderr, "Error in gpuFree(a_dev)\n");
       exit(1);
       }
 #endif /* TEST_GPU */
-   
+
    //-----------------------------------------------------------------------------------------------------------------------------
    // Check the results
-   
+
    status = CHECK_CORRECTNESS_MULTIPLY('N', 'N', 'F', 'F', uplo_c,
                                         na, a, b, c, na_rows, na_cols, sc_desc,
                                         nblk, myid, np_rows, np_cols, my_prow, my_pcol);
-   
+
    if (myid==0) {
       if (status !=0) {
          printf("Test produced an error!\n");
@@ -463,7 +463,7 @@ int main(int argc, char** argv) {
       }
       if (status ==0) printf("All ok!\n");
    }
-   
+
 
    //-----------------------------------------------------------------------------------------------------------------------------
    // Deallocate

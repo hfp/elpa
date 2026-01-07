@@ -124,7 +124,7 @@ __global__ void cuda_copy_a_tmatc_kernel(T *a_dev, T *tmatc_dev, const int l_col
 
 template <typename T>
 void cuda_copy_a_tmatc_FromC(T *a_dev, T *tmatc_dev, int *nblk_in, int *matrixRows_in, int *l_cols_in, int *l_colx_in, int *l_row1_in, cudaStream_t my_stream){
-  int nblk = *nblk_in;   
+  int nblk = *nblk_in;
   int matrixRows = *matrixRows_in;
   int l_cols = *l_cols_in;
   int l_colx = *l_colx_in;
@@ -145,22 +145,22 @@ void cuda_copy_a_tmatc_FromC(T *a_dev, T *tmatc_dev, int *nblk_in, int *matrixRo
   }
 }
 
-extern "C" void cuda_copy_double_a_tmatc_FromC(double *a_dev, double *tmatc_dev, int *nblk_in, int *matrixRows_in, 
+extern "C" void cuda_copy_double_a_tmatc_FromC(double *a_dev, double *tmatc_dev, int *nblk_in, int *matrixRows_in,
                                                int *l_cols_in, int *l_colx_in, int *l_row1_in, cudaStream_t my_stream){
   cuda_copy_a_tmatc_FromC(a_dev, tmatc_dev, nblk_in, matrixRows_in, l_cols_in, l_colx_in, l_row1_in, my_stream);
 }
 
-extern "C" void cuda_copy_float_a_tmatc_FromC(float *a_dev, float *tmatc_dev, int *nblk_in, int *matrixRows_in, 
+extern "C" void cuda_copy_float_a_tmatc_FromC(float *a_dev, float *tmatc_dev, int *nblk_in, int *matrixRows_in,
                                               int *l_cols_in, int *l_colx_in, int *l_row1_in, cudaStream_t my_stream){
   cuda_copy_a_tmatc_FromC(a_dev, tmatc_dev, nblk_in, matrixRows_in, l_cols_in, l_colx_in, l_row1_in, my_stream);
 }
 
-extern "C" void cuda_copy_double_complex_a_tmatc_FromC(cuDoubleComplex *a_dev, cuDoubleComplex *tmatc_dev, int *nblk_in, int *matrixRows_in, 
+extern "C" void cuda_copy_double_complex_a_tmatc_FromC(cuDoubleComplex *a_dev, cuDoubleComplex *tmatc_dev, int *nblk_in, int *matrixRows_in,
                                                   int *l_cols_in, int *l_colx_in, int *l_row1_in, cudaStream_t my_stream){
   cuda_copy_a_tmatc_FromC(a_dev, tmatc_dev, nblk_in, matrixRows_in, l_cols_in, l_colx_in, l_row1_in, my_stream);
 }
 
-extern "C" void cuda_copy_float_complex_a_tmatc_FromC(cuFloatComplex *a_dev, cuFloatComplex *tmatc_dev, int *nblk_in, int *matrixRows_in, 
+extern "C" void cuda_copy_float_complex_a_tmatc_FromC(cuFloatComplex *a_dev, cuFloatComplex *tmatc_dev, int *nblk_in, int *matrixRows_in,
                                                  int *l_cols_in, int *l_colx_in, int *l_row1_in, cudaStream_t my_stream){
   cuda_copy_a_tmatc_FromC(a_dev, tmatc_dev, nblk_in, matrixRows_in, l_cols_in, l_colx_in, l_row1_in, my_stream);
 }
@@ -231,8 +231,8 @@ void cuda_set_a_lower_to_zero(T *a_dev, int *na_in, int *matrixRows_in, int *my_
   }
 }
 
-extern "C" void cuda_set_a_lower_to_zero_FromC(char dataType, intptr_t a_dev, int *na_in, int *matrixRows_in, 
-                                                      int *my_pcol_in, int *np_cols_in, int *my_prow_in, int *np_rows_in, 
+extern "C" void cuda_set_a_lower_to_zero_FromC(char dataType, intptr_t a_dev, int *na_in, int *matrixRows_in,
+                                                      int *my_pcol_in, int *np_cols_in, int *my_prow_in, int *np_rows_in,
                                                       int *nblk_in, int *wantDebug_in, cudaStream_t my_stream){
 
   if (dataType=='D') cuda_set_a_lower_to_zero<double>((double *) a_dev, na_in, matrixRows_in, my_pcol_in, np_cols_in, my_prow_in, np_rows_in, nblk_in, wantDebug_in, my_stream);

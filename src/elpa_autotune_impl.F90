@@ -74,7 +74,7 @@ module elpa_autotune_impl
     integer :: sublevel_cardinality1stage(0:ELPA_NUMBER_OF_AUTOTUNE_LEVELS-1)
     real(kind=C_DOUBLE) :: sublevel_min_val1stage(0:ELPA_NUMBER_OF_AUTOTUNE_LEVELS-1)
     integer :: sublevel_min_loc1stage(0:ELPA_NUMBER_OF_AUTOTUNE_LEVELS-1)
-    integer :: total_current_1stage 
+    integer :: total_current_1stage
     integer :: sublevel_current1stage(0:ELPA_NUMBER_OF_AUTOTUNE_LEVELS-1)
     integer :: sublevel_part1stage(0:ELPA_NUMBER_OF_AUTOTUNE_LEVELS-1)
     integer :: sublevel_cardinality2stage(0:ELPA_NUMBER_OF_AUTOTUNE_LEVELS-1)
@@ -126,7 +126,7 @@ module elpa_autotune_impl
 #else
       integer, intent(out)                       :: error
 #endif
-      
+
       ! nothing to do atm
 #ifdef USE_FORTRAN2008
       if (present(error)) error = ELPA_OK

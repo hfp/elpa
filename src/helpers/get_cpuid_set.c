@@ -65,12 +65,12 @@ static inline void get_cpu_manufacturer(int *set)
   char str[13]="GenuineIntel\0";
   char manufacturer[13];
 
-  memcpy(manufacturer, registers[1], 12); 
+  memcpy(manufacturer, registers[1], 12);
   manufacturer[12] = '\0';
 
   if (strcmp(manufacturer, str) == 0) {
     set[CPU_MANUFACTURER - 1] = 1;
-  } else { 
+  } else {
     set[CPU_MANUFACTURER - 1] = 0;
   }
 }
@@ -110,7 +110,7 @@ void get_cpuid_set(int *set, int nlength){
   bool HW_BMI2;
   bool HW_ADX;
   bool HW_PREFETCHWT1;
-  
+
   //  SIMD: 128-bit
   bool HW_SSE;
   bool HW_SSE2;
@@ -121,7 +121,7 @@ void get_cpuid_set(int *set, int nlength){
   bool HW_SSE4a;
   bool HW_AES;
   bool HW_SHA;
-  
+
   //  SIMD: 256-bit
   bool HW_AVX;
   bool HW_XOP;
@@ -138,16 +138,16 @@ void get_cpuid_set(int *set, int nlength){
   bool HW_AVX512DQ;   //  AVX512 Doubleword + Quadword
   bool HW_AVX512IFMA; //  AVX512 Integer 52-bit Fused Multiply-Add
   bool HW_AVX512VBMI; //  AVX512 Vector Byte Manipulation Instructions
-  
+
   int info[4];
 #ifdef HAVE_HETEROGENOUS_CLUSTER_SUPPORT
 
   cpuid(info, 0);
   int nIds = info[0];
-  
+
   cpuid(info, 0x80000000);
   unsigned nExIds = info[0];
-#endif  
+#endif
   //  Detect Features
   if (nIds >= 0x00000001){
 #ifdef HAVE_HETEROGENOUS_CLUSTER_SUPPORT

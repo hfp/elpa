@@ -94,7 +94,7 @@ template <>  inline float_complex elpaHostNumberFromInt<float_complex> (int numb
 //_________________________________________________________________________________________________
 // Generic math device functions
 
-template <typename T> 
+template <typename T>
 INLINE_DEVICE T elpaDeviceSign(T a, T b) {
   if (b>=0) return fabs(a);
   else return -fabs(a);
@@ -149,13 +149,13 @@ template <> INLINE_DEVICE float_complex elpaDeviceNumberFromRealImag<float_compl
 INLINE_DEVICE double elpaDeviceAdd(double a, double b) { return a + b; }
 INLINE_DEVICE float  elpaDeviceAdd(float a, float b)   { return a + b; }
 INLINE_DEVICE double_complex elpaDeviceAdd(double_complex a, double_complex b) {
-#if defined(WITH_NVIDIA_GPU_VERSION)  
-  return cuCadd (a, b); 
+#if defined(WITH_NVIDIA_GPU_VERSION)
+  return cuCadd (a, b);
 #elif defined(WITH_AMD_GPU_VERSION)
   return hipCadd(a, b);
 #else
   return a + b;
-#endif  
+#endif
 }
 INLINE_DEVICE float_complex elpaDeviceAdd(float_complex a, float_complex b) {
 #if defined(WITH_NVIDIA_GPU_VERSION)
@@ -191,13 +191,13 @@ INLINE_DEVICE float_complex elpaDeviceSubtract(float_complex a, float_complex b)
 INLINE_DEVICE double elpaDeviceMultiply(double a, double b) { return a * b; }
 INLINE_DEVICE float  elpaDeviceMultiply(float  a, float  b) { return a * b; }
 INLINE_DEVICE double_complex elpaDeviceMultiply(double_complex a, double_complex b) {
-#if defined(WITH_NVIDIA_GPU_VERSION)  
-  return cuCmul (a, b); 
+#if defined(WITH_NVIDIA_GPU_VERSION)
+  return cuCmul (a, b);
 #elif defined(WITH_AMD_GPU_VERSION)
   return hipCmul(a, b);
 #else
   return a * b;
-#endif  
+#endif
 }
 INLINE_DEVICE float_complex elpaDeviceMultiply(float_complex a, float_complex b) {
 #if defined(WITH_NVIDIA_GPU_VERSION)
@@ -212,11 +212,11 @@ INLINE_DEVICE float_complex elpaDeviceMultiply(float_complex a, float_complex b)
 INLINE_DEVICE double elpaDeviceDivide(double a, double b) { return a / b; }
 INLINE_DEVICE float  elpaDeviceDivide(float  a, float  b) { return a / b; }
 INLINE_DEVICE double_complex elpaDeviceDivide(double_complex a, double_complex b) {
-#if defined(WITH_NVIDIA_GPU_VERSION)  
-  return cuCdiv (a, b); 
+#if defined(WITH_NVIDIA_GPU_VERSION)
+  return cuCdiv (a, b);
 #elif defined(WITH_AMD_GPU_VERSION)
   return hipCdiv(a, b);
-#else  
+#else
   return a / b;
 #endif
 }
@@ -236,7 +236,7 @@ INLINE_DEVICE float  elpaDeviceSqrt(float  number) { return sqrtf(number); }
 INLINE_DEVICE double elpaDeviceComplexConjugate(double number) {return number;}
 INLINE_DEVICE float elpaDeviceComplexConjugate(float  number) {return number;}
 INLINE_DEVICE double_complex elpaDeviceComplexConjugate(double_complex number) {
-#if defined(WITH_NVIDIA_GPU_VERSION) 
+#if defined(WITH_NVIDIA_GPU_VERSION)
   return cuConj(number);
 #elif defined(WITH_AMD_GPU_VERSION)
   return hipConj(number);
@@ -257,18 +257,18 @@ INLINE_DEVICE float_complex elpaDeviceComplexConjugate(float_complex number) {
 INLINE_DEVICE double elpaDeviceRealPart(double number) {return number;}
 INLINE_DEVICE float  elpaDeviceRealPart(float  number) {return number;}
 INLINE_DEVICE double elpaDeviceRealPart(double_complex number) {
-#if defined(WITH_NVIDIA_GPU_VERSION) || defined(WITH_AMD_GPU_VERSION)  
+#if defined(WITH_NVIDIA_GPU_VERSION) || defined(WITH_AMD_GPU_VERSION)
   return number.x;
 #else
   return number.real();
 #endif
 }
 INLINE_DEVICE float  elpaDeviceRealPart(float_complex number) {
-#if defined(WITH_NVIDIA_GPU_VERSION) || defined(WITH_AMD_GPU_VERSION)    
+#if defined(WITH_NVIDIA_GPU_VERSION) || defined(WITH_AMD_GPU_VERSION)
   return number.x;
 #else
   return number.real();
-#endif  
+#endif
 }
 
 INLINE_DEVICE double elpaDeviceImagPart(double number) {return 0.0;}
@@ -332,14 +332,14 @@ INLINE_DEVICE void atomicAdd(T* address, T val) {
 #endif
 
 #ifdef WITH_SYCL_GPU_VERSION
-template <typename T> 
+template <typename T>
 INLINE_DEVICE void atomicAdd(T* address, T val)
   {
   sycl::atomic_ref<T, sycl::memory_order_relaxed, sycl::memory_scope::device, sycl::access::address_space::global_space> atomic_sum (*address);
   atomic_sum += val;
   }
 
-template <>  
+template <>
 INLINE_DEVICE void atomicAdd(std::complex<double>* address, std::complex<double> val)
   {
   double* real_ptr = reinterpret_cast<double*>(address); // Pointer to the real part
@@ -352,7 +352,7 @@ INLINE_DEVICE void atomicAdd(std::complex<double>* address, std::complex<double>
   atomic_sum_imag += val.imag();
   }
 
-template <>  
+template <>
 INLINE_DEVICE void atomicAdd(std::complex<float>* address, std::complex<float> val)
   {
   float* real_ptr = reinterpret_cast<float*>(address); // Pointer to the real part
@@ -418,11 +418,11 @@ INLINE_DEVICE int local_index(int idx, int my_proc, int num_procs, int nblk, int
   }
   else {
     // non local block
-    if (iflag == 0) result = 0; 
+    if (iflag == 0) result = 0;
     else {
       result = (L_block_gl / num_procs) * nblk;
 
-      if ((L_block_gl % num_procs) > my_proc) result += nblk; 
+      if ((L_block_gl % num_procs) > my_proc) result += nblk;
       if (iflag > 0) result += 1;
     }
   }

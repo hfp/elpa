@@ -301,7 +301,7 @@
     h1 = hh(nb,1)
 
     x(1:nq) = x(1:nq) + q(1:nq,nb+5) * h1
- 
+
     ! Rank-1 update
     tau1 = hh(1,1)
     x(1:nq) = x(1:nq) * tau1
@@ -319,7 +319,7 @@
     h2 = tau3 * vs_1_3
     h3 = tau3 * vs_2_3
     z(1:nq) = z(1:nq) * tau3  - (y(1:nq) * h3 + x(1:nq) * h2)
- 
+
     tau4 = hh(1,4)
     vs_1_4 = scalarproduct(4)
     vs_2_4 = scalarproduct(5)
@@ -369,12 +369,12 @@
 
     h6 = hh(2,6)
 
-    q(1:nq,2) = q(1:nq,2) - (v(1:nq) + t(1:nq) * h6) 
+    q(1:nq,2) = q(1:nq,2) - (v(1:nq) + t(1:nq) * h6)
 
     h5 = hh(2,5)
     h6 = hh(3,6)
 
-    q(1:nq,3) = q(1:nq,3) - (w(1:nq) + v(1:nq) * h5 + t(1:nq) * h6) 
+    q(1:nq,3) = q(1:nq,3) - (w(1:nq) + v(1:nq) * h5 + t(1:nq) * h6)
 
     h4 = hh(2,4)
     h5 = hh(3,5)

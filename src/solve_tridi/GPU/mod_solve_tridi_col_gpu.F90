@@ -128,5 +128,5 @@ module solve_tridi_col_gpu
 #endif
     end subroutine
 
-  
+
 end module

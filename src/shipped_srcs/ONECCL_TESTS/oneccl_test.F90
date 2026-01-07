@@ -71,7 +71,7 @@ contains
       print *, "Error getting MPI size"
       n_local_ranks = -1
       return
-    end if 
+    end if
     call mpi_comm_split_type(mpi_comm_world, mpi_comm_type_shared, 0, mpi_info_null, mpi_local_comm, ierr)
     if (ierr /= MPI_SUCCESS) then
       print *, "Error splitting MPI communicator"
@@ -104,7 +104,7 @@ contains
 
     integer(kind=c_intptr_t), intent(out) :: ccl_comm
     integer(kind=c_intptr_t), intent(out) :: my_stream
-    
+
     type(onecclUniqueId), intent(inout) :: ccl_unique_id_val
     integer(kind=c_int) :: my_rank, my_gpu
     integer(kind=c_int) :: n_local_ranks, n_ranks, n_local_gpus, ierr, ok
@@ -193,7 +193,7 @@ contains
     if  (ok == 0) then
       write(*,"(2X,A)") "Error: CCL_comm_destroy"
       stop
-    else 
+    else
       print *, "CCL communicator destroyed successfully"
     end if
   end subroutine test_ccl_cleanup

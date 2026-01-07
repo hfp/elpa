@@ -61,10 +61,10 @@
 
 #ifdef WITH_NVIDIA_GPU_VERSION
 #include "./CUDA/test_cudaFunctions.h"
-#endif 
+#endif
 #ifdef WITH_AMD_GPU_VERSION
 #include "./ROCm/test_rocmFunctions.h"
-#endif 
+#endif
 #ifdef WITH_SYCL_GPU_VERSION
 #include "./SYCL/test_syclFunctions.h"
 #endif
@@ -77,7 +77,7 @@ void set_gpu_parameters_tests(){
 #ifdef WITH_NVIDIA_GPU_VERSION
    gpuMemcpyHostToDevice = cudaMemcpyHostToDeviceFromC();
    gpuMemcpyDeviceToHost = cudaMemcpyDeviceToHostFromC();
-#endif 
+#endif
 #ifdef WITH_AMD_GPU_VERSION
    gpuMemcpyHostToDevice = hipMemcpyHostToDeviceFromC();
    gpuMemcpyDeviceToHost = hipMemcpyDeviceToHostFromC();
@@ -94,7 +94,7 @@ void set_gpu_parameters_tests(){
 int gpuGetDeviceCount_tests(int *count){
 #ifdef WITH_NVIDIA_GPU_VERSION
    return cudaGetDeviceCountFromC(count);
-#endif 
+#endif
 #ifdef WITH_AMD_GPU_VERSION
    return hipGetDeviceCountFromC(count);
 #endif
@@ -110,7 +110,7 @@ int gpuGetDeviceCount_tests(int *count){
 int gpuSetDevice_tests(int n){
 #ifdef WITH_NVIDIA_GPU_VERSION
    return cudaSetDeviceFromC(n);
-#endif   
+#endif
 #ifdef WITH_AMD_GPU_VERSION
    return hipSetDeviceFromC(n);
 #endif
@@ -125,7 +125,7 @@ int gpuSetDevice_tests(int n){
 int gpuMalloc_tests(intptr_t *a, size_t width_height) {
 #ifdef WITH_NVIDIA_GPU_VERSION
    return cudaMallocFromC(a, width_height);
-#endif   
+#endif
 #ifdef WITH_AMD_GPU_VERSION
    return hipMallocFromC(a, width_height);
 #endif
@@ -134,13 +134,13 @@ int gpuMalloc_tests(intptr_t *a, size_t width_height) {
 #endif
 #ifdef WITH_OPENMP_OFFLOAD_GPU_VERSION
 #error "openmp_offload missing"
-#endif   
+#endif
 }
 
 int gpuFree_tests(intptr_t *a) {
 #ifdef WITH_NVIDIA_GPU_VERSION
    return cudaFreeFromC(a);
-#endif   
+#endif
 #ifdef WITH_AMD_GPU_VERSION
    return hipFreeFromC(a);
 #endif
@@ -150,13 +150,13 @@ int gpuFree_tests(intptr_t *a) {
 #endif
 #ifdef WITH_OPENMP_OFFLOAD_GPU_VERSION
 #error "openmp_offload missing"
-#endif   
+#endif
 }
 
 int gpuMemcpy_tests(intptr_t *dest, intptr_t *src, size_t count, int dir){
 #ifdef WITH_NVIDIA_GPU_VERSION
    return cudaMemcpyFromC(dest, src, count, dir);
-#endif  
+#endif
 #ifdef WITH_AMD_GPU_VERSION
    return hipMemcpyFromC(dest, src, count, dir);
 #endif
@@ -165,5 +165,5 @@ int gpuMemcpy_tests(intptr_t *dest, intptr_t *src, size_t count, int dir){
 #endif
 #ifdef WITH_OPENMP_OFFLOAD_GPU_VERSION
 #error "openmp_offload missing"
-#endif  
+#endif
 }

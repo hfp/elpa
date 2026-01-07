@@ -99,7 +99,7 @@ extern "C" void sycl_copy_real_part_to_q_float_complex_FromC(std::complex<float>
 }
 
 
-template<typename T> 
+template<typename T>
 void sycl_zero_skewsymmetric_q(T *q_dev, int *matrixRows_in, int *matrixCols_in, QueueData *my_stream) {
   int matrixCols = *matrixCols_in;
   int matrixRows = *matrixRows_in;
@@ -118,7 +118,7 @@ void sycl_zero_skewsymmetric_q(T *q_dev, int *matrixRows_in, int *matrixCols_in,
         q_dev[index] = 0.0;
     }
   });
-  
+
   q.wait_and_throw();
 }
 
@@ -166,7 +166,7 @@ template<typename T> void sycl_copy_skewsymmetric_second_half_q(T *q_dev, int *i
       sycl_copy_skewsymmetric_second_half_q_kernel<T, false>(q_dev, i, matrixRows, matrixCols, it);
     });
   }
-  
+
   q.wait_and_throw();
 }
 
@@ -196,7 +196,7 @@ void sycl_copy_skewsymmetric_first_half_q_FromC(T *q_dev, int *i_in, int *matrix
       q_dev[index] = -q_dev[index];
     }
   });
-  
+
   q.wait_and_throw();
 }
 

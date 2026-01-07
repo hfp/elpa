@@ -165,7 +165,7 @@ module test_util
       implicit none
       real(kind=c_double) :: x
       logical :: result_infinity_or_NaN
-  
+
       result_infinity_or_NaN = x/=x .or. x>huge(x) .or. x<-huge(x)
     end function
 
@@ -173,7 +173,7 @@ module test_util
       implicit none
       real(kind=c_float) :: x
       logical :: result_infinity_or_NaN
-  
+
       result_infinity_or_NaN = x/=x .or. x>huge(x) .or. x<-huge(x)
     end function
 

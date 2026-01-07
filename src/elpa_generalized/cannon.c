@@ -107,7 +107,7 @@ int gpuMemcpyDeviceToHost;
 #define gpuErrCheck(ans) { gpuAssert((ans), __FILE__, __LINE__); }
 static inline void gpuAssert(int status, const char *file, int line)
 {
-   if (status != 1) // 1 = success for ELPA GPU interfaces 
+   if (status != 1) // 1 = success for ELPA GPU interfaces
    {
       fprintf(stderr,"GPUassert: %s %d\n", file, line);
       exit(!status);

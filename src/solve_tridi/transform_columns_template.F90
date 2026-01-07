@@ -93,7 +93,7 @@ subroutine transform_columns_cpu_&
 #endif
 
   real(kind=REAL_DATATYPE)                   :: qtrans(2,2)
-  
+
   real(kind=REAL_DATATYPE)                   :: tmp(na) ! only l_rows <= na elements are used
 
 #ifdef WITH_MPI
@@ -117,7 +117,7 @@ subroutine transform_columns_cpu_&
   integer(kind=c_int)                        :: cclDataType
 
   if (l_rows==0) return ! My processor column has no work to do
-  
+
   useGPU = .false.
 #ifdef SOLVE_TRIDI_GPU_BUILD
   useGPU = .true.
@@ -130,10 +130,10 @@ subroutine transform_columns_cpu_&
     my_stream = obj%gpu_setup%my_stream
 #endif
     SM_count = obj%gpu_setup%gpuSMcount
-    
+
     if (useCCL) then
       my_stream = obj%gpu_setup%my_stream
-      
+
       ccl_comm_cols_self = obj%gpu_setup%ccl_comm_cols
       if (mpi_comm_cols_self==mpi_comm_self) then
         ccl_comm_cols_self = obj%gpu_setup%ccl_comm_self
@@ -141,7 +141,7 @@ subroutine transform_columns_cpu_&
 
 #if defined(DOUBLE_PRECISION)
       cclDataType = cclDouble
-#endif      
+#endif
 #if defined(SINGLE_PRECISION)
       cclDataType = cclFloat
 #endif
@@ -176,7 +176,7 @@ subroutine transform_columns_cpu_&
     else ! (pc2==my_pcol)
 #ifdef WITH_MPI
       shift_dev = (l_rqs-1 + (lc1-1)*ldq)*size_of_datatype
-      
+
       if (useGPU .and. .not. useCCL) then
         ! memcopy GPU->CPU
 #ifdef WITH_GPU_STREAMS
@@ -245,12 +245,12 @@ subroutine transform_columns_cpu_&
   else if (pc2==my_pcol) then ! (pc1==my_pcol)
 #ifdef WITH_MPI
     shift_dev = (l_rqs-1 + (lc2-1)*ldq)*size_of_datatype
-      
+
     if (useGPU .and. .not. useCCL) then
 #ifdef WITH_GPU_STREAMS
       successGPU = gpu_memcpy_async(int(loc(q(l_rqs,lc2)),kind=c_intptr_t), q_dev + shift_dev, &
                                     l_rows*size_of_datatype, gpuMemcpyDeviceToHost, my_stream)
-      
+
       successGPU = gpu_stream_synchronize(my_stream)
       check_stream_synchronize_gpu("transform_columns: q_dev -> q", successGPU)
 #else
@@ -263,19 +263,19 @@ subroutine transform_columns_cpu_&
     if (useCCL) then
       call obj%timer%start("ccl_send_recv")
       successGPU = ccl_group_start()
-    
+
       successGPU = successGPU .and. ccl_send (q_dev + shift_dev, int(l_rows,kind=c_size_t), &
                                               cclDataType, pc1, ccl_comm_cols_self, my_stream)
-    
+
       successGPU = successGPU .and. ccl_recv (tmp_dev, int(l_rows,kind=c_size_t), &
                                               cclDataType, pc1, ccl_comm_cols_self, my_stream)
-    
+
       successGPU = successGPU .and. ccl_group_end()
       if (.not. successGPU) then
         print *,"Error in ccl_group_start/ccl_group_end/ccl_send/ccl_recv!"
         stop 1
       endif
-    
+
       successGPU = gpu_stream_synchronize(my_stream)
       check_stream_synchronize_gpu("transform_columns ccl_send/ccl_recv", successGPU)
       call obj%timer%stop("ccl_send_recv")

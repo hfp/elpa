@@ -128,7 +128,7 @@ __global__ void hip_copy_a_tmatc_kernel(T *a_dev, T *tmatc_dev, const int l_cols
 
 template <typename T>
 void hip_copy_a_tmatc_FromC(T *a_dev, T *tmatc_dev, int *nblk_in, int *matrixRows_in, int *l_cols_in, int *l_colx_in, int *l_row1_in, hipStream_t my_stream){
-  int nblk = *nblk_in;   
+  int nblk = *nblk_in;
   int matrixRows = *matrixRows_in;
   int l_cols = *l_cols_in;
   int l_colx = *l_colx_in;
@@ -138,10 +138,10 @@ void hip_copy_a_tmatc_FromC(T *a_dev, T *tmatc_dev, int *nblk_in, int *matrixRow
   dim3 threadsPerBlock = dim3(nblk,1,1);
 
 #ifdef WITH_GPU_STREAMS
-  hipLaunchKernelGGL(hip_copy_a_tmatc_kernel, blocks, threadsPerBlock, 0, my_stream, 
+  hipLaunchKernelGGL(hip_copy_a_tmatc_kernel, blocks, threadsPerBlock, 0, my_stream,
                      a_dev, tmatc_dev, l_cols, matrixRows, l_colx, l_row1);
 #else
-  hipLaunchKernelGGL(hip_copy_a_tmatc_kernel, blocks, threadsPerBlock, 0, 0, 
+  hipLaunchKernelGGL(hip_copy_a_tmatc_kernel, blocks, threadsPerBlock, 0, 0,
                      a_dev, tmatc_dev, l_cols, matrixRows, l_colx, l_row1);
 #endif
   hipError_t hiperr = hipGetLastError();
@@ -151,22 +151,22 @@ void hip_copy_a_tmatc_FromC(T *a_dev, T *tmatc_dev, int *nblk_in, int *matrixRow
   }
 }
 
-extern "C" void hip_copy_double_a_tmatc_FromC(double *a_dev, double *tmatc_dev, int *nblk_in, int *matrixRows_in, 
+extern "C" void hip_copy_double_a_tmatc_FromC(double *a_dev, double *tmatc_dev, int *nblk_in, int *matrixRows_in,
                                                int *l_cols_in, int *l_colx_in, int *l_row1_in, hipStream_t my_stream){
   hip_copy_a_tmatc_FromC(a_dev, tmatc_dev, nblk_in, matrixRows_in, l_cols_in, l_colx_in, l_row1_in, my_stream);
 }
 
-extern "C" void hip_copy_float_a_tmatc_FromC(float *a_dev, float *tmatc_dev, int *nblk_in, int *matrixRows_in, 
+extern "C" void hip_copy_float_a_tmatc_FromC(float *a_dev, float *tmatc_dev, int *nblk_in, int *matrixRows_in,
                                               int *l_cols_in, int *l_colx_in, int *l_row1_in, hipStream_t my_stream){
   hip_copy_a_tmatc_FromC(a_dev, tmatc_dev, nblk_in, matrixRows_in, l_cols_in, l_colx_in, l_row1_in, my_stream);
 }
 
-extern "C" void hip_copy_double_complex_a_tmatc_FromC(hipDoubleComplex *a_dev, hipDoubleComplex *tmatc_dev, int *nblk_in, int *matrixRows_in, 
+extern "C" void hip_copy_double_complex_a_tmatc_FromC(hipDoubleComplex *a_dev, hipDoubleComplex *tmatc_dev, int *nblk_in, int *matrixRows_in,
                                                   int *l_cols_in, int *l_colx_in, int *l_row1_in, hipStream_t my_stream){
   hip_copy_a_tmatc_FromC(a_dev, tmatc_dev, nblk_in, matrixRows_in, l_cols_in, l_colx_in, l_row1_in, my_stream);
 }
 
-extern "C" void hip_copy_float_complex_a_tmatc_FromC(hipFloatComplex *a_dev, hipFloatComplex *tmatc_dev, int *nblk_in, int *matrixRows_in, 
+extern "C" void hip_copy_float_complex_a_tmatc_FromC(hipFloatComplex *a_dev, hipFloatComplex *tmatc_dev, int *nblk_in, int *matrixRows_in,
                                                  int *l_cols_in, int *l_colx_in, int *l_row1_in, hipStream_t my_stream){
   hip_copy_a_tmatc_FromC(a_dev, tmatc_dev, nblk_in, matrixRows_in, l_cols_in, l_colx_in, l_row1_in, my_stream);
 }
@@ -212,10 +212,10 @@ void hip_set_a_lower_to_zero(T *a_dev, int *na_in, int *matrixRows_in, int *my_p
   dim3 threadsPerBlock = dim3(MAX_THREADS_PER_BLOCK,1,1);
 
 #ifdef WITH_GPU_STREAMS
-  hipLaunchKernelGGL(hip_set_a_lower_to_zero_kernel, blocks, threadsPerBlock, 0, my_stream, 
+  hipLaunchKernelGGL(hip_set_a_lower_to_zero_kernel, blocks, threadsPerBlock, 0, my_stream,
                      a_dev, na, matrixRows, my_pcol, np_cols, my_prow, np_rows, nblk);
 #else
-  hipLaunchKernelGGL(hip_set_a_lower_to_zero_kernel, blocks, threadsPerBlock, 0, 0, 
+  hipLaunchKernelGGL(hip_set_a_lower_to_zero_kernel, blocks, threadsPerBlock, 0, 0,
                      a_dev, na, matrixRows, my_pcol, np_cols, my_prow, np_rows, nblk);
 #endif
 
@@ -230,8 +230,8 @@ void hip_set_a_lower_to_zero(T *a_dev, int *na_in, int *matrixRows_in, int *my_p
   }
 }
 
-extern "C" void hip_set_a_lower_to_zero_FromC(char dataType, intptr_t a_dev, int *na_in, int *matrixRows_in, 
-                                              int *my_pcol_in, int *np_cols_in, int *my_prow_in, int *np_rows_in, 
+extern "C" void hip_set_a_lower_to_zero_FromC(char dataType, intptr_t a_dev, int *na_in, int *matrixRows_in,
+                                              int *my_pcol_in, int *np_cols_in, int *my_prow_in, int *np_rows_in,
                                               int *nblk_in, int *wantDebug_in, hipStream_t my_stream){
 
   if (dataType=='D') hip_set_a_lower_to_zero<double>((double *) a_dev, na_in, matrixRows_in, my_pcol_in, np_cols_in, my_prow_in, np_rows_in, nblk_in, wantDebug_in, my_stream);

@@ -994,7 +994,7 @@ function elpa_solve_evp_&
        return
      endif
 
-#ifdef DEBUG_CUDA     
+#ifdef DEBUG_CUDA
      if (wantDebug .and. useGPU) then
        my_stream = obj%gpu_setup%my_stream
 
@@ -1012,7 +1012,7 @@ function elpa_solve_evp_&
                           int(mpi_comm_all,kind=MPI_KIND), mpierr)
 #endif
        if (myid==0) print *, "ELPA1, after tridiag: sum a_dev=", sum_debug
-       
+
        num = na * size_of_datatype_real
 #ifdef WITH_GPU_STREAMS
        successGPU = gpu_memcpy_async(int(loc(buffer_debug_real(1)),kind=c_intptr_t), ev_dev, num, gpuMemcpyDeviceToHost, my_stream)
@@ -1153,7 +1153,7 @@ function elpa_solve_evp_&
                          int(mpi_comm_all,kind=MPI_KIND), mpierr)
 #endif
       if (myid==0) print *, "elpa1, after solve_tridi: sum q_dev_actual=", sum_debug
-      
+
       num = na * size_of_datatype_real
 #ifdef WITH_GPU_STREAMS
        successGPU = gpu_memcpy_async(int(loc(buffer_debug_real(1)),kind=c_intptr_t), ev_dev, num, gpuMemcpyDeviceToHost, my_stream)

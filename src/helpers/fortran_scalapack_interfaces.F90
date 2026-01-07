@@ -43,7 +43,7 @@
 ! This file was written by A. Marek, MPCDF
 
 
-  interface 
+  interface
     subroutine descinit(DESC, M, N, MB, NB, IRSRC, ICSRC, ICTXT, LLD, INFO)
     use precision
     implicit none
@@ -143,7 +143,7 @@
   end interface
 
   interface
-    subroutine pdgenr2d(m, n, a, ia, ja, desca, b, ib, jb, descb, ictxt) 
+    subroutine pdgenr2d(m, n, a, ia, ja, desca, b, ib, jb, descb, ictxt)
     use PRECISION_MODULE
     implicit none
     integer(kind=BLAS_KIND) :: m, n, ia, ja, desca(*), ib, jb, descb(*)
@@ -206,7 +206,7 @@
   end interface
 
   interface
-    subroutine psgenr2d(m, n, a, ia, ja, desca, b, ib, jb, descb, ictxt) 
+    subroutine psgenr2d(m, n, a, ia, ja, desca, b, ib, jb, descb, ictxt)
     use PRECISION_MODULE
     implicit none
     integer(kind=BLAS_KIND) :: m, n, ia, ja, desca(*), ib, jb, descb(*)
@@ -270,7 +270,7 @@
   end interface
 
   interface
-    subroutine pzgenr2d(m, n, a, ia, ja, desca, b, ib, jb, descb, ictxt) 
+    subroutine pzgenr2d(m, n, a, ia, ja, desca, b, ib, jb, descb, ictxt)
     use PRECISION_MODULE
     implicit none
     integer(kind=BLAS_KIND) :: m, n, ia, ja, desca(*), ib, jb, descb(*)
@@ -334,7 +334,7 @@
   end interface
 
   interface
-    subroutine pcgenr2d(m, n, a, ia, ja, desca, b, ib, jb, descb, ictxt) 
+    subroutine pcgenr2d(m, n, a, ia, ja, desca, b, ib, jb, descb, ictxt)
     use PRECISION_MODULE
     implicit none
     integer(kind=BLAS_KIND) :: m, n, ia, ja, desca(*), ib, jb, descb(*)

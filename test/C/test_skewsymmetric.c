@@ -69,7 +69,7 @@
 #ifdef __cplusplus
 #define double_complex std::complex<double>
 #define float_complex std::complex<float>
-#define Complex_I std::complex<EV_TYPE> (0.0,1.0); 
+#define Complex_I std::complex<EV_TYPE> (0.0,1.0);
 #else
 #define double_complex double complex
 #define float_complex float complex
@@ -242,7 +242,7 @@ int main(int argc, char** argv) {
      na = 500;
      nev = 250;
      nblk = 16;
-#endif 
+#endif
    }
 
    for (np_cols = (C_INT_TYPE) sqrt((double) nprocs); np_cols > 1; np_cols--) {
@@ -292,7 +292,7 @@ int main(int argc, char** argv) {
    for (_elements=0;_elements<na;_elements++){
      ev_skewsymmetric[_elements] = 0.;
    }
-   
+
    is_hermitian=0;
    is_skewsymmetric=1;
    PREPARE_MATRIX_RANDOM(na, myid, na_rows, na_cols, sc_desc, a_skewsymmetric, z_skewsymmetric_prepare, as_skewsymmetric, is_hermitian, is_skewsymmetric);
@@ -316,7 +316,7 @@ int main(int argc, char** argv) {
    //  a_complex[_elements] = 0.;
    //  z_complex[_elements] = 0.;
    //  as_complex[_elements] = 0.;
-   //}  
+   //}
    //for (_elements=0;_elements<na;_elements++){
    //  ev_complex[_elements] = 0.;
    //}

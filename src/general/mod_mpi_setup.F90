@@ -66,7 +66,7 @@ module elpa_mpi_setup
     integer(kind=c_int)            :: myRank_comm_parent
     integer(kind=c_int)            :: myRank_comm_rows
     integer(kind=c_int)            :: myRank_comm_cols
-    
+
     integer(kind=c_int)            :: nRanksExternal_comm_parent
     integer(kind=c_int)            :: nRanksExternal_comm_rows
     integer(kind=c_int)            :: nRanksExternal_comm_cols

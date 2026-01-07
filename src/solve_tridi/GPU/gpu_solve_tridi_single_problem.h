@@ -58,7 +58,7 @@ __global__ void gpu_check_monotony_kernel(T *d, T *q, T *qtmp, const int nlen, c
   //if (i>=0 && i<gemm_dim_k) {
   //  if (j>=0 && j<gemm_dim_l) {
   //    qtmp1_tmp[i+gemm_dim_k*j] = qtmp1[i+gemm_dim_k*j];
-  //  }    
+  //  }
   //}
   for (int i=0; i<nlen-1;i++) {
     if (d[i+1] < d[i]) {
@@ -97,7 +97,7 @@ void gpu_check_monotony(T *d_dev, T *q_dev, T *qtmp_dev, int nlen, int ldq, int 
 #else
   gpu_check_monotony_kernel<<<blocks,threadsPerBlock>>>            (d_dev, q_dev, qtmp_dev, nlen, ldq);
 #endif
-  
+
   if (debug)
     {
     gpuDeviceSynchronize();
@@ -149,7 +149,7 @@ void gpu_construct_full_from_tridi_matrix(T *q_dev, T *d_dev, T *e_dev, int nlen
 #else
   gpu_construct_full_from_tridi_matrix_kernel<<<blocks,threadsPerBlock>>>            (q_dev, d_dev, e_dev, nlen, ldq);
 #endif
-  
+
   if (debug)
     {
     gpuDeviceSynchronize();

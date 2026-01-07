@@ -90,7 +90,7 @@ module elpa_api
       procedure(elpa_destroy_i), deferred, public :: destroy        !< method to destroy an ELPA object
 
       procedure(elpa_setup_gpu_i),   deferred, public :: setup_gpu  !< method to setup the GPU usage
-      
+
       ! key/value store
       generic, public :: set => &                                   !< export a method to set integer/double/float key/values
           elpa_set_integer, &
@@ -125,7 +125,7 @@ module elpa_api
 
       generic, public :: eigenvectors_double => &             !< method eigenvectors for solving the full eigenvalue problem
           elpa_eigenvectors_a_h_a_d, &                        !< for (real) double data, can be used with host arrays or
-          elpa_eigenvectors_d_ptr_d                           !< GPU device pointers in the GPU version   
+          elpa_eigenvectors_d_ptr_d                           !< GPU device pointers in the GPU version
 
       generic, public :: eigenvectors_float => &              !< method eigenvectors for solving the full eigenvalue problem
           elpa_eigenvectors_a_h_a_f, &                        !< for (real) float data, can be used with host arrays or
@@ -197,7 +197,7 @@ module elpa_api
 
       generic, public :: generalized_eigenvectors_double => & !< method eigenvectors for solving the full generalized eigenvalue problem
           elpa_generalized_eigenvectors_a_h_a_d, &            !< for (real) double data, can be used with host arrays or
-          elpa_generalized_eigenvectors_d_ptr_d               !< GPU device pointers in the GPU version   
+          elpa_generalized_eigenvectors_d_ptr_d               !< GPU device pointers in the GPU version
 
       generic, public :: generalized_eigenvectors_float => &  !< method eigenvectors for solving the full generalized eigenvalue problem
           elpa_generalized_eigenvectors_a_h_a_f, &            !< for (real) float data, can be used with host arrays or
@@ -279,25 +279,25 @@ module elpa_api
       generic, public:: pxgemm_multiply_float_complex => &
               elpa_pxgemm_multiply_a_h_a_fc, &
               elpa_pxgemm_multiply_d_ptr_fc
-  
+
       generic, public :: cholesky => &                            !< method for the cholesky factorisation of matrix a
           elpa_cholesky_a_h_a_d, &
           elpa_cholesky_a_h_a_f, &
           elpa_cholesky_a_h_a_dc, &
           elpa_cholesky_a_h_a_fc
- 
+
       generic, public :: cholesky_double => &                     !< method for the cholesky factorisation of matrix a
           elpa_cholesky_a_h_a_d, &
           elpa_cholesky_d_ptr_d
- 
+
       generic, public :: cholesky_float => &                      !< method for the cholesky factorisation of matrix a
           elpa_cholesky_a_h_a_f, &
           elpa_cholesky_d_ptr_f
- 
+
       generic, public :: cholesky_double_complex => &             !< method for the cholesky factorisation of matrix a
           elpa_cholesky_a_h_a_dc, &
           elpa_cholesky_d_ptr_dc
- 
+
       generic, public :: cholesky_float_complex => &              !< method for the cholesky factorisation of matrix a
           elpa_cholesky_a_h_a_fc, &
           elpa_cholesky_d_ptr_fc
@@ -310,22 +310,22 @@ module elpa_api
 
       generic, public :: invert_triangular_double => &          !< method eigenvectors for solving the full eigenvalue problem
               elpa_invert_trm_a_h_a_d, &                        !< for (real) double data, can be used with host arrays or
-              elpa_invert_trm_d_ptr_d                           !< GPU device pointers in the GPU version   
+              elpa_invert_trm_d_ptr_d                           !< GPU device pointers in the GPU version
 
       generic, public :: invert_triangular_float => &           !< method eigenvectors for solving the full eigenvalue problem
               elpa_invert_trm_a_h_a_f, &                        !< for (real) double data, can be used with host arrays or
-              elpa_invert_trm_d_ptr_f                           !< GPU device pointers in the GPU version   
+              elpa_invert_trm_d_ptr_f                           !< GPU device pointers in the GPU version
 
       generic, public :: invert_triangular_double_complex => &  !< method eigenvectors for solving the full eigenvalue problem
               elpa_invert_trm_a_h_a_dc, &                       !< for (real) double data, can be used with host arrays or
-              elpa_invert_trm_d_ptr_dc                          !< GPU device pointers in the GPU version   
+              elpa_invert_trm_d_ptr_dc                          !< GPU device pointers in the GPU version
 
       generic, public :: invert_triangular_float_complex => &   !< method eigenvectors for solving the full eigenvalue problem
               elpa_invert_trm_a_h_a_fc, &                       !< for (real) double data, can be used with host arrays or
-              elpa_invert_trm_d_ptr_fc                          !< GPU device pointers in the GPU version   
+              elpa_invert_trm_d_ptr_fc                          !< GPU device pointers in the GPU version
 
       generic, public :: solve_tridiagonal => &                 !< method to solve the eigenvalue problem for a tridiagonal matrix
-          elpa_solve_tridiagonal_d, &                           
+          elpa_solve_tridiagonal_d, &
           elpa_solve_tridiagonal_f
 
       procedure(print_settings_i), deferred, public :: print_settings !< method to print all parameters
@@ -409,7 +409,7 @@ module elpa_api
       procedure(elpa_generalized_eigenvalues_d_ptr_dc_i),   deferred, public :: elpa_generalized_eigenvalues_d_ptr_dc
       procedure(elpa_generalized_eigenvalues_d_ptr_fc_i),   deferred, public :: elpa_generalized_eigenvalues_d_ptr_fc
 
-      
+
       procedure(elpa_hermitian_multiply_a_h_a_d_i),  deferred, public :: elpa_hermitian_multiply_a_h_a_d
       procedure(elpa_hermitian_multiply_a_h_a_f_i),  deferred, public :: elpa_hermitian_multiply_a_h_a_f
       procedure(elpa_hermitian_multiply_a_h_a_dc_i), deferred, public :: elpa_hermitian_multiply_a_h_a_dc
@@ -498,7 +498,7 @@ module elpa_api
   end interface
 
 
-  !> \brief abstract definition of the ELPA setup_gpu method 
+  !> \brief abstract definition of the ELPA setup_gpu method
   !> Parameters
   !> \details
   !> \param   self        class(elpa_t): the ELPA object
@@ -1119,7 +1119,7 @@ module elpa_api
     !> \param   api_version integer: api_version that ELPA should use
     !> \result  error       integer: error code, which can be queried with elpa_strerr
     !
-    !c> // /src/elpa_api.F90    
+    !c> // /src/elpa_api.F90
     !c> int elpa_init(int api_version);
     function elpa_init(api_version) result(error) bind(C, name="elpa_init")
       use elpa_utilities, only : error_unit
@@ -1158,7 +1158,7 @@ module elpa_api
     end function
 
 #if OPTIONAL_C_ERROR_ARGUMENT == 1
-    !c_o> // c_o: /src/elpa_api.F90 
+    !c_o> // c_o: /src/elpa_api.F90
     !c_o> #if OPTIONAL_C_ERROR_ARGUMENT == 1
     !c_o> #define elpa_uninit(...) CONC(elpa_uninit, NARGS(__VA_ARGS__))(__VA_ARGS__)
     !c_o> #endif
@@ -1179,7 +1179,7 @@ module elpa_api
       call elpa_uninit()
     end subroutine
 #else
-    !c_no> // c_no: /src/elpa_api.F90 
+    !c_no> // c_no: /src/elpa_api.F90
     !c_no> #if OPTIONAL_C_ERROR_ARGUMENT != 1
     !c_no> void elpa_uninit(int *error);
     !c_no> #endif
@@ -1201,7 +1201,7 @@ module elpa_api
       !use elpa_gpu, only : gpuDeviceArray, gpublasHandleArray, my_stream
       use elpa_omp
       implicit none
-      
+
 #ifdef USE_FORTRAN2008
       integer, optional, intent(out) :: error
 #else
@@ -1218,13 +1218,13 @@ module elpa_api
 !#endif /* WITH_OPENMP_TRADITIONAL */
 !
 !#if defined(WITH_NVIDIA_GPU_VERSION) || defined(WITH_AMD_GPU_VERSION) || defined(WITH_OPENMP_OFFLOAD_GPU_VERSION) || defined(WITH_SYCL_GPU_VERSION)
-!      if (allocated(gpublasHandleArray)) then   
+!      if (allocated(gpublasHandleArray)) then
 !
 !#include "./GPU/handle_destruction_template.F90"
-!      
+!
 !        deallocate(self%gpu_setup%gpublasHandleArray)
 !        deallocate(self%gpu_setup%gpuDeviceArray)
-!      
+!
 !#ifdef WITH_NVIDIA_GPU_VERSION
 !        deallocate(self%gpu_setup%cublasHandleArray)
 !        deallocate(self%gpu_setup%cudaDeviceArray)
@@ -1262,7 +1262,7 @@ module elpa_api
      error = ELPA_OK
 #endif
     end subroutine
-    
+
     !> \brief helper function for error strings
     !> Parameters
     !> \param   elpa_error  integer: error code to querry

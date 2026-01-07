@@ -63,7 +63,7 @@ void set_gpu_parameters(int* gpuMemcpyHostToDevice, int* gpuMemcpyDeviceToHost){
 #ifdef WITH_NVIDIA_GPU_VERSION
   *gpuMemcpyHostToDevice = cudaMemcpyHostToDeviceFromC();
   *gpuMemcpyDeviceToHost = cudaMemcpyDeviceToHostFromC();
-#endif 
+#endif
 #ifdef WITH_AMD_GPU_VERSION
   *gpuMemcpyHostToDevice = hipMemcpyHostToDeviceFromC();
   *gpuMemcpyDeviceToHost = hipMemcpyDeviceToHostFromC();
@@ -80,7 +80,7 @@ void set_gpu_parameters(int* gpuMemcpyHostToDevice, int* gpuMemcpyDeviceToHost){
 int gpuGetDeviceCount(int *count){
 #ifdef WITH_NVIDIA_GPU_VERSION
   return cudaGetDeviceCountFromC(count);
-#endif 
+#endif
 #ifdef WITH_AMD_GPU_VERSION
   return hipGetDeviceCountFromC(count);
 #endif
@@ -96,7 +96,7 @@ int gpuGetDeviceCount(int *count){
 int gpuSetDevice(int n){
 #ifdef WITH_NVIDIA_GPU_VERSION
   return cudaSetDeviceFromC(n);
-#endif   
+#endif
 #ifdef WITH_AMD_GPU_VERSION
   return hipSetDeviceFromC(n);
 #endif
@@ -112,7 +112,7 @@ int gpuSetDevice(int n){
 int gpuMalloc(intptr_t *a, size_t width_height) {
 #ifdef WITH_NVIDIA_GPU_VERSION
   return cudaMallocFromC(a, width_height);
-#endif   
+#endif
 #ifdef WITH_AMD_GPU_VERSION
   return hipMallocFromC(a, width_height);
 #endif
@@ -128,7 +128,7 @@ int gpuMalloc(intptr_t *a, size_t width_height) {
 int gpuFree(intptr_t *a) {
 #ifdef WITH_NVIDIA_GPU_VERSION
   return cudaFreeFromC(a);
-#endif   
+#endif
 #ifdef WITH_AMD_GPU_VERSION
   return hipFreeFromC(a);
 #endif
@@ -144,7 +144,7 @@ int gpuFree(intptr_t *a) {
 int gpuMemcpy(intptr_t *dest, intptr_t *src, size_t count, int dir){
 #ifdef WITH_NVIDIA_GPU_VERSION
   return cudaMemcpyFromC(dest, src, count, dir);
-#endif  
+#endif
 #ifdef WITH_AMD_GPU_VERSION
   return hipMemcpyFromC(dest, src, count, dir);
 #endif
@@ -160,7 +160,7 @@ int gpuMemcpy(intptr_t *dest, intptr_t *src, size_t count, int dir){
 int gpuDeviceSynchronize(){
 #ifdef WITH_NVIDIA_GPU_VERSION
   return cudaDeviceSynchronizeFromC();
-#endif  
+#endif
 #ifdef WITH_AMD_GPU_VERSION
   return hipDeviceSynchronizeFromC();
 #endif

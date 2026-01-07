@@ -71,7 +71,7 @@ void gpu_update_d(T *d_dev, T *e_dev, int *limits_dev, int ndiv, int na, int deb
 #else
   gpu_update_d_kernel<<<blocks,threadsPerBlock>>>            (d_dev, e_dev, limits_dev, ndiv, na);
 #endif
-  
+
   if (debug)
     {
     gpuDeviceSynchronize();
@@ -117,7 +117,7 @@ void gpu_copy_qmat1_to_qmat2(T *qmat1_dev, T *qmat2_dev, int max_size, int debug
 #else
   gpu_copy_qmat1_to_qmat2_kernel<<<blocks,threadsPerBlock>>>            (qmat1_dev, qmat2_dev, max_size);
 #endif
-  
+
   if (debug)
     {
     gpuDeviceSynchronize();
@@ -128,7 +128,7 @@ void gpu_copy_qmat1_to_qmat2(T *qmat1_dev, T *qmat2_dev, int max_size, int debug
   }
 }
 
-extern "C" void CONCATENATE(ELPA_GPU,  _copy_qmat1_to_qmat2_FromC)(char dataType, intptr_t qmat1_dev, intptr_t qmat2_dev, 
+extern "C" void CONCATENATE(ELPA_GPU,  _copy_qmat1_to_qmat2_FromC)(char dataType, intptr_t qmat1_dev, intptr_t qmat2_dev,
                                                                    int max_size, int debug, gpuStream_t my_stream) {
   if      (dataType=='D') gpu_copy_qmat1_to_qmat2<double>((double *) qmat1_dev, (double *) qmat2_dev, max_size, debug, my_stream);
   else if (dataType=='S') gpu_copy_qmat1_to_qmat2<float> ((float  *) qmat1_dev, (float  *) qmat2_dev, max_size, debug, my_stream);

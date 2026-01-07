@@ -666,7 +666,7 @@ subroutine trans_ev_tridi_to_band_&
                                ldq*matrixCols * size_of_datatype, &
                                gpuMemcpyHostToDevice, my_stream)
       check_memcpy_gpu("trans_ev_tridi_to_band 1: q -> q_dev", successGPU)
-      
+
       successGPU = gpu_stream_synchronize(my_stream)
       check_stream_synchronize_gpu("trans_ev_tridi_to_band 1: q -> q_dev", successGPU)
       ! synchronize streamsPerThread; maybe not neccessary
@@ -1186,7 +1186,7 @@ subroutine trans_ev_tridi_to_band_&
 
           if (useGPU) then
 
-          else    
+          else
             call unpack_row_&
                  &MATH_DATATYPE&
                  &_cpu_&
@@ -2014,7 +2014,7 @@ subroutine trans_ev_tridi_to_band_&
 
           successGPU =  gpu_memcpy_async(c_loc(bcast_buffer_mpi_fortran_ptr(1,1)), &
                                    c_loc(hh_trans_mpi_fortran_ptr(1,current_tv_off+1)),  &
-                                     size(hh_trans,dim=1) * (current_tv_off+current_local_n-(current_tv_off+1)+1) * &   
+                                     size(hh_trans,dim=1) * (current_tv_off+current_local_n-(current_tv_off+1)+1) * &
                                      size_of_datatype, &
                                      gpuMemcpyDeviceToDevice, my_stream)
           check_memcpy_gpu("tridi_to_band: bcast_buffer -> bcast_buffer_dev", successGPU)
@@ -2387,7 +2387,7 @@ subroutine trans_ev_tridi_to_band_&
             else ! allComputeOnGPU
               if (wantDebug) call obj%timer%start("memcpy")
               dev_offset = (0 + (n_off * stripe_width) + ( (i-1) * stripe_width *a_dim2 )) * size_of_datatype
-#ifdef WITH_GPU_STREAMS 
+#ifdef WITH_GPU_STREAMS
               successGPU = gpu_stream_synchronize(my_stream)
               check_stream_synchronize_gpu("tridi_to_band: bottom_border_recv_buffer -> aIntern_dev", successGPU)
 
@@ -2718,7 +2718,7 @@ subroutine trans_ev_tridi_to_band_&
               if (.not.success) then
                 success=.false.
                 return
-               endif      
+               endif
             else ! useGPU
               call obj%timer%start("OpenMP parallel" // PRECISION_SUFFIX)
 

@@ -475,7 +475,7 @@ module merge_systems_gpu_new
 #if defined(WITH_NVIDIA_GPU_VERSION) || defined(WITH_AMD_GPU_VERSION) || defined(WITH_SYCL_GPU_VERSION)
       call gpu_copy_qtmp2_slice_to_q_c (dataType, q_dev, qtmp2_dev, idxq1_dev, l_col_out_dev, &
                                         l_rqs, l_rqe, l_rows, ncnt, gemm_dim_k, matrixRows, ns, debug, my_stream)
-#endif    
+#endif
     end subroutine
 
 
@@ -495,7 +495,7 @@ module merge_systems_gpu_new
 #endif
     end subroutine
 
-    
+
     subroutine gpu_fill_tmp_arrays (dataType, d1u_dev, d1_dev, zu_dev, z_dev, d1l_dev, zl_dev, &
                                     idx1_dev, p_col_dev, coltyp_dev, nnzu_val_dev, nnzl_val_dev, nnzul_dev, &
                                     na, np, na1, np_rem, debug, my_stream)
@@ -577,8 +577,8 @@ module merge_systems_gpu_new
       call gpu_fill_array_c (dataType, array_dev, value_dev, n, SM_count, debug, my_stream)
 #endif
     end subroutine
-    
-    
+
+
     subroutine gpu_solve_secular_equation_loop (dataType, d1_dev, z1_dev, delta_dev, rho_dev, &
                                             z_dev, dbase_dev, ddiff_dev,  my_proc, na1, n_procs, SM_count, debug, my_stream)
       use, intrinsic :: iso_c_binding

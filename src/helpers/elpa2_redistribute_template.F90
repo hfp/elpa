@@ -168,9 +168,9 @@
      !else
      !  na_rows_ = int(na_rows,kind=BLAS_KIND)
      !  na_cols_ = int(na_cols,kind=BLAS_KIND)
-     !  sc_desc_ 
+     !  sc_desc_
      !endif
-     
+
      ! now we can set up the the blacs descriptor
 
      !sc_desc_(:) = 0
@@ -215,7 +215,7 @@
      a => aIntern(1:matrixRows,1:matrixCols)
      q => qIntern(1:matrixRows,1:matrixCols)
 
-     
+
      call obj%timer%stop("redistribute")
    !else
    !  print *,"not redistributing"

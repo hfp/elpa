@@ -345,7 +345,7 @@ extern "C" void launch_compute_hh_trafo_c_hip_kernel_complex_double(hipDoubleCom
 }
 
 template <unsigned int blk>
-__global__ void 
+__global__ void
 #ifdef WITH_HIPCUB
 __launch_bounds__(blk)
 #endif

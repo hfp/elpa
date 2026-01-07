@@ -143,19 +143,19 @@ program print_available_elpa2_kernels
           if (e%can_set("gpu",1) == ELPA_OK) then
             call e%set("gpu",1, error)
           endif
-        endif 
+        endif
         if (elpa_int_value_to_string(KERNEL_KEY, kernel) .eq. "ELPA_2STAGE_COMPLEX_NVIDIA_GPU" .or. &
             elpa_int_value_to_string(KERNEL_KEY, kernel) .eq. "ELPA_2STAGE_REAL_NVIDIA_GPU") then
           if (e%can_set("nvidia-gpu",1) == ELPA_OK) then
             call e%set("nvidia-gpu",1, error)
           endif
-        endif 
+        endif
         if (elpa_int_value_to_string(KERNEL_KEY, kernel) .eq. "ELPA_2STAGE_COMPLEX_AMD_GPU" .or. &
             elpa_int_value_to_string(KERNEL_KEY, kernel) .eq. "ELPA_2STAGE_REAL_AMD_GPU") then
           if (e%can_set("amd-gpu",1) == ELPA_OK) then
             call e%set("amd-gpu",1, error)
           endif
-        endif 
+        endif
 
         if (e%can_set(KERNEL_KEY, kernel) == ELPA_OK) then
           if (elpa_int_value_to_string(KERNEL_KEY, kernel) .eq. "ELPA_2STAGE_COMPLEX_GPU" .or. &

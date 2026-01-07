@@ -154,7 +154,7 @@
 #undef  GPU_GET_SKEWSYMMETRIC_SECOND_HALF_Q_PRECISION
 #undef  GPU_PUT_SKEWSYMMETRIC_SECOND_HALF_Q_PRECISION
 
-#undef  gpusolver_PRECISION_syevd 
+#undef  gpusolver_PRECISION_syevd
 #if 0
 /* General definitions needed in single and double case */
 /* the if 0 bracket is just to make the IBM Fortran compiler happy */
@@ -466,9 +466,9 @@
 #undef  gpu_transpose_reduceadd_vectors_copy_block_PRECISION
 #undef  gpusolver_PRECISION_TRTRI
 #undef  gpusolver_PRECISION_POTRF
-#undef  mkl_offload_PRECISION_GEMM 
-#undef  mkl_offload_PRECISION_GEMV 
-#undef  mkl_offload_PRECISION_TRMM 
+#undef  mkl_offload_PRECISION_GEMM
+#undef  mkl_offload_PRECISION_GEMV
+#undef  mkl_offload_PRECISION_TRMM
 #undef  scal_PRECISION_GEMM
 #undef  scal_PRECISION_DOTC
 #undef  scal_PRECISION_LASET

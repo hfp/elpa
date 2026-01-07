@@ -148,7 +148,7 @@ subroutine redist_band_&
   !call obj%timer%stop("mpi_communication")
 
   ! Get global_id mapping 2D procssor coordinates to global id
-  
+
   allocate(global_id(0:np_rows-1,0:np_cols-1), stat=istat, errmsg=errorMessage)
   check_allocate("redist_band: global_id", istat, errorMessage)
 #ifdef WITH_OPENMP_TRADITIONAL
@@ -299,7 +299,7 @@ subroutine redist_band_&
   ! Exchange all data with MPI_Alltoallv
 #ifdef WITH_MPI
   call obj%timer%start("mpi_communication")
-  
+
   if (np_rows*np_cols>1) then
     call MPI_Alltoallv(sbuf, int(ncnt_s,kind=MPI_KIND), int(nstart_s,kind=MPI_KIND), MPI_MATH_DATATYPE_PRECISION_EXPL, &
                        rbuf, int(ncnt_r,kind=MPI_KIND), int(nstart_r,kind=MPI_KIND), MPI_MATH_DATATYPE_PRECISION_EXPL, &
@@ -307,7 +307,7 @@ subroutine redist_band_&
   else
     rbuf = sbuf
   endif
-  
+
   call obj%timer%stop("mpi_communication")
 #else /* WITH_MPI */
   rbuf = sbuf

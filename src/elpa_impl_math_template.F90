@@ -103,7 +103,7 @@
       integer                         :: error
 #endif
       logical                         :: success_l
-     
+
       success_l = .false.
 
 #if defined(INCLUDE_ROUTINES)
@@ -132,7 +132,7 @@
         error = ELPA_ERROR
       endif
 #endif
-    end subroutine  
+    end subroutine
 
 
     !> \brief  elpa_hermitian_multiply_d_ptr_d: class method to perform C : = A**T * B
@@ -184,7 +184,7 @@
       integer                         :: error
 #endif
       logical                         :: success_l
-     
+
       success_l = .false.
 
 #if defined(INCLUDE_ROUTINES)
@@ -213,12 +213,12 @@
         error = ELPA_ERROR
       endif
 #endif
-    end subroutine  
+    end subroutine
 
     !c> // /src/elpa_impl_math_template.F90
-    
+
 #ifdef REALCASE
-#ifdef DOUBLE_PRECISION_REAL    
+#ifdef DOUBLE_PRECISION_REAL
     !c> void elpa_hermitian_multiply_a_h_a_d(elpa_t handle, char uplo_a, char uplo_c, int ncb, double *a, double *b, int nrows_b, int ncols_b, double *c, int nrows_c, int ncols_c, int *error);
 #endif
 #ifdef SINGLE_PRECISION_REAL
@@ -226,7 +226,7 @@
 #endif
 #endif
 #ifdef COMPLEXCASE
-#ifdef DOUBLE_PRECISION_COMPLEX    
+#ifdef DOUBLE_PRECISION_COMPLEX
     !c> void elpa_hermitian_multiply_a_h_a_dc(elpa_t handle, char uplo_a, char uplo_c, int ncb, double_complex *a, double_complex *b, int nrows_b, int ncols_b, double_complex *c, int nrows_c, int ncols_c, int *error);
 #endif
 #ifdef SINGLE_PRECISION_COMPLEX
@@ -238,10 +238,10 @@
                     &_c(handle, uplo_a, uplo_c, ncb, a_p, b_p, nrows_b, &
                                            ncols_b, c_p, nrows_c, ncols_c, error)          &
 #ifdef REALCASE
-#ifdef DOUBLE_PRECISION_REAL 
+#ifdef DOUBLE_PRECISION_REAL
                                            bind(C, name="elpa_hermitian_multiply_a_h_a_d")
 #endif
-#ifdef SINGLE_PRECISION_REAL 
+#ifdef SINGLE_PRECISION_REAL
                                            bind(C, name="elpa_hermitian_multiply_a_h_a_f")
 #endif
 #endif
@@ -249,7 +249,7 @@
 #ifdef DOUBLE_PRECISION_COMPLEX
                                            bind(C, name="elpa_hermitian_multiply_a_h_a_dc")
 #endif
-#ifdef SINGLE_PRECISION_COMPLEX 
+#ifdef SINGLE_PRECISION_COMPLEX
                                            bind(C, name="elpa_hermitian_multiply_a_h_a_fc")
 #endif
 #endif
@@ -282,7 +282,7 @@
     end subroutine
 
 #ifdef REALCASE
-#ifdef DOUBLE_PRECISION_REAL    
+#ifdef DOUBLE_PRECISION_REAL
     !c> void elpa_hermitian_multiply_d_ptr_d(elpa_t handle, char uplo_a, char uplo_c, int ncb, double *a, double *b, int nrows_b, int ncols_b, double *c, int nrows_c, int ncols_c, int *error);
 #endif
 #ifdef SINGLE_PRECISION_REAL
@@ -290,7 +290,7 @@
 #endif
 #endif
 #ifdef COMPLEXCASE
-#ifdef DOUBLE_PRECISION_COMPLEX    
+#ifdef DOUBLE_PRECISION_COMPLEX
     !c> void elpa_hermitian_multiply_d_ptr_dc(elpa_t handle, char uplo_a, char uplo_c, int ncb, double_complex *a, double_complex *b, int nrows_b, int ncols_b, double_complex *c, int nrows_c, int ncols_c, int *error);
 #endif
 #ifdef SINGLE_PRECISION_COMPLEX
@@ -302,10 +302,10 @@
                     &_c(handle, uplo_a, uplo_c, ncb, a_p, b_p, nrows_b, &
                                            ncols_b, c_p, nrows_c, ncols_c, error)          &
 #ifdef REALCASE
-#ifdef DOUBLE_PRECISION_REAL 
+#ifdef DOUBLE_PRECISION_REAL
                                            bind(C, name="elpa_hermitian_multiply_d_ptr_d")
 #endif
-#ifdef SINGLE_PRECISION_REAL 
+#ifdef SINGLE_PRECISION_REAL
                                            bind(C, name="elpa_hermitian_multiply_d_ptr_f")
 #endif
 #endif
@@ -313,7 +313,7 @@
 #ifdef DOUBLE_PRECISION_COMPLEX
                                            bind(C, name="elpa_hermitian_multiply_d_ptr_dc")
 #endif
-#ifdef SINGLE_PRECISION_COMPLEX 
+#ifdef SINGLE_PRECISION_COMPLEX
                                            bind(C, name="elpa_hermitian_multiply_d_ptr_fc")
 #endif
 #endif
@@ -395,7 +395,7 @@
       integer                         :: error
 #endif
       logical                         :: success_l
-     
+
       success_l = .false.
 #if defined(INCLUDE_ROUTINES)
       success_l = elpa_pxgemm_multiply_a_h_a_&
@@ -421,7 +421,7 @@
         error = ELPA_ERROR
       endif
 #endif
-    end subroutine  
+    end subroutine
 
 
     !> \brief  elpa_pxgemm_multiply_d_ptr_d: class method to perform C : = A**T * B
@@ -473,7 +473,7 @@
       integer                         :: error
 #endif
       logical                         :: success_l
-     
+
       success_l = .false.
 #if defined(INCLUDE_ROUTINES)
       success_l = elpa_pxgemm_multiply_d_ptr_&
@@ -499,12 +499,12 @@
         error = ELPA_ERROR
       endif
 #endif
-    end subroutine  
+    end subroutine
 
     !c> // /src/elpa_impl_math_template.F90
-    
+
 #ifdef REALCASE
-#ifdef DOUBLE_PRECISION_REAL    
+#ifdef DOUBLE_PRECISION_REAL
     !c> void elpa_pxgemm_multiply_a_h_a_d(elpa_t handle, char trans_a, char trans_b, int ncb, double *a, double *b, int nrows_b, int ncols_b, double *c, int nrows_c, int ncols_c, int *error);
 #endif
 #ifdef SINGLE_PRECISION_REAL
@@ -512,7 +512,7 @@
 #endif
 #endif
 #ifdef COMPLEXCASE
-#ifdef DOUBLE_PRECISION_COMPLEX    
+#ifdef DOUBLE_PRECISION_COMPLEX
     !c> void elpa_pxgemm_multiply_a_h_a_dc(elpa_t handle, char trans_a, char trans_b, int ncb, double_complex *a, double_complex *b, int nrows_b, int ncols_b, double_complex *c, int nrows_c, int ncols_c, int *error);
 #endif
 #ifdef SINGLE_PRECISION_COMPLEX
@@ -524,10 +524,10 @@
                     &_c(handle, trans_a, trans_b, ncb, a_p, b_p, nrows_b, &
                                            ncols_b, c_p, nrows_c, ncols_c, error)          &
 #ifdef REALCASE
-#ifdef DOUBLE_PRECISION_REAL 
+#ifdef DOUBLE_PRECISION_REAL
                                            bind(C, name="elpa_pxgemm_multiply_a_h_a_d")
 #endif
-#ifdef SINGLE_PRECISION_REAL 
+#ifdef SINGLE_PRECISION_REAL
                                            bind(C, name="elpa_pxgemm_multiply_a_h_a_f")
 #endif
 #endif
@@ -535,7 +535,7 @@
 #ifdef DOUBLE_PRECISION_COMPLEX
                                            bind(C, name="elpa_pxgemm_multiply_a_h_a_dc")
 #endif
-#ifdef SINGLE_PRECISION_COMPLEX 
+#ifdef SINGLE_PRECISION_COMPLEX
                                            bind(C, name="elpa_pxgemm_multiply_a_h_a_fc")
 #endif
 #endif
@@ -567,7 +567,7 @@
     end subroutine
 
 #ifdef REALCASE
-#ifdef DOUBLE_PRECISION_REAL    
+#ifdef DOUBLE_PRECISION_REAL
     !c> void elpa_pxgemm_multiply_d_ptr_d(elpa_t handle, char trans_a, char trans_b, int ncb, double *a, double *b, int nrows_b, int ncols_b, double *c, int nrows_c, int ncols_c, int *error);
 #endif
 #ifdef SINGLE_PRECISION_REAL
@@ -575,7 +575,7 @@
 #endif
 #endif
 #ifdef COMPLEXCASE
-#ifdef DOUBLE_PRECISION_COMPLEX    
+#ifdef DOUBLE_PRECISION_COMPLEX
     !c> void elpa_pxgemm_multiply_d_ptr_dc(elpa_t handle, char trans_a, char trans_b, int ncb, double_complex *a, double_complex *b, int nrows_b, int ncols_b, double_complex *c, int nrows_c, int ncols_c, int *error);
 #endif
 #ifdef SINGLE_PRECISION_COMPLEX
@@ -586,10 +586,10 @@
                     &ELPA_IMPL_SUFFIX&
                     &_c(handle, trans_a, trans_b, ncb, a_p, b_p, nrows_b, ncols_b, c_p, nrows_c, ncols_c, error) &
 #ifdef REALCASE
-#ifdef DOUBLE_PRECISION_REAL 
+#ifdef DOUBLE_PRECISION_REAL
                                            bind(C, name="elpa_pxgemm_multiply_d_ptr_d")
 #endif
-#ifdef SINGLE_PRECISION_REAL 
+#ifdef SINGLE_PRECISION_REAL
                                            bind(C, name="elpa_pxgemm_multiply_d_ptr_f")
 #endif
 #endif
@@ -597,7 +597,7 @@
 #ifdef DOUBLE_PRECISION_COMPLEX
                                            bind(C, name="elpa_pxgemm_multiply_d_ptr_dc")
 #endif
-#ifdef SINGLE_PRECISION_COMPLEX 
+#ifdef SINGLE_PRECISION_COMPLEX
                                            bind(C, name="elpa_pxgemm_multiply_d_ptr_fc")
 #endif
 #endif
@@ -683,7 +683,7 @@
         error = ELPA_ERROR
       endif
 #endif
-    end subroutine    
+    end subroutine
 
 #ifdef REALCASE
 #ifdef DOUBLE_PRECISION_REAL
@@ -736,7 +736,7 @@
       call elpa_cholesky_a_h_a_&
               &ELPA_IMPL_SUFFIX&
               & (self, a, error)
-    end subroutine      
+    end subroutine
 
 
     !>  \brief elpa_cholesky_d_ptr_d: class method to do a cholesky factorization
@@ -795,7 +795,7 @@
         error = ELPA_ERROR
       endif
 #endif
-    end subroutine    
+    end subroutine
 
 #ifdef REALCASE
 #ifdef DOUBLE_PRECISION_REAL
@@ -847,7 +847,7 @@
       call elpa_cholesky_d_ptr_&
               &ELPA_IMPL_SUFFIX&
               & (self, a_p, error)
-    end subroutine      
+    end subroutine
 
     !_____________________________________________________________________________________________________________________
     ! invert_trm
@@ -911,23 +911,23 @@
         error = ELPA_ERROR
       endif
 #endif
-    end subroutine   
+    end subroutine
 
 
 
 #ifdef REALCASE
-#ifdef DOUBLE_PRECISION_REAL      
+#ifdef DOUBLE_PRECISION_REAL
     !c> void elpa_invert_trm_a_h_a_d(elpa_t handle, double *a, int *error);
 #endif
-#ifdef SINGLE_PRECISION_REAL      
+#ifdef SINGLE_PRECISION_REAL
     !c> void elpa_invert_trm_a_h_a_f(elpa_t handle, float *a, int *error);
 #endif
 #endif
 #ifdef COMPLEXCASE
-#ifdef DOUBLE_PRECISION_COMPLEX     
+#ifdef DOUBLE_PRECISION_COMPLEX
     !c> void elpa_invert_trm_a_h_a_dc(elpa_t handle, double_complex *a, int *error);
 #endif
-#ifdef SINGLE_PRECISION_COMPLEX      
+#ifdef SINGLE_PRECISION_COMPLEX
     !c> void elpa_invert_trm_a_h_a_fc(elpa_t handle, float_complex *a, int *error);
 #endif
 #endif
@@ -1025,23 +1025,23 @@
         error = ELPA_ERROR
       endif
 #endif
-    end subroutine   
+    end subroutine
 
 
 
 #ifdef REALCASE
-#ifdef DOUBLE_PRECISION_REAL      
+#ifdef DOUBLE_PRECISION_REAL
     !c> void elpa_invert_trm_d_ptr_d(elpa_t handle, double *a, int *error);
 #endif
-#ifdef SINGLE_PRECISION_REAL      
+#ifdef SINGLE_PRECISION_REAL
     !c> void elpa_invert_trm_d_ptr_f(elpa_t handle, float *a, int *error);
 #endif
 #endif
 #ifdef COMPLEXCASE
-#ifdef DOUBLE_PRECISION_COMPLEX     
+#ifdef DOUBLE_PRECISION_COMPLEX
     !c> void elpa_invert_trm_d_ptr_dc(elpa_t handle, double_complex *a, int *error);
 #endif
-#ifdef SINGLE_PRECISION_COMPLEX      
+#ifdef SINGLE_PRECISION_COMPLEX
     !c> void elpa_invert_trm_d_ptr_fc(elpa_t handle, float_complex *a, int *error);
 #endif
 #endif
@@ -1098,7 +1098,7 @@
     !>                           output the eigenvalues in ascending order
     !>  \param e        array e on input subdiagonal elements of matrix, on exit destroyed
     !>  \param q        matrix  on exit : contains the eigenvectors
-    !>  \param error    integer, optional: returns an error code, which can be queried with elpa_strerr 
+    !>  \param error    integer, optional: returns an error code, which can be queried with elpa_strerr
     subroutine elpa_solve_tridiagonal_&
                    &ELPA_IMPL_SUFFIX&
                    & (self, d, e, q, error)
@@ -1153,13 +1153,13 @@
         error = ELPA_ERROR
       endif
 #endif
-    end subroutine   
+    end subroutine
 
 
-#ifdef DOUBLE_PRECISION_REAL      
+#ifdef DOUBLE_PRECISION_REAL
     !c> void elpa_solve_tridiagonal_d(elpa_t handle, double *d, double *e, double *q, int *error);
 #endif
-#ifdef SINGLE_PRECISION_REAL      
+#ifdef SINGLE_PRECISION_REAL
     !c> void elpa_solve_tridiagonal_f(elpa_t handle, float *d, float *e, float *q, int *error);
 #endif
 
@@ -1201,4 +1201,3 @@
               &ELPA_IMPL_SUFFIX&
               & (self, d, e, q, error)
     end subroutine
-    

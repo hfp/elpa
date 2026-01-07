@@ -1,9 +1,9 @@
 #if 0
 !    This file is part of ELPA.
-!     
+!
 !    The ELPA library was originally created by the ELPA consortium,
 !    consisting of the following organizations:
-!     
+!
 !    - Max Planck Computing and Data Facility (MPCDF), formerly known as
 !      Rechenzentrum Garching der Max-Planck-Gesellschaft (RZG),
 !    - Bergische Universität Wuppertal, Lehrstuhl für angewandte
@@ -19,9 +19,9 @@
 !    This particular source code file contains additions, changes and
 !    enhancements authored by Intel Corporation which is not part of
 !    the ELPA consortium.
-!       
+!
 !    More information can be found here:
-!    http://elpa.mpcdf.mpg.de/      
+!    http://elpa.mpcdf.mpg.de/
 !
 !    ELPA is free software: you can redistribute it and/or modify
 !    it under the terms of the version 3 of the license of the
@@ -42,16 +42,16 @@
 !    may have back to the original ELPA library distribution, and keep
 !    any derivatives of ELPA under the same license that we chose for
 !    the original distribution, the GNU Lesser General Public License.
-!     
-!     
+!
+!
 ! ELPA1 -- Faster replacements for ScaLAPACK symmetric eigenvalue routines
-!       
+!
 ! Copyright of the original code rests with the authors inside the ELPA
 ! consortium. The copyright of any additional modifications shall rest
 ! with their original authors, but shall adhere to the licensing terms
 ! distributed along with the original code in the file "COPYING".
-#endif  
-      
+#endif
+
 #include "../general/sanity.F90"
 #include "../general/error_checking.inc"
 
@@ -68,7 +68,7 @@
     ! solve_tridi_single_problem is called from solve_trodi_col: with parameters q_dev=qmat1_dev, ldq=max_size
     ! qmat1(max_size, max_size) -> q(ldq, ldq), and not q(ldq,nlen)!! same for q_dev
     ! but that's fine if nlen<=ldq, then not the whole matrix is used. otherwise can lead to errors
-    ! Now: called from two places differently: with np_rows==1 and np_rows>1 and should be treated with care  
+    ! Now: called from two places differently: with np_rows==1 and np_rows>1 and should be treated with care
 
     ! Solves the symmetric, tridiagonal eigenvalue problem on a single processor.
     ! Takes precautions if DSTEDC fails or if the eigenvalues are not ordered correctly.
@@ -115,7 +115,7 @@
 
     debug = 0
     if (wantDebug) debug = 1
-    
+
     useGPU =.false.
     useGPUsolver =.false.
 #ifdef SOLVE_TRIDI_GPU_BUILD
@@ -143,7 +143,7 @@
 
     if (useGPUsolver) then
       gpusolverHandle = obj%gpu_setup%gpusolverHandleArray(0)
-      
+
 #if defined(WITH_NVIDIA_CUSOLVER)
       call gpu_construct_full_from_tridi_matrix(PRECISION_CHAR, q_dev, d_dev, e_dev, nlen, ldq, debug, my_stream)
 #endif

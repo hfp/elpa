@@ -17,14 +17,14 @@ subroutine elpa_cssmv(n, alpha, a, lda, x,  y)
 
   use precision
   use elpa_utilities, only : error_unit
-  use elpa_blas_interfaces  
+  use elpa_blas_interfaces
   implicit none
 #include "./precision_kinds.F90"
 
   integer(kind=BLAS_KIND)     :: n, lda
   MATH_DATATYPE(kind=rck)     :: alpha
   MATH_DATATYPE(kind=rck)     :: a( lda, * ), x( * ), y( * )
-  integer(kind=ik), parameter :: nb = 64 
+  integer(kind=ik), parameter :: nb = 64
   integer(kind=ik)            :: ii, jj, ic, iy, jc, jx, info
   MATH_DATATYPE(kind=rck)     :: temp
   MATH_DATATYPE(kind=rck)     :: work( nb )
@@ -53,7 +53,7 @@ subroutine elpa_cssmv(n, alpha, a, lda, x,  y)
     do ii = 1, n, nb
       ic = min( nb, n-ii+1 )
       iy = 1 + (ii-1)
-        
+
       ! gemv for non-diagonal blocks. use 2x dtrmv for diagonal blocks
       if ( ii < jj ) then
        call PRECISION_GEMV('t', int(jc,kind=BLAS_KIND), int(nb,kind=BLAS_KIND), -alpha, &
@@ -73,10 +73,10 @@ subroutine elpa_cssmv(n, alpha, a, lda, x,  y)
         call PRECISION_COPY( int(jc,kind=BLAS_KIND), x( jx ), 1_BLAS_KIND, work, 1_BLAS_KIND )
         call PRECISION_TRMV( 'l', 'n', 'n', int(jc,kind=BLAS_KIND), a( jj, jj ), int(lda,kind=BLAS_KIND), work, 1_BLAS_KIND )
         call PRECISION_AXPY( int(jc,kind=BLAS_KIND),alpha, work, 1_BLAS_KIND, y( iy ), 1_BLAS_KIND)
-           
+
         call PRECISION_COPY( int(jc,kind=BLAS_KIND), x( jx ), 1_BLAS_KIND, work, 1_BLAS_KIND )
         call PRECISION_TRMV( 'l', 't', 'n', int(jc,kind=BLAS_KIND), a( jj, jj ), int(lda,kind=BLAS_KIND), work, 1_BLAS_KIND )
-        call PRECISION_AXPY(int(jc,kind=BLAS_KIND), -alpha, work, 1_BLAS_KIND, y( iy ), 1_BLAS_KIND)               
+        call PRECISION_AXPY(int(jc,kind=BLAS_KIND), -alpha, work, 1_BLAS_KIND, y( iy ), 1_BLAS_KIND)
       end if
     end do
     temp = one

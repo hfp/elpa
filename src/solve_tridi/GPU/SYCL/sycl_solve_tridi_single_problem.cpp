@@ -62,7 +62,7 @@ using namespace sycl_be;
 extern "C" int syclDeviceSynchronizeFromC();
 
 template <typename T>
-void gpu_check_monotony_kernel (T *d, T *q, T *qtmp, const int nlen, const int ldq, 
+void gpu_check_monotony_kernel (T *d, T *q, T *qtmp, const int nlen, const int ldq,
                                 const sycl::nd_item<1> &it) {
   //int i = it.get_group(0) * it.get_local_range(0) + it.get_local_id(0);
   //int j = blockIdx.y * blockDim.y + threadIdx.y;
@@ -72,7 +72,7 @@ void gpu_check_monotony_kernel (T *d, T *q, T *qtmp, const int nlen, const int l
   //if (i>=0 && i<gemm_dim_k) {
   //  if (j>=0 && j<gemm_dim_l) {
   //    qtmp1_tmp[i+gemm_dim_k*j] = qtmp1[i+gemm_dim_k*j];
-  //  }    
+  //  }
   //}
   for (int i=0; i<nlen-1;i++) {
     if (d[i+1] < d[i]) {
@@ -125,7 +125,7 @@ extern "C" void CONCATENATE(ELPA_GPU,  _check_monotony_FromC)(char dataType, int
 //________________________________________________________________
 
 template <typename T>
-void gpu_construct_full_from_tridi_matrix_kernel (T *q, T *d, T *e, const int nlen, const int ldq, 
+void gpu_construct_full_from_tridi_matrix_kernel (T *q, T *d, T *e, const int nlen, const int ldq,
                                        const sycl::nd_item<1> &it) {
   int i = it.get_group(0) * it.get_local_range(0) + it.get_local_id(0);
 
@@ -146,7 +146,7 @@ void gpu_construct_full_from_tridi_matrix_kernel (T *q, T *d, T *e, const int nl
 
 template <typename T>
 void gpu_construct_full_from_tridi_matrix(T *q_dev, T *d_dev, T *e_dev, int nlen, int ldq, int debug, gpuStream_t my_stream) {
-  
+
   sycl::queue q = getQueueOrDefault(my_stream);
   sycl::range<1> threadsPerBlock = maxWorkgroupSize<1>(q);
   sycl::range<1> blocks((nlen + threadsPerBlock.get(0) - 1) / threadsPerBlock.get(0));

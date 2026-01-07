@@ -182,7 +182,7 @@ module cholesky_gpu
 #endif
     end subroutine
 
-    
+
     subroutine gpu_set_a_lower_to_zero(dataType, a_dev, na, matrixRows, my_pcol, np_cols, my_prow, np_rows, &
                                        nblk, debug, my_stream)
       use, intrinsic :: iso_c_binding

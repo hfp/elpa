@@ -110,7 +110,7 @@ subroutine tridiag_cpu_&
    &PRECISION &
   (obj, na, &
 #ifdef TRIDIAG_GPU_BUILD
-   a_dev, &  
+   a_dev, &
 #else
    a_mat, &
 #endif
@@ -151,7 +151,7 @@ subroutine tridiag_cpu_&
   logical                                       :: useCCL
 
   ! input/output GPU pointers
-  integer(kind=C_intptr_T)                      :: tau_dev, a_dev, d_vec_dev, e_vec_dev 
+  integer(kind=C_intptr_T)                      :: tau_dev, a_dev, d_vec_dev, e_vec_dev
 #ifndef TRIDIAG_GPU_BUILD
   MATH_DATATYPE(kind=rck), intent(out)          :: tau(na)
 #ifdef USE_ASSUMED_SIZE
@@ -202,7 +202,7 @@ subroutine tridiag_cpu_&
   MATH_DATATYPE(kind=rck)                       :: vav, x, aux1(2), vrl, xf, conjg_tau, dot_prod
   MATH_DATATYPE(kind=rck), allocatable          :: aux(:)
 
-  integer(kind=c_intptr_t)                      :: aux_dev, aux1_dev, aux_complex_dev, vav_dev, vav_host_or_dev, dot_prod_dev, & 
+  integer(kind=c_intptr_t)                      :: aux_dev, aux1_dev, aux_complex_dev, vav_dev, vav_host_or_dev, dot_prod_dev, &
                                                    xf_dev, a_updated_element_dev, xf_host_or_dev, tau_istep_host_or_dev
   integer(kind=c_intptr_t)                      :: vnorm2_dev, vrl_dev ! alias pointers for aux1_dev(1), aux1_dev(2)
 
@@ -212,9 +212,9 @@ subroutine tridiag_cpu_&
 
   integer(kind=c_intptr_t)                      :: num
   MATH_DATATYPE(kind=rck), pointer              :: v_row(:), & ! used to store calculated Householder Vector
-                                                   v_col(:)   ! the same Vector, but transposed 
+                                                   v_col(:)   ! the same Vector, but transposed
   MATH_DATATYPE(kind=rck), pointer              :: u_row_debug(:), & ! used to store calculated Householder Vector
-                                                   u_col_debug(:)   ! the same Vector, but transposed 
+                                                   u_col_debug(:)   ! the same Vector, but transposed
   MATH_DATATYPE(kind=rck), pointer              :: u_col(:), u_row(:)
 
   ! the following two matrices store pairs of vectors v and u calculated in each step
@@ -290,10 +290,10 @@ else
   useCCL = obj%gpu_setup%useCCL
 #if defined(USE_CCL_TRIDIAG)
   if (useGPU) then
-  
+
     ccl_comm_rows = obj%gpu_setup%ccl_comm_rows
     ccl_comm_cols = obj%gpu_setup%ccl_comm_cols
-  
+
 #if   REALCASE == 1 && DOUBLE_PRECISION == 1
     cclDataType = cclDouble
     k_datatype = 1
@@ -307,12 +307,12 @@ else
     cclDataType = cclFloat
     k_datatype = 2
 #endif
- 
-  endif 
+
+  endif
 #endif /* defined(USE_CCL_TRIDIAG) */
 
   allocate(aux(2*max_stored_uv), stat=istat, errmsg=errorMessage)
-  
+
   success = .true.
 
 
@@ -499,7 +499,7 @@ else
       allocate(u_row(max_local_rows))
     endif
 
-    
+
     if (gpu_vendor() /= OPENMP_OFFLOAD_GPU) then
       num = (max_local_rows * 2*max_stored_uv) * size_of_datatype
       successGPU = gpu_host_register(int(loc(vu_stored_rows),kind=c_intptr_t), num, gpuHostRegisterDefault)
@@ -558,7 +558,7 @@ else
     allocate(u_row(max_local_rows), stat=istat, errmsg=errorMessage)
     call check_alloc("tridiag_&
     &MATH_DATATYPE ", "u_row", istat, errorMessage)
-      
+
   endif ! useGPU
 
 #ifdef WITH_OPENMP_TRADITIONAL
@@ -639,7 +639,7 @@ else
       ! This must be a multiple of lcm_s_t (else it is getting complicated),
       ! thus some elements before nvs will be accessed/set.
       nblks_skip = ((nvs-1)/(nblk*lcm_s_t))*lcm_s_t
-    
+
       successGPU = gpu_malloc(aux_transpose_dev, ((nblks_tot-nblks_skip+lcm_s_t-1)/lcm_s_t) * nblk * nvc * size_of_datatype)
       check_alloc_gpu("tridiag: aux_transpose_dev", successGPU)
     endif ! .not. isSquareGridGPU
@@ -769,7 +769,7 @@ else
         if (useGPU) then
           if (wantDebug) call obj%timer%start("gpublas_gemv_skinny")
           NVTX_RANGE_PUSH("gpublas gemv skinny  v_row_dev+=vu_stored_rows_dev*uv_stored_cols_dev")
-          
+
           ! v_row_dev = vu_stored_rows_dev * uv_stored_cols_dev(l_cols+1,1:2*n_stored_vecs) + v_row_dev
           gpuHandle = obj%gpu_setup%gpublasHandleArray(0)
           call gpublas_PRECISION_GEMV('N', l_rows, 2*n_stored_vecs,  &
@@ -831,8 +831,8 @@ else
 #endif
 
           NVTX_RANGE_POP("memcpy new D-H aux1_dev->aux1")
-        endif ! .not. useCCL 
-      endif ! useGPU  
+        endif ! .not. useCCL
+      endif ! useGPU
 
 
       if (.not. useGPU) then
@@ -846,7 +846,7 @@ else
           aux1(2) = 0.
         endif
         NVTX_RANGE_POP("cpu_dot v_row*v_row, aux1(2)=v_row")
-      endif ! .not. useGPU 
+      endif ! .not. useGPU
 
 #ifdef WITH_MPI
       if (useCCL) then
@@ -903,7 +903,7 @@ else
 #if defined(USE_CCL_TRIDIAG)
         NVTX_RANGE_PUSH("gpu_hh_transform")
 
-        call gpu_hh_transform_PRECISION(obj, vrl_dev, vnorm2_dev, xf_dev, tau_dev+(istep-1)*size_of_datatype, & 
+        call gpu_hh_transform_PRECISION(obj, vrl_dev, vnorm2_dev, xf_dev, tau_dev+(istep-1)*size_of_datatype, &
                                         wantDebug, my_stream)
         NVTX_RANGE_POP("gpu_hh_transform")
 #endif /* defined(USE_CCL_TRIDIAG) */
@@ -920,7 +920,7 @@ else
                 (obj, vrl, vnorm2, xf, tau(istep), wantDebug)
         NVTX_RANGE_POP("hh_transform")
       endif ! useCCL
-      
+
       ! vrl is newly computed off-diagonal element of the final tridiagonal matrix
       if (my_prow == prow(istep-1, nblk, np_rows)) then
         if (.not. useCCL) then
@@ -947,32 +947,32 @@ else
         NVTX_RANGE_PUSH("cpu copy: v_row->a_mat")
         a_mat(1:l_rows,l_cols+1) = v_row(1:l_rows)
         NVTX_RANGE_POP("")
-      endif ! .not. useGPU 
+      endif ! .not. useGPU
 
       if (.not. useCCL) then
         ! add tau after the end of actuall v_row, to be broadcasted with it
         v_row(l_rows+1) = tau(istep)
       endif
 
-      
+
       if (useGPU) then
         if (useCCL) then
           xf_host_or_dev = xf_dev
-        else 
+        else
           xf_host_or_dev = int(loc(xf),kind=c_intptr_t)
-        endif       
-        
+        endif
+
         if (wantDebug) call obj%timer%start("gpu_set_e_vec_scale_set_one_store_v_row_kernel")
         NVTX_RANGE_PUSH("gpu_set_e_vec_scale_set_one_store_v_row_kernel")
 
         isOurProcessRow = (my_prow == prow(istep-1, nblk, np_rows))
-        call gpu_set_e_vec_scale_set_one_store_v_row_PRECISION(e_vec_dev, vrl_dev, a_dev, v_row_dev, tau_dev, xf_host_or_dev, & 
+        call gpu_set_e_vec_scale_set_one_store_v_row_PRECISION(e_vec_dev, vrl_dev, a_dev, v_row_dev, tau_dev, xf_host_or_dev, &
                                                   l_rows, l_cols, matrixRows, istep, isOurProcessRow, useCCL, wantDebug, my_stream)
         NVTX_RANGE_POP("gpu_set_e_vec_scale_set_one_store_v_row_kernel ")
         if (wantDebug) call obj%timer%stop("gpu_set_e_vec_scale_set_one_store_v_row_kernel")
-      endif ! useGPU  
+      endif ! useGPU
 
-      if (useGPU .and. .not. useCCL) then      
+      if (useGPU .and. .not. useCCL) then
         !v_row_dev -> v_row
         NVTX_RANGE_PUSH("memcpy new D-H v_row_dev->v_row")
 
@@ -1054,7 +1054,7 @@ else
           &PRECISION &
                 (obj, v_row, ubound(v_row,dim=1), mpi_comm_rows, v_col, ubound(v_col,dim=1), mpi_comm_cols, &
                 1, istep-1, 1, nblk, max_threads, .true., success)
-      
+
       if (wantDebug) successGPU = gpu_DeviceSynchronize()
       NVTX_RANGE_POP("elpa_transpose_vectors v_row -> v_col")
 
@@ -1092,7 +1092,7 @@ else
           ! debug
           allocate(u_col_debug(l_cols))
           u_col_debug(:) = 0.
-          
+
           successGPU = gpu_memcpy(u_col_dev, int(loc(u_col_debug(1)),kind=c_intptr_t), &
                       l_cols * size_of_datatype, gpuMemcpyHostToDevice)
           check_memcpy_gpu("tridiag: u_col_dev", successGPU)
@@ -1164,7 +1164,7 @@ else
 !$omp&       matrixRows, istep, tile_size, l_rows, l_cols, ur_p, uc_p, a_mat, &
 !$omp&       matrixCols)
       my_thread = omp_get_thread_num()
-          
+
       n_threads = omp_get_num_threads()
 
       n_iter = 0
@@ -1254,17 +1254,17 @@ else
           ! this requires altering of the algorithm when later explicitly updating the matrix
           ! after max_stored_uv is reached : we need to update all tiles, not only those above diagonal
           if (wantDebug) call obj%timer%start("gpublas_gemv")
-          
+
           gpuHandle = obj%gpu_setup%gpublasHandleArray(0) ! 0.3-0.5 us
 
           NVTX_RANGE_PUSH("gpublas_gemv: u_col_dev=a_dev^T*v_row_dev")
-              
+
           ! u_col_dev = a_dev^T*v_row_dev
           call gpublas_PRECISION_GEMV(BLAS_TRANS_OR_CONJ, l_rows,l_cols,  &
                                     ONE, a_dev, matrixRows,                   &
                                     v_row_dev , 1,                          &
                                     ZERO, u_col_dev, 1, gpuHandle)
-              
+
           if (wantDebug) successGPU = gpu_DeviceSynchronize()
           NVTX_RANGE_POP("gpublas_gemv: u_col_dev=a_dev^T*v_row_dev")
           if (wantDebug) call obj%timer%stop("gpublas_gemv")
@@ -1287,9 +1287,9 @@ else
 
             l_row_beg = 1
             l_row_end = min(l_rows,(i+1)*l_rows_per_tile)
-                  
+
             offset_dev = ((l_row_beg-1) + (l_col_beg - 1) * matrixRows) * size_of_datatype
-          
+
             gpuHandle = obj%gpu_setup%gpublasHandleArray(0)
             call gpublas_PRECISION_GEMV(BLAS_TRANS_OR_CONJ, &
                           l_row_end-l_row_beg+1, l_col_end-l_col_beg+1, &
@@ -1305,7 +1305,7 @@ else
 
             l_row_beg = 1
             l_row_end = min(l_rows,i*l_rows_per_tile)
-              
+
             offset_dev = ((l_row_beg-1) + (l_col_beg - 1) * matrixRows) * size_of_datatype
 
             if (isSkewsymmetric) then
@@ -1361,13 +1361,13 @@ else
           if (wantDebug) call obj%timer%start("blas")
 
           NVTX_RANGE_PUSH("cpu gemv_x2 aux=vu_stored_rows^T*v_row,u_col+=uv_stored_cols*aux")
-      
+
           ! aux = vu_stored_rows^T*v_row
           call PRECISION_GEMV(BLAS_TRANS_OR_CONJ,     &
                               int(l_rows,kind=BLAS_KIND), int(2*n_stored_vecs,kind=BLAS_KIND),   &
                               ONE, vu_stored_rows, int(ubound(vu_stored_rows,dim=1),kind=BLAS_KIND),   &
                               v_row,  1_BLAS_KIND, ZERO, aux, 1_BLAS_KIND)
-              
+
           ! u_col = uv_stored_cols*aux + u_col
           call PRECISION_GEMV('N', int(l_cols,kind=BLAS_KIND), int(2*n_stored_vecs,kind=BLAS_KIND),   &
                               ONE, uv_stored_cols, int(ubound(uv_stored_cols,dim=1),kind=BLAS_KIND),   &
@@ -1377,20 +1377,20 @@ else
         else ! .not. useGPU
           if (wantDebug) call obj%timer%start("gpublas_gemv_skinny_x2")
           NVTX_RANGE_PUSH("gpublas gemv_x2 skinny aux_dev=vu_stored_rows_dev^T*v_row_dev,u_col_dev+=uv_stored_cols_dev*aux_dev")
-          
+
           ! aux_dev = vu_stored_rows_dev^T*v_row_dev
           gpuHandle = obj%gpu_setup%gpublasHandleArray(0)
           call gpublas_PRECISION_GEMV(BLAS_TRANS_OR_CONJ, l_rows, 2*n_stored_vecs, &
                                       ONE, vu_stored_rows_dev, max_local_rows,   &
                                       v_row_dev,  1, ZERO, aux_dev, 1, gpuHandle)
-              
+
           ! u_col_dev = uv_stored_cols_dev*aux_dev + u_col_dev
           call gpublas_PRECISION_GEMV('N', l_cols, 2*n_stored_vecs, &
                                       ONE, uv_stored_cols_dev, max_local_cols,   &
                                       aux_dev, 1, ONE, u_col_dev, 1, gpuHandle)
           if (wantDebug) successGPU = gpu_DeviceSynchronize()
           NVTX_RANGE_POP("gpublas gemv_x2 skinny aux_dev=vu_stored_rows_dev^T*v_row_dev,u_col_dev+=uv_stored_cols_dev*aux_dev")
-          if (wantDebug) call obj%timer%stop("gpublas_gemv_skinny_x2")  
+          if (wantDebug) call obj%timer%stop("gpublas_gemv_skinny_x2")
         endif ! .not. useGPU
       endif ! n_stored_vecs > 0
 
@@ -1421,7 +1421,7 @@ else
     ! on the processors containing the diagonal
     ! This is only necessary if u_row has been calculated, i.e. if the
     ! global tile size is smaller than the global remaining matrix
-    
+
     ! in GPU case, u_row_dev=0 up to now, so elpa_reduce_add_vectors is skipped
 
     if (tile_size < istep-1 .and. .not. useGPU) then
@@ -1476,7 +1476,7 @@ else
       endif ! useCCL
 #endif /* WITH_MPI */
     endif ! (l_cols > 0)
-    
+
     ! Transpose Householder Vector u_col -> u_row
     if (useCCL) then
 #if defined(USE_CCL_TRIDIAG)
@@ -1531,7 +1531,7 @@ else
       check_memcpy_gpu("tridiag: v_col_dev", successGPU)
 #endif
       NVTX_RANGE_POP("memcpy new-2 H-D v_col->v_col_dev")
- 
+
       NVTX_RANGE_PUSH("memcpy new-2 H-D u_col->u_col_dev")
 #ifdef WITH_GPU_STREAMS
       call gpu_memcpy_async_and_stream_synchronize ("tridiag u_col->u_col_dev", u_col_dev, 0_c_intptr_t, &
@@ -1634,7 +1634,7 @@ else
       conjg_tau = conjg(tau(istep))
 #endif
     endif ! .not. useCCL
-    
+
     if (.not. useGPU) then
       NVTX_RANGE_PUSH("store u,v in U,V")
 
@@ -1680,8 +1680,8 @@ else
     n_stored_vecs = n_stored_vecs+1
 
     ! If the limit of max_stored_uv is reached, calculate A + VU**T + UV**T
-    if (n_stored_vecs == max_stored_uv .or. istep == 3) then        
-      
+    if (n_stored_vecs == max_stored_uv .or. istep == 3) then
+
       if (.not. useGPU .OR. .not. mat_vec_as_one_block) then
         do i = 0, (istep-2)/tile_size
           ! go over tiles above (or on) the diagonal
@@ -1734,19 +1734,19 @@ else
         !we can do that in one large cublas call
         if (wantDebug) call obj%timer%start("gpublas_gemm")
         NVTX_RANGE_PUSH("gpublas_gemm a_dev+=vu_stored_rows_dev*uv_stored_cols_dev")
-          
+
         gpuHandle = obj%gpu_setup%gpublasHandleArray(0)
         ! update a_dev
         ! a_dev = vu_stored_rows_dev*uv_stored_cols_dev + a_dev
         call gpublas_PRECISION_GEMM('N', BLAS_TRANS_OR_CONJ, l_rows, l_cols, 2*n_stored_vecs,   &
                                   ONE, vu_stored_rows_dev, max_local_rows, &
                                   uv_stored_cols_dev, max_local_cols,  &
-                                  ONE, a_dev, matrixRows, gpuHandle)                        
-         
+                                  ONE, a_dev, matrixRows, gpuHandle)
+
         if (wantDebug) successGPU = gpu_DeviceSynchronize()
         NVTX_RANGE_POP("gpublas_gemm a_dev+=vu_stored_rows_dev*uv_stored_cols_dev")
         if (wantDebug) call obj%timer%stop("gpublas_gemm")
-        
+
         ! copy real(a_dev(l_rows,l_cols)) -> d_vec_dev(istep-1) for correct initial value of d_vec_dev before atomicAdd
         if ((.not. isSkewsymmetric) .and. &
             (my_prow == prow(istep-1, nblk, np_rows) .and. my_pcol == pcol(istep-1, nblk, np_cols))) then
@@ -1799,12 +1799,12 @@ else
       endif ! useGPU
 
     endif ! (my_prow == prow(istep-1, nblk, np_rows) .and. my_pcol == pcol(istep-1, nblk, np_cols))
-    
+
     NVTX_RANGE_POP("tridi_cycle")
     if (wantDebug) call obj%timer%stop("main_loop_tridiag")
   enddo ! main cycle over istep=na,3,-1
 
-      
+
 #if COMPLEXCASE == 1
   ! Store e_vec(1) and d_vec(1)
 
@@ -1941,7 +1941,7 @@ else
 #ifdef WITH_GPU_STREAMS
     successGPU = gpu_memcpy_async(int(loc(d_vec(2)),kind=c_intptr_t), &
                             d_vec_dev + offset_dev, (na-2) * size_of_datatype_real, gpuMemcpyDeviceToHost, my_stream)
-#else    
+#else
     successGPU = gpu_memcpy      (int(loc(d_vec(2)),kind=c_intptr_t), & ! PETERDEBUG: this memcopy is not needed anymore?
                             d_vec_dev + offset_dev, (na-2) * size_of_datatype_real, gpuMemcpyDeviceToHost)
 #endif
@@ -1953,7 +1953,7 @@ else
 #ifdef WITH_GPU_STREAMS
       successGPU = gpu_memcpy_async(int(loc(e_vec(2)),kind=c_intptr_t), &
                               e_vec_dev + offset_dev, (na-1) * size_of_datatype_real, gpuMemcpyDeviceToHost, my_stream)
-#else     
+#else
       successGPU = gpu_memcpy      (int(loc(e_vec(2)),kind=c_intptr_t), &
                               e_vec_dev + offset_dev, (na-1) * size_of_datatype_real, gpuMemcpyDeviceToHost)
 #endif
@@ -2067,7 +2067,7 @@ if (useNonBlockingCollectivesRows) then
     call mpi_iallreduce(tmp_real, d_vec, int(na,kind=MPI_KIND), MPI_REAL_PRECISION, MPI_SUM, &
     int(mpi_comm_cols,kind=MPI_KIND), allreduce_request5, mpierr)
     call mpi_wait(allreduce_request5, MPI_STATUS_IGNORE, mpierr)
-    
+
     tmp_real = e_vec
     call mpi_iallreduce(tmp_real, e_vec, int(na,kind=MPI_KIND), MPI_REAL_PRECISION, MPI_SUM, &
     int(mpi_comm_cols,kind=MPI_KIND), allreduce_request7, mpierr)

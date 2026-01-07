@@ -20,17 +20,17 @@
 !
 !    More information can be found here:
 !    http://elpa.mpcdf.mpg.de/
-!             
+!
 !    ELPA is free software: you can redistribute it and/or modify
 !    it under the terms of the version 3 of the license of the
 !    GNU Lesser General Public License as published by the Free
 !    Software Foundation.
-!             
+!
 !    ELPA is distributed in the hope that it will be useful,
 !    but WITHOUT ANY WARRANTY; without even the implied warranty of
 !    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 !    GNU Lesser General Public License for more details.
-!           
+!
 !    You should have received a copy of the GNU Lesser General Public License
 !    along with ELPA.  If not, see <http://www.gnu.org/licenses/>
 !
@@ -53,7 +53,7 @@
                 stop 1
               endif
             endif
-          
+
             !broadcast id currently not possible
             call mpi_comm_size(mpi_comm_all, nprocs, mpierr)
             call MPI_Bcast(ncclId, 128, MPI_BYTE, 0, mpi_comm_all, mpierr)

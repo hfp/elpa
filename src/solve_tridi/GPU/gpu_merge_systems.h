@@ -52,7 +52,7 @@ int const THREADS_PER_BLOCK_SECULAR_EQ_KERNEL = MAX_THREADS_PER_BLOCK/2;
 
 //________________________________________________________________
 
-__global__ void gpu_compute_nnzl_nnzu_val_part1_kernel (int *p_col, int *idx1, int *coltyp, int *nnzu_val, int *nnzl_val, 
+__global__ void gpu_compute_nnzl_nnzu_val_part1_kernel (int *p_col, int *idx1, int *coltyp, int *nnzu_val, int *nnzl_val,
                                                         const int na, const int na1, const int np_rem, const int npc_n, const int nnzu_start, const int nnzl_start, const int np){
     int i  = blockIdx.x * blockDim.x + threadIdx.x;
 
@@ -75,23 +75,23 @@ __global__ void gpu_compute_nnzl_nnzu_val_part1_kernel (int *p_col, int *idx1, i
     //}
 }
 
-void gpu_compute_nnzl_nnzu_val_part1 (int *p_col_dev, int *idx1_dev, int *coltyp_dev, int *nnzu_val_dev, int *nnzl_val_dev, 
-                                      const int na, const int na1, const int np_rem, const int npc_n, 
+void gpu_compute_nnzl_nnzu_val_part1 (int *p_col_dev, int *idx1_dev, int *coltyp_dev, int *nnzu_val_dev, int *nnzl_val_dev,
+                                      const int na, const int na1, const int np_rem, const int npc_n,
                                       const int nnzu_start, const int nnzl_start, const int np,
                                       const int debug, gpuStream_t my_stream) {
-  
+
   dim3 threadsPerBlock(MAX_THREADS_PER_BLOCK);
   dim3 blocks((na1 + threadsPerBlock.x - 1) / threadsPerBlock.x);
   if (blocks.x==0) return;
 
 #ifdef WITH_GPU_STREAMS
-    gpu_compute_nnzl_nnzu_val_part1_kernel<<<blocks,threadsPerBlock,0,my_stream>>> (p_col_dev, idx1_dev, coltyp_dev, nnzu_val_dev, nnzl_val_dev, 
+    gpu_compute_nnzl_nnzu_val_part1_kernel<<<blocks,threadsPerBlock,0,my_stream>>> (p_col_dev, idx1_dev, coltyp_dev, nnzu_val_dev, nnzl_val_dev,
                                                                                     na, na1, np_rem, npc_n, nnzu_start, nnzl_start, np);
 #else
-    gpu_compute_nnzl_nnzu_val_part1_kernel<<<blocks,threadsPerBlock>>>             (p_col_dev, idx1_dev, coltyp_dev, nnzu_val_dev, nnzl_val_dev, 
+    gpu_compute_nnzl_nnzu_val_part1_kernel<<<blocks,threadsPerBlock>>>             (p_col_dev, idx1_dev, coltyp_dev, nnzu_val_dev, nnzl_val_dev,
                                                                                     na, na1, np_rem, npc_n, nnzu_start, nnzl_start, np);
 #endif
-    
+
   if (debug)
     {
     gpuDeviceSynchronize();
@@ -101,9 +101,9 @@ void gpu_compute_nnzl_nnzu_val_part1 (int *p_col_dev, int *idx1_dev, int *coltyp
     }
 }
 
-extern "C" void CONCATENATE(ELPA_GPU,  _compute_nnzl_nnzu_val_part1_FromC) (intptr_t p_col_dev, intptr_t idx1_dev, intptr_t coltyp_dev, 
-                                                                            intptr_t nnzu_val_dev, intptr_t nnzl_val_dev, 
-                                                                            int na, int na1, int np_rem, int npc_n, 
+extern "C" void CONCATENATE(ELPA_GPU,  _compute_nnzl_nnzu_val_part1_FromC) (intptr_t p_col_dev, intptr_t idx1_dev, intptr_t coltyp_dev,
+                                                                            intptr_t nnzu_val_dev, intptr_t nnzl_val_dev,
+                                                                            int na, int na1, int np_rem, int npc_n,
                                                                             int nnzu_start, int nnzl_start, int np,
                                                                             int debug, gpuStream_t my_stream) {
   gpu_compute_nnzl_nnzu_val_part1((int *) p_col_dev, (int *) idx1_dev, (int *) coltyp_dev, (int *) nnzu_val_dev, (int *) nnzl_val_dev,
@@ -112,19 +112,19 @@ extern "C" void CONCATENATE(ELPA_GPU,  _compute_nnzl_nnzu_val_part1_FromC) (intp
 
 //________________________________________________________________
 
-__global__ void gpu_compute_nnzl_nnzu_val_part2_kernel (int *nnzu_val, int *nnzl_val, 
+__global__ void gpu_compute_nnzl_nnzu_val_part2_kernel (int *nnzu_val, int *nnzl_val,
                                                         const int na, const int na1, int nnzu_start, const int nnzl_start, const int npc_n){
   int i  = blockIdx.x * blockDim.x + threadIdx.x;
 
   int counter1 ;
   int counter2 ;
-  if (i == 0) 
+  if (i == 0)
     {
     for (int jj=0; jj<npc_n; jj++)
       {
       counter1 = 0;
       counter2 = 0;
-      
+
       for (int ii=0;ii<na1;ii++)
         {
         if (nnzu_val[ii+na1*jj] == 1)
@@ -132,17 +132,17 @@ __global__ void gpu_compute_nnzl_nnzu_val_part2_kernel (int *nnzu_val, int *nnzl
           counter1 = counter1 + 1;
           nnzu_val[ii+na1*jj] = counter1;
           }
-        else 
+        else
           {
           nnzu_val[ii+na1*jj] = 0;
           }
-        
+
         if (nnzl_val[ii+na1*jj] == 1)
           {
           counter2 = counter2 + 1;
           nnzl_val[ii+na1*jj] = counter2;
           }
-        else 
+        else
           {
           nnzl_val[ii+na1*jj] = 0;
           }
@@ -152,21 +152,21 @@ __global__ void gpu_compute_nnzl_nnzu_val_part2_kernel (int *nnzu_val, int *nnzl
 
 }
 
-void gpu_compute_nnzl_nnzu_val_part2 (int *nnzu_val_dev, int *nnzl_val_dev, 
+void gpu_compute_nnzl_nnzu_val_part2 (int *nnzu_val_dev, int *nnzl_val_dev,
                                       const int na, const int na1, int nnzu_start, const int nnzl_start, const int npc_n,
                                       const int debug, gpuStream_t my_stream) {
-  
+
   dim3 threadsPerBlock(1);
   dim3 blocks(1);
 
 #ifdef WITH_GPU_STREAMS
-    gpu_compute_nnzl_nnzu_val_part2_kernel<<<blocks,threadsPerBlock,0,my_stream>>> (nnzu_val_dev, nnzl_val_dev, 
+    gpu_compute_nnzl_nnzu_val_part2_kernel<<<blocks,threadsPerBlock,0,my_stream>>> (nnzu_val_dev, nnzl_val_dev,
                                                                                     na, na1, nnzu_start, nnzl_start, npc_n);
 #else
-    gpu_compute_nnzl_nnzu_val_part2_kernel<<<blocks,threadsPerBlock>>>             (nnzu_val_dev, nnzl_val_dev, 
+    gpu_compute_nnzl_nnzu_val_part2_kernel<<<blocks,threadsPerBlock>>>             (nnzu_val_dev, nnzl_val_dev,
                                                                                     na, na1, nnzu_start, nnzl_start, npc_n);
 #endif
-    
+
   if (debug)
     {
     gpuDeviceSynchronize();
@@ -176,7 +176,7 @@ void gpu_compute_nnzl_nnzu_val_part2 (int *nnzu_val_dev, int *nnzl_val_dev,
     }
 }
 
-extern "C" void CONCATENATE(ELPA_GPU,  _compute_nnzl_nnzu_val_part2_FromC) (intptr_t nnzu_val_dev, intptr_t nnzl_val_dev, 
+extern "C" void CONCATENATE(ELPA_GPU,  _compute_nnzl_nnzu_val_part2_FromC) (intptr_t nnzu_val_dev, intptr_t nnzl_val_dev,
                                                                             int na, int na1, int nnzu_start, int nnzl_start, int npc_n,
                                                                             int debug, gpuStream_t my_stream) {
   gpu_compute_nnzl_nnzu_val_part2((int *) nnzu_val_dev, (int *) nnzl_val_dev,
@@ -186,10 +186,10 @@ extern "C" void CONCATENATE(ELPA_GPU,  _compute_nnzl_nnzu_val_part2_FromC) (intp
 //________________________________________________________________
 
 template <typename T>
-__global__ void gpu_copy_qtmp1_slice_to_q_kernel(T *q, T *qtmp1, int *l_col_out, int *p_col_out, int *p_col, int *idx2, int *idx, 
-                                                 int ndef, const int l_rqs, const int l_rqe, const int l_rows, const int matrixRows, const int gemm_dim_k, 
+__global__ void gpu_copy_qtmp1_slice_to_q_kernel(T *q, T *qtmp1, int *l_col_out, int *p_col_out, int *p_col, int *idx2, int *idx,
+                                                 int ndef, const int l_rqs, const int l_rqe, const int l_rows, const int matrixRows, const int gemm_dim_k,
                                                  const int my_pcol, const int na1, const int np_rem, const int na){
-  
+
   // do i = 1, na
   //   idx_i = idx(i)
   //   if (idx_i>na1) then
@@ -221,22 +221,22 @@ __global__ void gpu_copy_qtmp1_slice_to_q_kernel(T *q, T *qtmp1, int *l_col_out,
 }
 
 template <typename T>
-void gpu_copy_qtmp1_slice_to_q (T *q_dev, T *qtmp1_dev, int *l_col_out_dev, int *p_col_out_dev, int *p_col_dev, int *idx2_dev, int *idx_dev, 
-                                int ndef, const int l_rqs, const int l_rqe, const int l_rows, const int matrixRows, const int gemm_dim_k, 
+void gpu_copy_qtmp1_slice_to_q (T *q_dev, T *qtmp1_dev, int *l_col_out_dev, int *p_col_out_dev, int *p_col_dev, int *idx2_dev, int *idx_dev,
+                                int ndef, const int l_rqs, const int l_rqe, const int l_rows, const int matrixRows, const int gemm_dim_k,
                                 const int my_pcol, const int na1, const int np_rem, const int na, const int debug, gpuStream_t my_stream){
-  
+
   dim3 threadsPerBlock(MAX_THREADS_PER_BLOCK);
   dim3 blocks((l_rows + threadsPerBlock.x - 1) / threadsPerBlock.x);
   if (blocks.x==0) return;
 
 #ifdef WITH_GPU_STREAMS
-    gpu_copy_qtmp1_slice_to_q_kernel<T><<<blocks,threadsPerBlock,0,my_stream>>>(q_dev, qtmp1_dev, l_col_out_dev, p_col_out_dev, p_col_dev, idx2_dev, idx_dev, 
+    gpu_copy_qtmp1_slice_to_q_kernel<T><<<blocks,threadsPerBlock,0,my_stream>>>(q_dev, qtmp1_dev, l_col_out_dev, p_col_out_dev, p_col_dev, idx2_dev, idx_dev,
                                                                                 ndef, l_rqs, l_rqe, l_rows, matrixRows, gemm_dim_k, my_pcol, na1, np_rem, na);
 #else
-    gpu_copy_qtmp1_slice_to_q_kernel<T><<<blocks,threadsPerBlock>>>            (q_dev, qtmp1_dev, l_col_out_dev, p_col_out_dev, p_col_dev, idx2_dev, idx_dev, 
+    gpu_copy_qtmp1_slice_to_q_kernel<T><<<blocks,threadsPerBlock>>>            (q_dev, qtmp1_dev, l_col_out_dev, p_col_out_dev, p_col_dev, idx2_dev, idx_dev,
                                                                                 ndef, l_rqs, l_rqe, l_rows, matrixRows, gemm_dim_k, my_pcol, na1, np_rem, na);
 #endif
-    
+
   if (debug)
     {
     gpuDeviceSynchronize();
@@ -246,10 +246,10 @@ void gpu_copy_qtmp1_slice_to_q (T *q_dev, T *qtmp1_dev, int *l_col_out_dev, int 
     }
 }
 
-extern "C" void CONCATENATE(ELPA_GPU,  _copy_qtmp1_slice_to_q_FromC) (char dataType, intptr_t q_dev, intptr_t qtmp1_dev, 
-                                                                    intptr_t l_col_out_dev, intptr_t p_col_out_dev, 
-                                                                    intptr_t p_col_dev, intptr_t idx2_dev, intptr_t idx_dev, 
-                                                                    int ndef, int l_rqs, int l_rqe, int l_rows, int matrixRows, int gemm_dim_k, 
+extern "C" void CONCATENATE(ELPA_GPU,  _copy_qtmp1_slice_to_q_FromC) (char dataType, intptr_t q_dev, intptr_t qtmp1_dev,
+                                                                    intptr_t l_col_out_dev, intptr_t p_col_out_dev,
+                                                                    intptr_t p_col_dev, intptr_t idx2_dev, intptr_t idx_dev,
+                                                                    int ndef, int l_rqs, int l_rqe, int l_rows, int matrixRows, int gemm_dim_k,
                                                                     int my_pcol, int na1, int np_rem, int na, int debug, gpuStream_t my_stream){
   if      (dataType=='D') gpu_copy_qtmp1_slice_to_q<double>((double *) q_dev, (double *) qtmp1_dev,
                                                             (int *) l_col_out_dev, (int *) p_col_out_dev,
@@ -267,8 +267,8 @@ extern "C" void CONCATENATE(ELPA_GPU,  _copy_qtmp1_slice_to_q_FromC) (char dataT
 //________________________________________________________________
 
 template <typename T>
-__global__ void gpu_copy_q_slice_to_qtmp2_kernel(T *q, T *qtmp2, int *idxq1, int *l_col_out, 
-                                                const int l_rows, const int l_rqs, const int l_rqe, const int matrixRows, const int matrixCols, 
+__global__ void gpu_copy_q_slice_to_qtmp2_kernel(T *q, T *qtmp2, int *idxq1, int *l_col_out,
+                                                const int l_rows, const int l_rqs, const int l_rqe, const int matrixRows, const int matrixCols,
                                                 const int gemm_dim_k, const int gemm_dim_m, const int ns, const int ncnt, const int indx, const int indx2, const int na) {
   int j  = blockIdx.x * blockDim.x + threadIdx.x; // 1.._l_rows
   int ii = blockIdx.y * blockDim.y + threadIdx.y + 1; // 1.._l_rows
@@ -276,37 +276,37 @@ __global__ void gpu_copy_q_slice_to_qtmp2_kernel(T *q, T *qtmp2, int *idxq1, int
   if (ii >=1 && ii < ncnt+1) {
     if (j >= 0 && j < l_rows) {
       int idx_2= ii+1+ns-1;
-      int idx = idxq1[idx_2-1] ; 
-      int k = l_col_out[idx-1]; 
+      int idx = idxq1[idx_2-1] ;
+      int k = l_col_out[idx-1];
 
       int index2 = j + l_rqs-1 + matrixRows * (k-1);
       int index  = j + gemm_dim_k * (ii-1);
       qtmp2[index]=q[index2];
-    } 
+    }
   }
 }
 
 template <typename T>
-void gpu_copy_q_slice_to_qtmp2 (T *q_dev, T *qtmp2_dev, int *idxq1_dev, int *l_col_out_dev, 
-                                const int l_rows, const int l_rqs, const int l_rqe, const int matrixRows, const int matrixCols, 
-                                const int gemm_dim_k, const int gemm_dim_m, const int ns, const int ncnt, 
+void gpu_copy_q_slice_to_qtmp2 (T *q_dev, T *qtmp2_dev, int *idxq1_dev, int *l_col_out_dev,
+                                const int l_rows, const int l_rqs, const int l_rqe, const int matrixRows, const int matrixCols,
+                                const int gemm_dim_k, const int gemm_dim_m, const int ns, const int ncnt,
                                 const int indx, const int indx2, const int na,
                                 const int debug, gpuStream_t my_stream){
-  
+
   dim3 threadsPerBlock(32, 32);
   dim3 blocks((l_rows + threadsPerBlock.x - 1) / threadsPerBlock.x, (ncnt + threadsPerBlock.y - 1) / threadsPerBlock.y);
   if (blocks.x==0 || blocks.y==0) return;
 
 #ifdef WITH_GPU_STREAMS
-    gpu_copy_q_slice_to_qtmp2_kernel<T><<<blocks,threadsPerBlock,0,my_stream>>>(q_dev, qtmp2_dev, idxq1_dev, l_col_out_dev, 
-                                                                                l_rows, l_rqs, l_rqe, matrixRows, matrixCols, 
-                                                                                gemm_dim_k, gemm_dim_m, ns, ncnt, indx, indx2, na); 
+    gpu_copy_q_slice_to_qtmp2_kernel<T><<<blocks,threadsPerBlock,0,my_stream>>>(q_dev, qtmp2_dev, idxq1_dev, l_col_out_dev,
+                                                                                l_rows, l_rqs, l_rqe, matrixRows, matrixCols,
+                                                                                gemm_dim_k, gemm_dim_m, ns, ncnt, indx, indx2, na);
 #else
-    gpu_copy_q_slice_to_qtmp2_kernel<T><<<blocks,threadsPerBlock>>>            (q_dev, qtmp2_dev, idxq1_dev, l_col_out_dev, 
-                                                                                l_rows, l_rqs, l_rqe, matrixRows, matrixCols, 
+    gpu_copy_q_slice_to_qtmp2_kernel<T><<<blocks,threadsPerBlock>>>            (q_dev, qtmp2_dev, idxq1_dev, l_col_out_dev,
+                                                                                l_rows, l_rqs, l_rqe, matrixRows, matrixCols,
                                                                                 gemm_dim_k, gemm_dim_m, ns, ncnt, indx, indx2, na);
 #endif
-    
+
   if (debug)
     {
     gpuDeviceSynchronize();
@@ -317,17 +317,17 @@ void gpu_copy_q_slice_to_qtmp2 (T *q_dev, T *qtmp2_dev, int *idxq1_dev, int *l_c
 }
 
 extern "C" void CONCATENATE(ELPA_GPU,  _copy_q_slice_to_qtmp2_FromC) (char dataType, intptr_t q_dev, intptr_t qtmp2_dev,
-                                                                      intptr_t idxq1_dev, intptr_t l_col_out_dev, 
-                                                                      int l_rows, int l_rqs, int l_rqe, int matrixRows, int matrixCols, 
-                                                                      int gemm_dim_k, int gemm_dim_m, int ns, int ncnt, 
+                                                                      intptr_t idxq1_dev, intptr_t l_col_out_dev,
+                                                                      int l_rows, int l_rqs, int l_rqe, int matrixRows, int matrixCols,
+                                                                      int gemm_dim_k, int gemm_dim_m, int ns, int ncnt,
                                                                       int indx, int indx2, int na,
                                                                       int debug, gpuStream_t my_stream){
 
-  if      (dataType=='D') gpu_copy_q_slice_to_qtmp2<double>((double *) q_dev, (double *) qtmp2_dev, (int *) idxq1_dev, (int *) l_col_out_dev, 
+  if      (dataType=='D') gpu_copy_q_slice_to_qtmp2<double>((double *) q_dev, (double *) qtmp2_dev, (int *) idxq1_dev, (int *) l_col_out_dev,
                                                             l_rows, l_rqs, l_rqe, matrixRows, matrixCols, gemm_dim_k, gemm_dim_m, ns, ncnt, indx, indx2, na,
                                                             debug, my_stream);
 
-  else if (dataType=='S') gpu_copy_q_slice_to_qtmp2<float> ((float  *) q_dev, (float  *) qtmp2_dev, (int *) idxq1_dev, (int *) l_col_out_dev, 
+  else if (dataType=='S') gpu_copy_q_slice_to_qtmp2<float> ((float  *) q_dev, (float  *) qtmp2_dev, (int *) idxq1_dev, (int *) l_col_out_dev,
                                                             l_rows, l_rqs, l_rqe, matrixRows, matrixCols, gemm_dim_k, gemm_dim_m, ns, ncnt, indx, indx2, na,
                                                             debug, my_stream);
   else {
@@ -338,8 +338,8 @@ extern "C" void CONCATENATE(ELPA_GPU,  _copy_q_slice_to_qtmp2_FromC) (char dataT
 //________________________________________________________________
 
 template <typename T>
-__global__ void gpu_copy_qtmp2_slice_to_q_kernel(T *q, T *qtmp2, int *idxq1, int *l_col_out, 
-                                                 const int l_rqs, const int l_rqe, const int l_rows,  const int ncnt, const int gemm_dim_k, 
+__global__ void gpu_copy_qtmp2_slice_to_q_kernel(T *q, T *qtmp2, int *idxq1, int *l_col_out,
+                                                 const int l_rqs, const int l_rqe, const int l_rows,  const int ncnt, const int gemm_dim_k,
                                                  const int matrixRows, const int ns) {
   int i = blockIdx.x * blockDim.x + threadIdx.x;
   int j = blockIdx.y * blockDim.y + threadIdx.y;
@@ -355,23 +355,23 @@ __global__ void gpu_copy_qtmp2_slice_to_q_kernel(T *q, T *qtmp2, int *idxq1, int
 }
 
 template <typename T>
-void gpu_copy_qtmp2_slice_to_q (T *q_dev, T *qtmp2_dev, int *idxq1_dev, int *l_col_out_dev, 
-                                const int l_rqs, const int l_rqe, const int l_rows,  const int ncnt, const int gemm_dim_k, 
+void gpu_copy_qtmp2_slice_to_q (T *q_dev, T *qtmp2_dev, int *idxq1_dev, int *l_col_out_dev,
+                                const int l_rqs, const int l_rqe, const int l_rows,  const int ncnt, const int gemm_dim_k,
                                 const int matrixRows, const int ns,
                                 const int debug, gpuStream_t my_stream){
-  
+
   dim3 threadsPerBlock(32, 32);
   dim3 blocks((ncnt + threadsPerBlock.x - 1) / threadsPerBlock.x, (l_rows + threadsPerBlock.y - 1) / threadsPerBlock.y);
   if (blocks.x==0 || blocks.y==0) return;
 
 #ifdef WITH_GPU_STREAMS
-    gpu_copy_qtmp2_slice_to_q_kernel<T><<<blocks,threadsPerBlock,0,my_stream>>>(q_dev, qtmp2_dev, idxq1_dev, l_col_out_dev, 
-                                                                                l_rqs, l_rqe, l_rows, ncnt, gemm_dim_k, matrixRows, ns); 
+    gpu_copy_qtmp2_slice_to_q_kernel<T><<<blocks,threadsPerBlock,0,my_stream>>>(q_dev, qtmp2_dev, idxq1_dev, l_col_out_dev,
+                                                                                l_rqs, l_rqe, l_rows, ncnt, gemm_dim_k, matrixRows, ns);
 #else
-    gpu_copy_qtmp2_slice_to_q_kernel<T><<<blocks,threadsPerBlock>>>            (q_dev, qtmp2_dev, idxq1_dev, l_col_out_dev, 
+    gpu_copy_qtmp2_slice_to_q_kernel<T><<<blocks,threadsPerBlock>>>            (q_dev, qtmp2_dev, idxq1_dev, l_col_out_dev,
                                                                                 l_rqs, l_rqe, l_rows, ncnt, gemm_dim_k, matrixRows, ns);
 #endif
-    
+
   if (debug)
     {
     gpuDeviceSynchronize();
@@ -382,14 +382,14 @@ void gpu_copy_qtmp2_slice_to_q (T *q_dev, T *qtmp2_dev, int *idxq1_dev, int *l_c
 }
 
 extern "C" void CONCATENATE(ELPA_GPU,  _copy_qtmp2_slice_to_q_FromC) (char dataType, intptr_t q_dev, intptr_t qtmp2_dev,
-                                                                      intptr_t idxq1_dev, intptr_t l_col_out_dev, 
+                                                                      intptr_t idxq1_dev, intptr_t l_col_out_dev,
                                                                       int l_rqs, int l_rqe, int l_rows,  int ncnt, int gemm_dim_k,
                                                                       int matrixRows, int ns,
                                                                       int debug, gpuStream_t my_stream){
 
   if      (dataType=='D') gpu_copy_qtmp2_slice_to_q<double>((double *) q_dev, (double *) qtmp2_dev, (int *) idxq1_dev, (int *) l_col_out_dev,
                                                              l_rqs, l_rqe, l_rows, ncnt, gemm_dim_k, matrixRows, ns, debug, my_stream);
-  else if (dataType=='S') gpu_copy_qtmp2_slice_to_q<float> ((float  *) q_dev, (float  *) qtmp2_dev, (int *) idxq1_dev, (int *) l_col_out_dev, 
+  else if (dataType=='S') gpu_copy_qtmp2_slice_to_q<float> ((float  *) q_dev, (float  *) qtmp2_dev, (int *) idxq1_dev, (int *) l_col_out_dev,
                                                              l_rqs, l_rqe, l_rows, ncnt, gemm_dim_k, matrixRows, ns, debug, my_stream);
   else {
     printf("Error in gpu_copy_qtmp2_slice_to_q: Unsupported data type\n");
@@ -399,7 +399,7 @@ extern "C" void CONCATENATE(ELPA_GPU,  _copy_qtmp2_slice_to_q_FromC) (char dataT
 //________________________________________________________________
 
 template <typename T>
-__global__ void gpu_fill_ev_kernel (T *ev, T *d1u, T *dbase, T *ddiff, T *zu, T *ev_scale, int *idxq1, int *idx, 
+__global__ void gpu_fill_ev_kernel (T *ev, T *d1u, T *dbase, T *ddiff, T *zu, T *ev_scale, int *idxq1, int *idx,
                                     const int na, const int gemm_dim_l, const int gemm_dim_m, const int nnzu, const int ns, const int ncnt) {
   int k = blockIdx.x * blockDim.x + threadIdx.x;
   int i = blockIdx.y * blockDim.y + threadIdx.y + 1;
@@ -422,19 +422,19 @@ __global__ void gpu_fill_ev_kernel (T *ev, T *d1u, T *dbase, T *ddiff, T *zu, T 
 template <typename T>
 void gpu_fill_ev (T *ev_dev, T *d1u_dev, T *dbase_dev, T *ddiff_dev, T *zu_dev, T *ev_scale_dev, int *idxq1_dev, int  *idx_dev,
                   int na, int gemm_dim_l, int gemm_dim_m, int nnzu, int ns, int ncnt, int debug, gpuStream_t my_stream){
-  
+
   dim3 threadsPerBlock(32, 32);
   dim3 blocks((nnzu + threadsPerBlock.x - 1) / threadsPerBlock.x, (ncnt + threadsPerBlock.y - 1) / threadsPerBlock.y);
   if (blocks.x==0 || blocks.y==0) return;
 
 #ifdef WITH_GPU_STREAMS
-    gpu_fill_ev_kernel<T><<<blocks,threadsPerBlock,0,my_stream>>>(ev_dev, d1u_dev, dbase_dev, ddiff_dev, zu_dev, ev_scale_dev, idxq1_dev, idx_dev, 
-                                                                  na, gemm_dim_l, gemm_dim_m, nnzu, ns, ncnt); 
+    gpu_fill_ev_kernel<T><<<blocks,threadsPerBlock,0,my_stream>>>(ev_dev, d1u_dev, dbase_dev, ddiff_dev, zu_dev, ev_scale_dev, idxq1_dev, idx_dev,
+                                                                  na, gemm_dim_l, gemm_dim_m, nnzu, ns, ncnt);
 #else
-    gpu_fill_ev_kernel<T><<<blocks,threadsPerBlock>>>            (ev_dev, d1u_dev, dbase_dev, ddiff_dev, zu_dev, ev_scale_dev, idxq1_dev, idx_dev, 
+    gpu_fill_ev_kernel<T><<<blocks,threadsPerBlock>>>            (ev_dev, d1u_dev, dbase_dev, ddiff_dev, zu_dev, ev_scale_dev, idxq1_dev, idx_dev,
                                                                   na, gemm_dim_l, gemm_dim_m, nnzu, ns, ncnt);
 #endif
-    
+
   if (debug)
     {
     gpuDeviceSynchronize();
@@ -444,15 +444,15 @@ void gpu_fill_ev (T *ev_dev, T *d1u_dev, T *dbase_dev, T *ddiff_dev, T *zu_dev, 
     }
 }
 
-extern "C" void CONCATENATE(ELPA_GPU,  _fill_ev_FromC) (char dataType, intptr_t ev_dev, intptr_t d1u_dev, intptr_t dbase_dev, intptr_t ddiff_dev, 
+extern "C" void CONCATENATE(ELPA_GPU,  _fill_ev_FromC) (char dataType, intptr_t ev_dev, intptr_t d1u_dev, intptr_t dbase_dev, intptr_t ddiff_dev,
                                                       intptr_t zu_dev, intptr_t ev_scale_dev, intptr_t idxq1_dev, intptr_t idx_dev,
                                                       int na, int gemm_dim_l, int gemm_dim_m, int nnzu, int ns, int ncnt,
                                                       int debug, gpuStream_t my_stream){
-  if      (dataType=='D') gpu_fill_ev<double>((double *) ev_dev, (double *) d1u_dev, (double *) dbase_dev, (double *) ddiff_dev, 
+  if      (dataType=='D') gpu_fill_ev<double>((double *) ev_dev, (double *) d1u_dev, (double *) dbase_dev, (double *) ddiff_dev,
                                               (double *) zu_dev, (double *) ev_scale_dev, (int *) idxq1_dev, (int *) idx_dev,
                                               na, gemm_dim_l, gemm_dim_m, nnzu, ns, ncnt, debug, my_stream);
 
-  else if (dataType=='S') gpu_fill_ev<float> ((float  *) ev_dev, (float  *) d1u_dev, (float  *) dbase_dev, (float  *) ddiff_dev, 
+  else if (dataType=='S') gpu_fill_ev<float> ((float  *) ev_dev, (float  *) d1u_dev, (float  *) dbase_dev, (float  *) ddiff_dev,
                                               (float  *) zu_dev, (float  *) ev_scale_dev, (int *) idxq1_dev, (int *) idx_dev,
                                               na, gemm_dim_l, gemm_dim_m, nnzu, ns, ncnt, debug, my_stream);
   else {
@@ -464,7 +464,7 @@ extern "C" void CONCATENATE(ELPA_GPU,  _fill_ev_FromC) (char dataType, intptr_t 
 
 template <typename T>
 __global__ void gpu_fill_tmp_arrays_kernel (T *d1u, T *d1, T *zu, T *z, T *d1l, T *zl,
-                                            int *idx1, int *p_col, int *coltyp, int *nnzu_val, int *nnzl_val, int *nnzul, 
+                                            int *idx1, int *p_col, int *coltyp, int *nnzu_val, int *nnzl_val, int *nnzul,
                                             const int na, const int np, const int na1, const int np_rem) {
   int i = blockIdx.x * blockDim.x + threadIdx.x;
 
@@ -488,7 +488,7 @@ __global__ void gpu_fill_tmp_arrays_kernel (T *d1u, T *d1, T *zu, T *z, T *d1l, 
       }
     }
 
-  if (i == 0) 
+  if (i == 0)
     {
     nnzul[0]=0;
     nnzul[1]=0;
@@ -525,23 +525,23 @@ __global__ void gpu_fill_tmp_arrays_kernel (T *d1u, T *d1, T *zu, T *z, T *d1l, 
 
 template <typename T>
 void gpu_fill_tmp_arrays (T *d1u_dev, T *d1_dev, T *zu_dev, T *z_dev, T *d1l_dev, T *zl_dev,
-                          int *idx1_dev, int *p_col_dev, int *coltyp_dev, int *nnzu_val_dev, int *nnzl_val_dev, int *nnzul_dev, 
+                          int *idx1_dev, int *p_col_dev, int *coltyp_dev, int *nnzu_val_dev, int *nnzl_val_dev, int *nnzul_dev,
                           const int na, const int np, const int na1, const int np_rem, int debug, gpuStream_t my_stream){
-  
+
   dim3 threadsPerBlock(MAX_THREADS_PER_BLOCK);
   dim3 blocks((na1 + threadsPerBlock.x - 1) / threadsPerBlock.x);
   if (blocks.x==0) return;
 
 #ifdef WITH_GPU_STREAMS
-    gpu_fill_tmp_arrays_kernel<T><<<blocks,threadsPerBlock,0,my_stream>>>(d1u_dev, d1_dev, zu_dev, z_dev, d1l_dev, zl_dev, 
-                                                                          idx1_dev, p_col_dev, coltyp_dev, nnzu_val_dev, nnzl_val_dev, nnzul_dev, 
-                                                                          na, np, na1, np_rem); 
+    gpu_fill_tmp_arrays_kernel<T><<<blocks,threadsPerBlock,0,my_stream>>>(d1u_dev, d1_dev, zu_dev, z_dev, d1l_dev, zl_dev,
+                                                                          idx1_dev, p_col_dev, coltyp_dev, nnzu_val_dev, nnzl_val_dev, nnzul_dev,
+                                                                          na, np, na1, np_rem);
 #else
-    gpu_fill_tmp_arrays_kernel<T><<<blocks,threadsPerBlock>>>            (d1u_dev, d1_dev, zu_dev, z_dev, d1l_dev, zl_dev, 
-                                                                          idx1_dev, p_col_dev, coltyp_dev, nnzu_val_dev, nnzl_val_dev, nnzul_dev, 
+    gpu_fill_tmp_arrays_kernel<T><<<blocks,threadsPerBlock>>>            (d1u_dev, d1_dev, zu_dev, z_dev, d1l_dev, zl_dev,
+                                                                          idx1_dev, p_col_dev, coltyp_dev, nnzu_val_dev, nnzl_val_dev, nnzul_dev,
                                                                           na, np, na1, np_rem);
 #endif
-    
+
   if (debug)
     {
     gpuDeviceSynchronize();
@@ -551,9 +551,9 @@ void gpu_fill_tmp_arrays (T *d1u_dev, T *d1_dev, T *zu_dev, T *z_dev, T *d1l_dev
     }
 }
 
-extern "C" void CONCATENATE(ELPA_GPU,  _fill_tmp_arrays_FromC) (char dataType, intptr_t d1u_dev, intptr_t d1_dev, intptr_t zu_dev, intptr_t z_dev, 
+extern "C" void CONCATENATE(ELPA_GPU,  _fill_tmp_arrays_FromC) (char dataType, intptr_t d1u_dev, intptr_t d1_dev, intptr_t zu_dev, intptr_t z_dev,
                                                                 intptr_t d1l_dev, intptr_t zl_dev,
-                                                                intptr_t idx1_dev, intptr_t p_col_dev, intptr_t coltyp_dev, 
+                                                                intptr_t idx1_dev, intptr_t p_col_dev, intptr_t coltyp_dev,
                                                                 intptr_t nnzu_val_dev, intptr_t nnzl_val_dev, intptr_t nnzul_dev,
                                                                 int na, int np, int na1, int np_rem,
                                                                 int debug, gpuStream_t my_stream){
@@ -571,7 +571,7 @@ extern "C" void CONCATENATE(ELPA_GPU,  _fill_tmp_arrays_FromC) (char dataType, i
 //________________________________________________________________
 
 template <typename T>
-__global__ void gpu_zero_q_kernel(T *q, int *p_col_out, int *l_col_out, 
+__global__ void gpu_zero_q_kernel(T *q, int *p_col_out, int *l_col_out,
                                   const int na, const int my_pcol, const int l_rqs, const int l_rqe, const int matrixRows) {
     int i = blockIdx.x*blockDim.x + threadIdx.x;
     int j = blockIdx.y*blockDim.y + threadIdx.y;
@@ -581,27 +581,27 @@ __global__ void gpu_zero_q_kernel(T *q, int *p_col_out, int *l_col_out,
         if (p_col_out[i] == my_pcol) {
       	  int index = l_col_out[i] - 1;
           q[j+l_rqs - 1 + matrixRows*index] = 0;
-      }	      
+      }	
     }
   }
 }
 
 template <typename T>
-void gpu_zero_q(T *q_dev, int *p_col_out_dev, int *l_col_out_dev, 
-                const int na, const int my_pcol, const int l_rqs, const int l_rqe, const int matrixRows, 
+void gpu_zero_q(T *q_dev, int *p_col_out_dev, int *l_col_out_dev,
+                const int na, const int my_pcol, const int l_rqs, const int l_rqe, const int matrixRows,
                 const int debug, gpuStream_t my_stream) {
 
-  
+
   dim3 threadsPerBlock(32, 32);
   dim3 blocks((na + threadsPerBlock.x - 1) / threadsPerBlock.x, ((l_rqe-l_rqs+1) + threadsPerBlock.y - 1) / threadsPerBlock.y);
   if (blocks.x==0 || blocks.y==0) return;
 
 #ifdef WITH_GPU_STREAMS
-    gpu_zero_q_kernel<T><<<blocks,threadsPerBlock,0,my_stream>>>(q_dev, p_col_out_dev, l_col_out_dev, na, my_pcol, l_rqs, l_rqe, matrixRows); 
+    gpu_zero_q_kernel<T><<<blocks,threadsPerBlock,0,my_stream>>>(q_dev, p_col_out_dev, l_col_out_dev, na, my_pcol, l_rqs, l_rqe, matrixRows);
 #else
     gpu_zero_q_kernel<T><<<blocks,threadsPerBlock>>>            (q_dev, p_col_out_dev, l_col_out_dev, na, my_pcol, l_rqs, l_rqe, matrixRows);
 #endif
-    
+
   if (debug)
     {
     gpuDeviceSynchronize();
@@ -611,12 +611,12 @@ void gpu_zero_q(T *q_dev, int *p_col_out_dev, int *l_col_out_dev,
     }
 }
 
-extern "C" void CONCATENATE(ELPA_GPU,  _zero_q_FromC) (char dataType, intptr_t q_dev, intptr_t p_col_out_dev, intptr_t l_col_out_dev, 
+extern "C" void CONCATENATE(ELPA_GPU,  _zero_q_FromC) (char dataType, intptr_t q_dev, intptr_t p_col_out_dev, intptr_t l_col_out_dev,
                                                       int na, int my_pcol, int l_rqs, int l_rqe, int matrixRows,
                                                       int debug, gpuStream_t my_stream) {
-  if      (dataType=='D') gpu_zero_q<double>((double *) q_dev, (int *) p_col_out_dev, (int *) l_col_out_dev, 
+  if      (dataType=='D') gpu_zero_q<double>((double *) q_dev, (int *) p_col_out_dev, (int *) l_col_out_dev,
                                               na, my_pcol, l_rqs, l_rqe, matrixRows, debug, my_stream);
-  else if (dataType=='S') gpu_zero_q<float> ((float  *) q_dev, (int *) p_col_out_dev, (int *) l_col_out_dev, 
+  else if (dataType=='S') gpu_zero_q<float> ((float  *) q_dev, (int *) p_col_out_dev, (int *) l_col_out_dev,
                                               na, my_pcol, l_rqs, l_rqe, matrixRows, debug, my_stream);
   else {
     printf("Error in gpu_zero_q: Unsupported data type\n");
@@ -626,8 +626,8 @@ extern "C" void CONCATENATE(ELPA_GPU,  _zero_q_FromC) (char dataType, intptr_t q
 //________________________________________________________________
 
 template <typename T>
-__global__ void gpu_copy_q_slice_to_qtmp1_kernel (T *qtmp1, T *q, int *l_col, int *idx2, int *p_col, 
-                                                  int ndef, const int na2, const int my_pcol, const int l_rows, const int l_rqs, const int l_rqe, 
+__global__ void gpu_copy_q_slice_to_qtmp1_kernel (T *qtmp1, T *q, int *l_col, int *idx2, int *p_col,
+                                                  int ndef, const int na2, const int my_pcol, const int l_rows, const int l_rqs, const int l_rqe,
                                                   const int matrixRows, const int gemm_dim_k) {
   // do i = 1, na2
   //   if (p_col(idx2(i))==my_pcol) then
@@ -653,22 +653,22 @@ __global__ void gpu_copy_q_slice_to_qtmp1_kernel (T *qtmp1, T *q, int *l_col, in
 }
 
 template <typename T>
-void gpu_copy_q_slice_to_qtmp1(T *qtmp1_dev, T *q_dev, int *l_col_out_dev, int *idx2_dev, int *p_col_dev, 
-                               int ndef, const int na2, const int my_pcol, const int l_rows, const int l_rqs, const int l_rqe, 
+void gpu_copy_q_slice_to_qtmp1(T *qtmp1_dev, T *q_dev, int *l_col_out_dev, int *idx2_dev, int *p_col_dev,
+                               int ndef, const int na2, const int my_pcol, const int l_rows, const int l_rqs, const int l_rqe,
                                const int matrixRows, const int gemm_dim_k, const int debug, gpuStream_t my_stream) {
- 
+
   dim3 threadsPerBlock(MAX_THREADS_PER_BLOCK);
   dim3 blocks((l_rows + threadsPerBlock.x - 1) / threadsPerBlock.x);
   if (blocks.x==0) return;
 
 #ifdef WITH_GPU_STREAMS
-    gpu_copy_q_slice_to_qtmp1_kernel<T><<<blocks,threadsPerBlock,0,my_stream>>>(qtmp1_dev, q_dev, l_col_out_dev, idx2_dev, p_col_dev, 
-                                                                                ndef, na2, my_pcol, l_rows, l_rqs, l_rqe, matrixRows, gemm_dim_k); 
+    gpu_copy_q_slice_to_qtmp1_kernel<T><<<blocks,threadsPerBlock,0,my_stream>>>(qtmp1_dev, q_dev, l_col_out_dev, idx2_dev, p_col_dev,
+                                                                                ndef, na2, my_pcol, l_rows, l_rqs, l_rqe, matrixRows, gemm_dim_k);
 #else
-    gpu_copy_q_slice_to_qtmp1_kernel<T><<<blocks,threadsPerBlock>>>            (qtmp1_dev, q_dev, l_col_out_dev, idx2_dev, p_col_dev, 
+    gpu_copy_q_slice_to_qtmp1_kernel<T><<<blocks,threadsPerBlock>>>            (qtmp1_dev, q_dev, l_col_out_dev, idx2_dev, p_col_dev,
                                                                                 ndef, na2, my_pcol, l_rows, l_rqs, l_rqe, matrixRows, gemm_dim_k);
 #endif
-    
+
   if (debug)
     {
     gpuDeviceSynchronize();
@@ -678,9 +678,9 @@ void gpu_copy_q_slice_to_qtmp1(T *qtmp1_dev, T *q_dev, int *l_col_out_dev, int *
     }
 }
 
-extern "C" void CONCATENATE(ELPA_GPU,  _copy_q_slice_to_qtmp1_FromC) (char dataType, intptr_t qtmp1_dev, intptr_t q_dev, 
-                                                                      intptr_t l_col_out_dev, intptr_t idx2_dev, intptr_t p_col_dev, 
-                                                                      int ndef, int na2, int my_pcol, int l_rows, int l_rqs, int l_rqe, 
+extern "C" void CONCATENATE(ELPA_GPU,  _copy_q_slice_to_qtmp1_FromC) (char dataType, intptr_t qtmp1_dev, intptr_t q_dev,
+                                                                      intptr_t l_col_out_dev, intptr_t idx2_dev, intptr_t p_col_dev,
+                                                                      int ndef, int na2, int my_pcol, int l_rows, int l_rqs, int l_rqe,
                                                                       int matrixRows, int gemm_dim_k, int debug, gpuStream_t my_stream) {
   if      (dataType=='D') gpu_copy_q_slice_to_qtmp1<double>((double *) qtmp1_dev, (double *) q_dev, (int *) l_col_out_dev, (int *) idx2_dev, (int *) p_col_dev,
                                                              ndef, na2, my_pcol, l_rows, l_rqs, l_rqe, matrixRows, gemm_dim_k, debug, my_stream);
@@ -701,14 +701,14 @@ __global__ void gpu_copy_qtmp1_to_qtmp1_tmp_kernel(T* qtmp1, T* qtmp1_tmp, const
   if (i<gemm_dim_k) {
     if (j<gemm_dim_l) {
       qtmp1_tmp[i+gemm_dim_k*j] = qtmp1[i+gemm_dim_k*j];
-    }    
-  }           
-} 
+    }
+  }
+}
 
 template <typename T>
-void gpu_copy_qtmp1_to_qtmp1_tmp (T *qtmp1_dev, T* qtmp1_tmp_dev, const int gemm_dim_k, const int gemm_dim_l, 
+void gpu_copy_qtmp1_to_qtmp1_tmp (T *qtmp1_dev, T* qtmp1_tmp_dev, const int gemm_dim_k, const int gemm_dim_l,
                                   const int debug, gpuStream_t my_stream) {
-  
+
   dim3 threadsPerBlock(32, 32);
   dim3 blocks((gemm_dim_k + threadsPerBlock.x - 1) / threadsPerBlock.x, (gemm_dim_l + threadsPerBlock.y - 1) / threadsPerBlock.y);
   if (blocks.x==0 || blocks.y==0) return;
@@ -718,7 +718,7 @@ void gpu_copy_qtmp1_to_qtmp1_tmp (T *qtmp1_dev, T* qtmp1_tmp_dev, const int gemm
 #else
     gpu_copy_qtmp1_to_qtmp1_tmp_kernel<T><<<blocks,threadsPerBlock>>>            (qtmp1_dev, qtmp1_tmp_dev, gemm_dim_k, gemm_dim_l);
 #endif
-    
+
   if (debug)
     {
     gpuDeviceSynchronize();
@@ -728,7 +728,7 @@ void gpu_copy_qtmp1_to_qtmp1_tmp (T *qtmp1_dev, T* qtmp1_tmp_dev, const int gemm
     }
 }
 
-extern "C" void CONCATENATE(ELPA_GPU,  _copy_qtmp1_to_qtmp1_tmp_FromC) (char dataType, intptr_t qtmp1_dev, intptr_t qtmp1_tmp_dev, 
+extern "C" void CONCATENATE(ELPA_GPU,  _copy_qtmp1_to_qtmp1_tmp_FromC) (char dataType, intptr_t qtmp1_dev, intptr_t qtmp1_tmp_dev,
                                                                         int gemm_dim_k, int gemm_dim_l, int debug, gpuStream_t my_stream) {
   if      (dataType=='D') gpu_copy_qtmp1_to_qtmp1_tmp<double>((double *) qtmp1_dev, (double *) qtmp1_tmp_dev, gemm_dim_k, gemm_dim_l, debug, my_stream);
   else if (dataType=='S') gpu_copy_qtmp1_to_qtmp1_tmp<float> ((float  *) qtmp1_dev, (float  *) qtmp1_tmp_dev, gemm_dim_k, gemm_dim_l, debug, my_stream);
@@ -750,7 +750,7 @@ __global__ void gpu_fill_array_kernel(T* array_dev, T* value_dev, int n) {
 
 template <typename T>
 void gpu_fill_array (T *array_dev, T* value_dev, int n, int SM_count, int debug, gpuStream_t my_stream){
-  
+
   dim3 blocks = dim3(SM_count,1,1);
   dim3 threadsPerBlock = dim3(MAX_THREADS_PER_BLOCK,1,1);
 
@@ -759,7 +759,7 @@ void gpu_fill_array (T *array_dev, T* value_dev, int n, int SM_count, int debug,
 #else
     gpu_fill_array_kernel<T><<<blocks,threadsPerBlock>>>            (array_dev, value_dev, n);
 #endif
-    
+
   if (debug)
     {
     gpuDeviceSynchronize();
@@ -787,12 +787,12 @@ __device__ T elpa_sum(int n, int tid, int threads_total, T* cache, Func func) {
   for (int j = tid; j < n; j += threads_total) {
     sum += func(j);
   }
-    
+
   cache[tid] = sum;
   __syncthreads();
 
 
-  for (int stride = threads_total/2; stride > 0; stride /= 2) 
+  for (int stride = threads_total/2; stride > 0; stride /= 2)
     {
     if (tid < stride) cache[tid] += cache[tid + stride];
     __syncthreads();
@@ -808,7 +808,7 @@ __forceinline__ __device__ void device_solve_secular_equation(int n, int i_f, T*
                                                               int tid, int threads_total) {
   int i = i_f - 1; // i_f is the Fortran index (1-indexed); convert to C index i
   __shared__ T dshift_sh, a_sh, b_sh, x_sh, y_sh;
-  
+
   __shared__ int break_flag_sh;
   if (tid==0) break_flag_sh=0;
   __syncthreads();
@@ -840,9 +840,9 @@ __forceinline__ __device__ void device_solve_secular_equation(int n, int i_f, T*
       b_sh = rho[0]*sum_zsq + 1;
       }
     __syncthreads();
-    } 
-  
-  else 
+    }
+
+  else
     {
     // Other eigenvalues: lower bound is d1[i] and upper bound is d1[i+1]
     if (tid==0)
@@ -881,7 +881,7 @@ __forceinline__ __device__ void device_solve_secular_equation(int n, int i_f, T*
   }
 
   // Bisection
-  for (int iter = 0; iter < maxIter; iter++) 
+  for (int iter = 0; iter < maxIter; iter++)
     {
     __syncthreads(); // needed to prevent changing break_flag_sh for the previous iteration
     if (tid==0)
@@ -894,7 +894,7 @@ __forceinline__ __device__ void device_solve_secular_equation(int n, int i_f, T*
       }
     __syncthreads(); // so all threads agree on x and break_flag
     if (break_flag_sh) break;
-    
+
     T sum_term = elpa_sum<T>(n, tid, threads_total, cache, [=] __device__ (int j) -> T {
       return z1[j]*z1[j] / (delta[j] - x_sh);
     });
@@ -925,16 +925,16 @@ __forceinline__ __device__ void device_solve_secular_equation(int n, int i_f, T*
 
 template <typename T>
 __global__ void gpu_solve_secular_equation_loop_kernel(T *d1_dev, T *z1_dev, T *delta_extended_dev, T *rho_dev,
-                                                       T *z_extended_dev, T *dbase_dev, T *ddiff_dev, 
+                                                       T *z_extended_dev, T *dbase_dev, T *ddiff_dev,
                                                        int my_proc, int na1, int n_procs){
-  __shared__ T cache[THREADS_PER_BLOCK_SECULAR_EQ_KERNEL]; 
+  __shared__ T cache[THREADS_PER_BLOCK_SECULAR_EQ_KERNEL];
   int thread = threadIdx.x;
   int block  = blockIdx.x;
 
   // do i = my_procs+1, na1, n_procs
   //   call solve_secular_equation_&
   //                               &PRECISION&
-  //                               &(obj, na1, i, d1, z1, delta, rho, s) 
+  //                               &(obj, na1, i, d1, z1, delta, rho, s)
 
   //   ! Compute updated z
   //   do j=1,na1
@@ -942,7 +942,7 @@ __global__ void gpu_solve_secular_equation_loop_kernel(T *d1_dev, T *z1_dev, T *
   //   enddo
 
   //   z(i) = z(i)*delta(i)
-    
+
   //   ! Store dbase/ddiff
 
   //   if (i<na1) then
@@ -966,12 +966,12 @@ __global__ void gpu_solve_secular_equation_loop_kernel(T *d1_dev, T *z1_dev, T *
   for (int i=my_proc + n_procs*block; i<na1; i += n_procs*gridDim.x)
     {
     int i_f = i + 1; // i_f is the Fortran index (1-based)
-    
+
     device_solve_secular_equation(na1, i_f, d1_dev, z1_dev, delta_extended_dev+na1*block, rho_dev, cache, thread, blockDim.x);
     __syncthreads(); // so all threads agree on delta_dev
 
     // Compute updated z (z_extended_dev)
-    T d1_i = d1_dev[i];                     
+    T d1_i = d1_dev[i];
     int index;
     for (int j = thread; j < na1; j += blockDim.x)
       {
@@ -982,20 +982,20 @@ __global__ void gpu_solve_secular_equation_loop_kernel(T *d1_dev, T *z1_dev, T *
     // Store dbase/ddiff
     if (thread==0)
       {
-      if (i_f < na1) 
+      if (i_f < na1)
         {
-        if (fabs(delta_extended_dev[i+1 + na1*block]) < fabs(delta_extended_dev[i + na1*block])) 
+        if (fabs(delta_extended_dev[i+1 + na1*block]) < fabs(delta_extended_dev[i + na1*block]))
           {
           dbase_dev[i] = d1_dev[i+1];
           ddiff_dev[i] = delta_extended_dev[i+1 + na1*block];
           }
-        else 
+        else
           {
           dbase_dev[i] = d1_dev[i];
           ddiff_dev[i] = delta_extended_dev[i + na1*block];
           }
-        } 
-      else 
+        }
+      else
         {
         dbase_dev[i] = d1_dev[i];
         ddiff_dev[i] = delta_extended_dev[i + na1*block];
@@ -1007,9 +1007,9 @@ __global__ void gpu_solve_secular_equation_loop_kernel(T *d1_dev, T *z1_dev, T *
 
 template <typename T>
 void gpu_solve_secular_equation_loop (T *d1_dev, T *z1_dev, T *delta_dev, T *rho_dev,
-                                      T *z_dev, T *dbase_dev, T *ddiff_dev, 
+                                      T *z_dev, T *dbase_dev, T *ddiff_dev,
                                       int my_proc, int na1, int n_procs, int SM_count, int debug, gpuStream_t my_stream){
-  
+
   dim3 blocks = dim3(SM_count,1,1);
   dim3 threadsPerBlock = dim3(THREADS_PER_BLOCK_SECULAR_EQ_KERNEL,1,1);
 
@@ -1032,7 +1032,7 @@ void gpu_solve_secular_equation_loop (T *d1_dev, T *z1_dev, T *delta_dev, T *rho
 }
 
 extern "C" void CONCATENATE(ELPA_GPU,  _solve_secular_equation_loop_FromC) (char dataType, intptr_t d1_dev, intptr_t z1_dev, intptr_t delta_dev, intptr_t rho_dev,
-                                                                            intptr_t z_dev, intptr_t dbase_dev, intptr_t ddiff_dev, 
+                                                                            intptr_t z_dev, intptr_t dbase_dev, intptr_t ddiff_dev,
                                                                             int my_proc, int na1, int n_procs, int SM_count, int debug, gpuStream_t my_stream){
   if      (dataType=='D') gpu_solve_secular_equation_loop<double>((double *) d1_dev, (double *) z1_dev, (double *) delta_dev, (double *) rho_dev,
                                                                   (double *) z_dev, (double *) dbase_dev, (double *) ddiff_dev,
@@ -1049,13 +1049,13 @@ extern "C" void CONCATENATE(ELPA_GPU,  _solve_secular_equation_loop_FromC) (char
 
 template <typename T>
 __global__ void gpu_local_product_kernel(T *z_dev, T *z_extended_dev, int na1, int SM_count){
-  
+
   int i0 = threadIdx.x + blockIdx.x*blockDim.x;
 
   for (int j=0; j<SM_count; j+=1) // for parallelizing over j we need atomic_multiply
     for (int i=i0; i<na1; i+=blockDim.x*gridDim.x)
       z_dev[i] = z_dev[i] * z_extended_dev[i + na1*j];
-  
+
 }
 
 template <typename T>
@@ -1080,7 +1080,7 @@ void gpu_local_product(T *z_dev, T *z_extended_dev, int na1, int SM_count, int d
   }
 }
 
-extern "C" void CONCATENATE(ELPA_GPU,  _local_product_FromC) (char dataType, intptr_t z_dev, intptr_t z_extended_dev, 
+extern "C" void CONCATENATE(ELPA_GPU,  _local_product_FromC) (char dataType, intptr_t z_dev, intptr_t z_extended_dev,
                                                                             int na1, int SM_count, int debug, gpuStream_t my_stream){
   if      (dataType=='D') gpu_local_product<double>((double *) z_dev, (double *) z_extended_dev, na1, SM_count, debug, my_stream);
   else if (dataType=='S') gpu_local_product<float> ((float  *) z_dev, (float  *) z_extended_dev, na1, SM_count, debug, my_stream);
@@ -1092,9 +1092,9 @@ extern "C" void CONCATENATE(ELPA_GPU,  _local_product_FromC) (char dataType, int
 //________________________________________________________________
 
 template <typename T>
-__global__ void gpu_add_tmp_loop_kernel (T *d1_dev, T *dbase_dev, T *ddiff_dev, T *z_dev, T *ev_scale_dev, T *tmp_extended_dev, 
+__global__ void gpu_add_tmp_loop_kernel (T *d1_dev, T *dbase_dev, T *ddiff_dev, T *z_dev, T *ev_scale_dev, T *tmp_extended_dev,
                                          int na1, int my_proc, int n_procs){
-  
+
   // do i = my_proc+1, na1, n_procs ! work distributed over all processors
   //   tmp(1:na1) = d1(1:na1)  - dbase(i)
   //   tmp(1:na1) = tmp(1:na1) + ddiff(i)
@@ -1116,7 +1116,7 @@ __global__ void gpu_add_tmp_loop_kernel (T *d1_dev, T *dbase_dev, T *ddiff_dev, 
       index = j + na1*blockIdx.x;
       tmp_extended_dev[index] = d1_dev[j] - dbase_or_diff_i;
       }
-    
+
     // separate loop to prevent compiler from optimization
     dbase_or_diff_i = ddiff_dev[i];
     for (int j=thread; j<na1; j+=blockDim.x)
@@ -1125,7 +1125,7 @@ __global__ void gpu_add_tmp_loop_kernel (T *d1_dev, T *dbase_dev, T *ddiff_dev, 
       tmp_extended_dev[index] = tmp_extended_dev[index] + dbase_or_diff_i;
       tmp_extended_dev[index] = z_dev[j] / tmp_extended_dev[index];
       }
-    
+
     T dot_product = elpa_sum<T>(na1, thread, blockDim.x, cache, [=] __device__ (int j) -> T {
       return tmp_extended_dev[j+na1*blockIdx.x]*tmp_extended_dev[j+na1*blockIdx.x];
     });
@@ -1135,16 +1135,16 @@ __global__ void gpu_add_tmp_loop_kernel (T *d1_dev, T *dbase_dev, T *ddiff_dev, 
       ev_scale_dev[i] = T(1.0)/sqrt(dot_product);
       }
     }
-  
+
 }
 
 template <typename T>
-void gpu_add_tmp_loop(T *d1_dev, T *dbase_dev, T *ddiff_dev, T *z_dev, T *ev_scale_dev, T *tmp_extended_dev, 
+void gpu_add_tmp_loop(T *d1_dev, T *dbase_dev, T *ddiff_dev, T *z_dev, T *ev_scale_dev, T *tmp_extended_dev,
                       int na1, int my_proc, int n_procs, int SM_count, int debug, gpuStream_t my_stream){
 
   dim3 blocks = dim3(SM_count,1,1);
   dim3 threadsPerBlock = dim3(MAX_THREADS_PER_BLOCK,1,1);
-  
+
 #ifdef WITH_GPU_STREAMS
   gpu_add_tmp_loop_kernel<<<blocks,threadsPerBlock,0,my_stream>>>(d1_dev, dbase_dev, ddiff_dev, z_dev, ev_scale_dev, tmp_extended_dev,
                                                                   na1, my_proc, n_procs);
@@ -1163,8 +1163,8 @@ void gpu_add_tmp_loop(T *d1_dev, T *dbase_dev, T *ddiff_dev, T *z_dev, T *ev_sca
   }
 }
 
-extern "C" void CONCATENATE(ELPA_GPU,  _add_tmp_loop_FromC)(char dataType, intptr_t d1_dev, intptr_t dbase_dev, 
-                                                            intptr_t ddiff_dev, intptr_t z_dev, intptr_t ev_scale_dev, intptr_t tmp_extended_dev,  
+extern "C" void CONCATENATE(ELPA_GPU,  _add_tmp_loop_FromC)(char dataType, intptr_t d1_dev, intptr_t dbase_dev,
+                                                            intptr_t ddiff_dev, intptr_t z_dev, intptr_t ev_scale_dev, intptr_t tmp_extended_dev,
                                                             int na1, int my_proc, int n_procs, int SM_count, int debug, gpuStream_t my_stream){
   if      (dataType=='D') gpu_add_tmp_loop<double>((double *) d1_dev, (double *) dbase_dev, (double *) ddiff_dev, (double *) z_dev, (double *) ev_scale_dev, (double *) tmp_extended_dev, na1, my_proc, n_procs, SM_count, debug, my_stream);
   else if (dataType=='S') gpu_add_tmp_loop<float> ((float  *) d1_dev, (float  *) dbase_dev, (float  *) ddiff_dev, (float  *) z_dev, (float  *) ev_scale_dev, (float  *) tmp_extended_dev, na1, my_proc, n_procs, SM_count, debug, my_stream);
@@ -1194,7 +1194,7 @@ __global__ void gpu_copy_qtmp1_q_compute_nnzu_nnzl_kernel(T *qtmp1_dev, T *q_dev
   //     endif
   //   endif
   // enddo
-  
+
   int tid = threadIdx.x + blockIdx.x*blockDim.x;
 
   int nnzu = 0;
@@ -1231,7 +1231,7 @@ __global__ void gpu_copy_qtmp1_q_compute_nnzu_nnzl_kernel(T *qtmp1_dev, T *q_dev
 
 template <typename T>
 void gpu_copy_qtmp1_q_compute_nnzu_nnzl(T *qtmp1_dev, T *q_dev, int *p_col_dev, int *l_col_dev, int *idx1_dev, int *coltyp_dev, int *nnzul_dev,
-                                        int na1, int l_rnm, int l_rqs, int l_rqm, int l_rows, int my_pcol, int ldq_tmp1, int ldq, 
+                                        int na1, int l_rnm, int l_rqs, int l_rqm, int l_rows, int my_pcol, int ldq_tmp1, int ldq,
                                         int SM_count, int debug, gpuStream_t my_stream){
 
   dim3 blocks = dim3(SM_count,1,1);
@@ -1253,18 +1253,18 @@ void gpu_copy_qtmp1_q_compute_nnzu_nnzl(T *qtmp1_dev, T *q_dev, int *p_col_dev, 
       printf("Error in executing gpu_copy_qtmp1_q_compute_nnzu_nnzl: %s\n",gpuGetErrorString(gpuerr));
     }
   }
-}   
+}
 
-extern "C" void CONCATENATE(ELPA_GPU,  _copy_qtmp1_q_compute_nnzu_nnzl_FromC)(char dataType, intptr_t qtmp1_dev, intptr_t q_dev, 
+extern "C" void CONCATENATE(ELPA_GPU,  _copy_qtmp1_q_compute_nnzu_nnzl_FromC)(char dataType, intptr_t qtmp1_dev, intptr_t q_dev,
                                                                               intptr_t p_col_dev, intptr_t l_col_dev, intptr_t idx1_dev, intptr_t coltyp_dev, intptr_t nnzul_dev,
-                                                                              int na1, int l_rnm, int l_rqs, int l_rqm, int l_rows, int my_pcol, int ldq_tmp1, int ldq, 
+                                                                              int na1, int l_rnm, int l_rqs, int l_rqm, int l_rows, int my_pcol, int ldq_tmp1, int ldq,
                                                                               int SM_count, int debug, gpuStream_t my_stream){
 
-  if      (dataType=='D') gpu_copy_qtmp1_q_compute_nnzu_nnzl<double>((double *) qtmp1_dev, (double *) q_dev, (int *) p_col_dev, (int *) l_col_dev, (int *) idx1_dev, (int *) coltyp_dev, (int *) nnzul_dev, 
-                                                                      na1, l_rnm, l_rqs, l_rqm, l_rows, my_pcol, ldq_tmp1, ldq, 
+  if      (dataType=='D') gpu_copy_qtmp1_q_compute_nnzu_nnzl<double>((double *) qtmp1_dev, (double *) q_dev, (int *) p_col_dev, (int *) l_col_dev, (int *) idx1_dev, (int *) coltyp_dev, (int *) nnzul_dev,
+                                                                      na1, l_rnm, l_rqs, l_rqm, l_rows, my_pcol, ldq_tmp1, ldq,
                                                                       SM_count, debug, my_stream);
-  else if (dataType=='S') gpu_copy_qtmp1_q_compute_nnzu_nnzl<float> ((float  *) qtmp1_dev, (float  *) q_dev, (int *) p_col_dev, (int *) l_col_dev, (int *) idx1_dev, (int *) coltyp_dev, (int *) nnzul_dev, 
-                                                                      na1, l_rnm, l_rqs, l_rqm, l_rows, my_pcol, ldq_tmp1, ldq, 
+  else if (dataType=='S') gpu_copy_qtmp1_q_compute_nnzu_nnzl<float> ((float  *) qtmp1_dev, (float  *) q_dev, (int *) p_col_dev, (int *) l_col_dev, (int *) idx1_dev, (int *) coltyp_dev, (int *) nnzul_dev,
+                                                                      na1, l_rnm, l_rqs, l_rqm, l_rows, my_pcol, ldq_tmp1, ldq,
                                                                       SM_count, debug, my_stream);
   else {
     printf("Error in elpa_copy_qtmp1_q_compute_nnzu_nnzl: Unsupported data type\n");
@@ -1274,9 +1274,9 @@ extern "C" void CONCATENATE(ELPA_GPU,  _copy_qtmp1_q_compute_nnzu_nnzl_FromC)(ch
 //________________________________________________________________
 
 template <typename T>
-__global__ void gpu_fill_z_kernel (T *z_dev, T *q_dev, int *p_col_dev, int *l_col_dev, 
+__global__ void gpu_fill_z_kernel (T *z_dev, T *q_dev, int *p_col_dev, int *l_col_dev,
                         int sig_int, int na, int my_pcol, int row_q, int ldq){
-  
+
   // do i = 1, na
   //   if (p_col(i)==my_pcol) z(i) = z(i) + sig*q(l_rqm+1,l_col(i))
   // enddo
@@ -1294,7 +1294,7 @@ __global__ void gpu_fill_z_kernel (T *z_dev, T *q_dev, int *p_col_dev, int *l_co
 }
 
 template <typename T>
-void gpu_fill_z(T *z_dev, T *q_dev, int *p_col_dev, int *l_col_dev, int sig_int, int na, int my_pcol, int row_q, int ldq, 
+void gpu_fill_z(T *z_dev, T *q_dev, int *p_col_dev, int *l_col_dev, int sig_int, int na, int my_pcol, int row_q, int ldq,
                 int SM_count, int debug, gpuStream_t my_stream){
 
   dim3 blocks = dim3(SM_count,1,1);
@@ -1305,7 +1305,7 @@ void gpu_fill_z(T *z_dev, T *q_dev, int *p_col_dev, int *l_col_dev, int sig_int,
 #else
   gpu_fill_z_kernel<<<blocks,threadsPerBlock>>>            (z_dev, q_dev, p_col_dev, l_col_dev, sig_int, na, my_pcol, row_q, ldq);
 #endif
-  
+
   if (debug)
     {
     gpuDeviceSynchronize();
@@ -1316,16 +1316,16 @@ void gpu_fill_z(T *z_dev, T *q_dev, int *p_col_dev, int *l_col_dev, int sig_int,
   }
 }
 
-extern "C" void CONCATENATE(ELPA_GPU,  _fill_z_FromC)(char dataType, intptr_t z_dev, intptr_t q_dev, 
+extern "C" void CONCATENATE(ELPA_GPU,  _fill_z_FromC)(char dataType, intptr_t z_dev, intptr_t q_dev,
                                                       intptr_t p_col_dev, intptr_t l_col_dev,
-                                                      int sig_int, int na, int my_pcol, int row_q, int ldq, 
+                                                      int sig_int, int na, int my_pcol, int row_q, int ldq,
                                                       int SM_count, int debug, gpuStream_t my_stream){
 
-  if      (dataType=='D') gpu_fill_z<double>((double *) z_dev, (double *) q_dev, (int *) p_col_dev, (int *) l_col_dev, 
-                                             sig_int, na, my_pcol, row_q, ldq, 
+  if      (dataType=='D') gpu_fill_z<double>((double *) z_dev, (double *) q_dev, (int *) p_col_dev, (int *) l_col_dev,
+                                             sig_int, na, my_pcol, row_q, ldq,
                                              SM_count, debug, my_stream);
-  else if (dataType=='S') gpu_fill_z<float> ((float  *) z_dev, (float  *) q_dev, (int *) p_col_dev, (int *) l_col_dev, 
-                                             sig_int, na, my_pcol, row_q, ldq, 
+  else if (dataType=='S') gpu_fill_z<float> ((float  *) z_dev, (float  *) q_dev, (int *) p_col_dev, (int *) l_col_dev,
+                                             sig_int, na, my_pcol, row_q, ldq,
                                              SM_count, debug, my_stream);
   else {
     printf("Error in elpa_fill_z: Unsupported data type\n");

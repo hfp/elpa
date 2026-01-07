@@ -118,8 +118,8 @@
         if(map_global_array_index_to_local_index(int(globI,kind=c_int), int(globJ,kind=c_int), loc_I, loc_J, &
                  int(nblk,kind=c_int), int(np_rows,kind=c_int), int(np_cols,kind=c_int), &
                  int(my_prow,kind=c_int), int(my_pcol,kind=c_int) )) then
-           locI = int(loc_i,kind=INT_TYPE)      
-           locJ = int(loc_j,kind=INT_TYPE)      
+           locI = int(loc_i,kind=INT_TYPE)
+           locJ = int(loc_j,kind=INT_TYPE)
            call timer%start("evaluation")
            a(locI, locJ) = analytic_matrix_&
               &MATH_DATATYPE&
@@ -143,14 +143,14 @@
 
 #if REALCASE == 1
 #ifdef DOUBLE_PRECISION_REAL
-    !c> void prepare_matrix_analytic_real_double_f(TEST_C_INT_TYPE na, 
+    !c> void prepare_matrix_analytic_real_double_f(TEST_C_INT_TYPE na,
     !c>                                           double *a,
     !c>                                           TEST_C_INT_TYPE na_rows, TEST_C_INT_TYPE na_cols,
     !c>                                           TEST_C_INT_TYPE nblk, TEST_C_INT_TYPE myid,
     !c>                                           TEST_C_INT_TYPE np_rows, TEST_C_INT_TYPE np_cols,
     !c>                                           TEST_C_INT_TYPE my_prow, TEST_C_INT_TYPE my_pcol);
 #else
-    !c> void prepare_matrix_analytic_real_single_f(TEST_C_INT_TYPE na, 
+    !c> void prepare_matrix_analytic_real_single_f(TEST_C_INT_TYPE na,
     !c>                                           float *a,
     !c>                                           TEST_C_INT_TYPE na_rows, TEST_C_INT_TYPE na_cols,
     !c>                                           TEST_C_INT_TYPE nblk, TEST_C_INT_TYPE myid,
@@ -161,14 +161,14 @@
 
 #if COMPLEXCASE == 1
 #ifdef DOUBLE_PRECISION_COMPLEX
-    !c> void prepare_matrix_analytic_complex_double_f(TEST_C_INT_TYPE na, 
+    !c> void prepare_matrix_analytic_complex_double_f(TEST_C_INT_TYPE na,
     !c>                                           double_complex *a,
     !c>                                           TEST_C_INT_TYPE na_rows, TEST_C_INT_TYPE na_cols,
     !c>                                           TEST_C_INT_TYPE nblk, TEST_C_INT_TYPE myid,
     !c>                                           TEST_C_INT_TYPE np_rows, TEST_C_INT_TYPE np_cols,
     !c>                                           TEST_C_INT_TYPE my_prow, TEST_C_INT_TYPE my_pcol);
 #else
-    !c> void prepare_matrix_analytic_complex_single_f(TEST_C_INT_TYPE na, 
+    !c> void prepare_matrix_analytic_complex_single_f(TEST_C_INT_TYPE na,
     !c>                                           float_complex *a,
     !c>                                           TEST_C_INT_TYPE na_rows, TEST_C_INT_TYPE na_cols,
     !c>                                           TEST_C_INT_TYPE nblk, TEST_C_INT_TYPE myid,
@@ -192,17 +192,17 @@
     implicit none
     TEST_INT_TYPE, value              :: na, na_rows, na_cols, nblk, myid, np_rows, np_cols, my_prow, my_pcol
     MATH_DATATYPE(kind=REAL_DATATYPE) ::  a(1:na_rows,1:na_cols)
-  
+
     call prepare_matrix_analytic_&
       &MATH_DATATYPE&
       &_&
       &PRECISION&
       & (na, a, nblk, myid, np_rows, np_cols, my_prow, my_pcol)
-      
-  end subroutine  
-  
+
+  end subroutine
+
   !-----------------------------------------------------------------------------------------------------------
-    
+
   function check_correctness_analytic_&
     &MATH_DATATYPE&
     &_&
@@ -321,11 +321,11 @@
         end if
       end do
 
-      ! find the global maximum and its position. From technical reasons (looking for a 
-      ! maximum of complex number), it is not so easy to do it nicely. Therefore we 
+      ! find the global maximum and its position. From technical reasons (looking for a
+      ! maximum of complex number), it is not so easy to do it nicely. Therefore we
       ! communicate local maxima to mpi rank 0 and resolve there. If we wanted to do
       ! it without this, it would be tricky.. question of uniquness - two complex numbers
-      ! with the same absolut values, but completely different... 
+      ! with the same absolut values, but completely different...
 #ifdef WITH_MPI
       call MPI_Gather(max_value_for_normalization, 1_MPI_KIND, MPI_MATH_DATATYPE_PRECISION, &
                       max_values_array, 1_MPI_KIND, MPI_MATH_DATATYPE_PRECISION, 0_MPI_KIND, &
@@ -334,7 +334,7 @@
                       0_MPI_KIND, int(MPI_COMM_WORLD,kind=MPI_KIND), mpierr)
       max_value_for_normalization = 0.0_rk
       max_value_idx = -1
-      do rank = 1, np_cols * np_rows 
+      do rank = 1, np_cols * np_rows
         if(abs(max_values_array(rank)) > abs(max_value_for_normalization)) then
           max_value_for_normalization = max_values_array(rank)
           max_value_idx = max_idx_array(rank)
@@ -345,8 +345,8 @@
       call MPI_Bcast(max_value_idx, 1_MPI_KIND, MPI_INT, 0_MPI_KIND, &
                      int(MPI_COMM_WORLD,kind=MPI_KIND), mpierr)
 #endif
-      ! we decided what the maximum computed value is. Calculate expected value on the same 
-      if(abs(max_value_for_normalization) < 0.0001_rk) then 
+      ! we decided what the maximum computed value is. Calculate expected value on the same
+      if(abs(max_value_for_normalization) < 0.0001_rk) then
         if(myid == 0) print *, 'Maximal value in eigenvector too small     :', max_value_for_normalization
         status =1
         return
@@ -425,48 +425,48 @@
 
 #if REALCASE == 1
 #ifdef DOUBLE_PRECISION_REAL
-    !c> TEST_C_INT_TYPE check_correctness_analytic_real_double_f(TEST_C_INT_TYPE na, 
+    !c> TEST_C_INT_TYPE check_correctness_analytic_real_double_f(TEST_C_INT_TYPE na,
     !c>                                                        TEST_C_INT_TYPE nev,
     !c>                                                        double *ev, double *z,
     !c>                                                        TEST_C_INT_TYPE na_rows, TEST_C_INT_TYPE na_cols,
     !c>                                                        TEST_C_INT_TYPE nblk, TEST_C_INT_TYPE myid,
     !c>                                                        TEST_C_INT_TYPE np_rows, TEST_C_INT_TYPE np_cols,
     !c>                                                        TEST_C_INT_TYPE my_prow, TEST_C_INT_TYPE my_pcol,
-    !c>                                                        TEST_C_INT_TYPE check_all_evals, 
+    !c>                                                        TEST_C_INT_TYPE check_all_evals,
     !c>                                                        TEST_C_INT_TYPE check_eigenvectors);
 #else
-    !c> TEST_C_INT_TYPE check_correctness_analytic_real_single_f(TEST_C_INT_TYPE na, 
+    !c> TEST_C_INT_TYPE check_correctness_analytic_real_single_f(TEST_C_INT_TYPE na,
     !c>                                                        TEST_C_INT_TYPE nev,
     !c>                                                        float *ev, float *z,
     !c>                                                        TEST_C_INT_TYPE na_rows, TEST_C_INT_TYPE na_cols,
     !c>                                                        TEST_C_INT_TYPE nblk, TEST_C_INT_TYPE myid,
     !c>                                                        TEST_C_INT_TYPE np_rows, TEST_C_INT_TYPE np_cols,
     !c>                                                        TEST_C_INT_TYPE my_prow, TEST_C_INT_TYPE my_pcol,
-    !c>                                                        TEST_C_INT_TYPE check_all_evals, 
+    !c>                                                        TEST_C_INT_TYPE check_all_evals,
     !c>                                                        TEST_C_INT_TYPE check_eigenvectors);
 #endif
 #endif /* REALCASE */
 
 #if COMPLEXCASE == 1
 #ifdef DOUBLE_PRECISION_COMPLEX
-    !c> TEST_C_INT_TYPE check_correctness_analytic_complex_double_f(TEST_C_INT_TYPE na, 
+    !c> TEST_C_INT_TYPE check_correctness_analytic_complex_double_f(TEST_C_INT_TYPE na,
     !c>                                                        TEST_C_INT_TYPE nev,
     !c>                                                        double *ev, double_complex *z,
     !c>                                                        TEST_C_INT_TYPE na_rows, TEST_C_INT_TYPE na_cols,
     !c>                                                        TEST_C_INT_TYPE nblk, TEST_C_INT_TYPE myid,
     !c>                                                        TEST_C_INT_TYPE np_rows, TEST_C_INT_TYPE np_cols,
     !c>                                                        TEST_C_INT_TYPE my_prow, TEST_C_INT_TYPE my_pcol,
-    !c>                                                        TEST_C_INT_TYPE check_all_evals, 
+    !c>                                                        TEST_C_INT_TYPE check_all_evals,
     !c>                                                        TEST_C_INT_TYPE check_eigenvectors);
 #else
-    !c> TEST_C_INT_TYPE check_correctness_analytic_complex_single_f(TEST_C_INT_TYPE na, 
+    !c> TEST_C_INT_TYPE check_correctness_analytic_complex_single_f(TEST_C_INT_TYPE na,
     !c>                                                        TEST_C_INT_TYPE nev,
     !c>                                                        float *ev, float_complex *z,
     !c>                                                        TEST_C_INT_TYPE na_rows, TEST_C_INT_TYPE na_cols,
     !c>                                                        TEST_C_INT_TYPE nblk, TEST_C_INT_TYPE myid,
     !c>                                                        TEST_C_INT_TYPE np_rows, TEST_C_INT_TYPE np_cols,
     !c>                                                        TEST_C_INT_TYPE my_prow, TEST_C_INT_TYPE my_pcol,
-    !c>                                                        TEST_C_INT_TYPE check_all_evals, 
+    !c>                                                        TEST_C_INT_TYPE check_all_evals,
     !c>                                                        TEST_C_INT_TYPE check_eigenvectors);
 #endif
 #endif /* COMPLEXCASE */
@@ -484,7 +484,7 @@
       &_f")
     use iso_c_binding
     use precision_for_tests
-    
+
     implicit none
 #include "./test_precision_kinds.F90"
     TEST_INT_TYPE, value                   :: na, nev, na_rows, na_cols, nblk, myid, &
@@ -494,19 +494,19 @@
     real(kind=rk), intent(inout)           :: ev(1:na)
     TEST_INT_TYPE, value                   :: check_all_evals  , check_eigenvectors
     logical                                :: check_all_evals_f, check_eigenvectors_f
-    
+
     if (check_all_evals == 0) then
         check_all_evals_f = .false.
-    else 
+    else
         check_all_evals_f = .true.
     end if
-    
+
     if (check_eigenvectors == 0) then
         check_eigenvectors_f = .false.
-    else 
+    else
         check_eigenvectors_f = .true.
     end if
-    
+
     status = check_correctness_analytic_&
     &MATH_DATATYPE&
     &_&
@@ -514,9 +514,9 @@
     & (na, nev, ev, z, nblk, myid, np_rows, np_cols, my_prow, my_pcol, check_all_evals_f, check_eigenvectors_f)
 
   end function
-    
+
     !-----------------------------------------------------------------------------------------------------------
-    
+
   function analytic_matrix_&
     &MATH_DATATYPE&
     &_&
@@ -753,7 +753,7 @@
 #ifdef DOUBLE_PRECISION_REAL
   !c> void print_matrix_real_double_f (TEST_C_INT_TYPE myid, TEST_C_INT_TYPE na, double *a, const char *mat_name_c);
 #else
-  !c> void print_matrix_real_single_f (TEST_C_INT_TYPE myid, TEST_C_INT_TYPE na, float  *a, const char *mat_name_c);  
+  !c> void print_matrix_real_single_f (TEST_C_INT_TYPE myid, TEST_C_INT_TYPE na, float  *a, const char *mat_name_c);
 #endif
 #endif /* REALCASE */
 
@@ -765,7 +765,7 @@
 #endif
 #endif /* COMPLEXCASE */
 
-    
+
   subroutine print_matrix_&
     &MATH_DATATYPE&
     &_&
@@ -776,11 +776,11 @@
       &_&
       &PRECISION&
       &_f")
-   
+
     use iso_c_binding
     use precision_for_tests
-    use elpa_api 
-    
+    use elpa_api
+
     implicit none
 #include "./test_precision_kinds.F90"
     TEST_INT_TYPE, value    :: myid, na
@@ -789,9 +789,9 @@
     MATH_DATATYPE(kind=rck) :: mat(na, na)
     type(c_ptr), intent(in), value                :: mat_name_c
     character(len=elpa_strlen_c(mat_name_c)), pointer :: mat_name_f
-      
+
     call c_f_pointer(mat_name_c, mat_name_f)
-      
+
     call print_matrix_&
       &MATH_DATATYPE&
       &_&
@@ -845,7 +845,7 @@
 
     res = matmul(A,S) - matmul(S,L)
     err = maxval(abs(res))
-    
+
     if(err > TOL) then
       print *, "WARNING: sanity test in module analytic failed, error is ", err
     end if

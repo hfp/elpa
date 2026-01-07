@@ -120,26 +120,26 @@ module elpa_impl
 
 
      !> \brief the implemenation methods
-     
+
      !< public methods to implement the solve step for real/complex double/single matrices
-     procedure, public :: elpa_eigenvectors_a_h_a_d                  
+     procedure, public :: elpa_eigenvectors_a_h_a_d
      procedure, public :: elpa_eigenvectors_a_h_a_f
      procedure, public :: elpa_eigenvectors_a_h_a_dc
      procedure, public :: elpa_eigenvectors_a_h_a_fc
 
-     procedure, public :: elpa_eigenvectors_d_ptr_d 
+     procedure, public :: elpa_eigenvectors_d_ptr_d
      procedure, public :: elpa_eigenvectors_d_ptr_f
      procedure, public :: elpa_eigenvectors_d_ptr_dc
      procedure, public :: elpa_eigenvectors_d_ptr_fc
-    
+
      !< public methods to implement the solve step for real/complex
      !< double/single matrices; only the eigenvalues are computed
-     procedure, public :: elpa_eigenvalues_a_h_a_d                   
+     procedure, public :: elpa_eigenvalues_a_h_a_d
      procedure, public :: elpa_eigenvalues_a_h_a_f
      procedure, public :: elpa_eigenvalues_a_h_a_dc
      procedure, public :: elpa_eigenvalues_a_h_a_fc
 
-     procedure, public :: elpa_eigenvalues_d_ptr_d 
+     procedure, public :: elpa_eigenvalues_d_ptr_d
      procedure, public :: elpa_eigenvalues_d_ptr_f
      procedure, public :: elpa_eigenvalues_d_ptr_dc
      procedure, public :: elpa_eigenvalues_d_ptr_fc
@@ -153,32 +153,32 @@ module elpa_impl
                                                                                !< double/single matrices; only the eigenvalues are computed
      procedure, public :: elpa_skew_eigenvalues_a_h_a_f
 
-     procedure, public :: elpa_skew_eigenvectors_d_ptr_d 
+     procedure, public :: elpa_skew_eigenvectors_d_ptr_d
      procedure, public :: elpa_skew_eigenvectors_d_ptr_f
-     procedure, public :: elpa_skew_eigenvalues_d_ptr_d 
+     procedure, public :: elpa_skew_eigenvalues_d_ptr_d
      procedure, public :: elpa_skew_eigenvalues_d_ptr_f
 #endif
-    
+
      !< public methods to implement the solve step for generalized
      !< eigenproblem and real/complex double/single matrices
-     procedure, public :: elpa_generalized_eigenvectors_a_h_a_d      
+     procedure, public :: elpa_generalized_eigenvectors_a_h_a_d
      procedure, public :: elpa_generalized_eigenvectors_a_h_a_f
      procedure, public :: elpa_generalized_eigenvectors_a_h_a_dc
      procedure, public :: elpa_generalized_eigenvectors_a_h_a_fc
 
-     procedure, public :: elpa_generalized_eigenvectors_d_ptr_d      
+     procedure, public :: elpa_generalized_eigenvectors_d_ptr_d
      procedure, public :: elpa_generalized_eigenvectors_d_ptr_f
      procedure, public :: elpa_generalized_eigenvectors_d_ptr_dc
      procedure, public :: elpa_generalized_eigenvectors_d_ptr_fc
 
      !< public methods to implement the solve step for generalized
      !< eigenproblem and real/complex double/single matrices; only the eigenvalues are computed
-     procedure, public :: elpa_generalized_eigenvalues_a_h_a_d                  
+     procedure, public :: elpa_generalized_eigenvalues_a_h_a_d
      procedure, public :: elpa_generalized_eigenvalues_a_h_a_f
      procedure, public :: elpa_generalized_eigenvalues_a_h_a_dc
      procedure, public :: elpa_generalized_eigenvalues_a_h_a_fc
-    
-     procedure, public :: elpa_generalized_eigenvalues_d_ptr_d                  
+
+     procedure, public :: elpa_generalized_eigenvalues_d_ptr_d
      procedure, public :: elpa_generalized_eigenvalues_d_ptr_f
      procedure, public :: elpa_generalized_eigenvalues_d_ptr_dc
      procedure, public :: elpa_generalized_eigenvalues_d_ptr_fc
@@ -186,9 +186,9 @@ module elpa_impl
      !< public methods to implement a "hermitian" multiplication of matrices a and b
      !< for real valued matrices:   a**T * b
      !< for complex valued matrices:   a**H * b
-     procedure, public :: elpa_hermitian_multiply_a_h_a_d      
-     procedure, public :: elpa_hermitian_multiply_a_h_a_f            
-     procedure, public :: elpa_hermitian_multiply_a_h_a_dc           
+     procedure, public :: elpa_hermitian_multiply_a_h_a_d
+     procedure, public :: elpa_hermitian_multiply_a_h_a_f
+     procedure, public :: elpa_hermitian_multiply_a_h_a_dc
      procedure, public :: elpa_hermitian_multiply_a_h_a_fc
 
      procedure, public :: elpa_hermitian_multiply_d_ptr_d      !< public methods to implement a "hermitian" multiplication of matrices a and b
@@ -197,7 +197,7 @@ module elpa_impl
      procedure, public :: elpa_hermitian_multiply_d_ptr_fc
 
      procedure, public :: elpa_pxgemm_multiply_a_h_a_d      !< public methods to implement a "pxgemm" multiplication of matrices a and b
-     procedure, public :: elpa_pxgemm_multiply_a_h_a_f 
+     procedure, public :: elpa_pxgemm_multiply_a_h_a_f
      procedure, public :: elpa_pxgemm_multiply_a_h_a_dc
      procedure, public :: elpa_pxgemm_multiply_a_h_a_fc
 
@@ -208,36 +208,36 @@ module elpa_impl
 
      !< public methods to implement the cholesky factorisation of
      !< real/complex double/single matrices
-     procedure, public :: elpa_cholesky_a_h_a_d                          
+     procedure, public :: elpa_cholesky_a_h_a_d
      procedure, public :: elpa_cholesky_a_h_a_f
      procedure, public :: elpa_cholesky_a_h_a_dc
      procedure, public :: elpa_cholesky_a_h_a_fc
-     
+
      !< public methods to implement the cholesky factorisation of
      !< real/complex double/single matrices
-     procedure, public :: elpa_cholesky_d_ptr_d                           
+     procedure, public :: elpa_cholesky_d_ptr_d
      procedure, public :: elpa_cholesky_d_ptr_f
      procedure, public :: elpa_cholesky_d_ptr_dc
      procedure, public :: elpa_cholesky_d_ptr_fc
 
      !< public methods to implement the inversion of a triangular
      !< real/complex double/single matrix
-     procedure, public :: elpa_invert_trm_a_h_a_d                                  
+     procedure, public :: elpa_invert_trm_a_h_a_d
      procedure, public :: elpa_invert_trm_a_h_a_f
      procedure, public :: elpa_invert_trm_a_h_a_dc
      procedure, public :: elpa_invert_trm_a_h_a_fc
 
      !< public methods to implement the inversion of a triangular
      !< real/complex double/single matrix
-     procedure, public :: elpa_invert_trm_d_ptr_d                        
+     procedure, public :: elpa_invert_trm_d_ptr_d
      procedure, public :: elpa_invert_trm_d_ptr_f
      procedure, public :: elpa_invert_trm_d_ptr_dc
      procedure, public :: elpa_invert_trm_d_ptr_fc
-     
+
      !< public methods to implement the solve step for a real valued
      !< double/single tridiagonal matrix
-     procedure, public :: elpa_solve_tridiagonal_d             
-     procedure, public :: elpa_solve_tridiagonal_f             
+     procedure, public :: elpa_solve_tridiagonal_d
+     procedure, public :: elpa_solve_tridiagonal_f
 
      procedure, public :: associate_int => elpa_associate_int  !< public method to set some pointers
 
@@ -348,9 +348,9 @@ module elpa_impl
     !c> #define double_complex double complex
     !c> #define float_complex float complex
     !c> #endif
-    
+
 #if OPTIONAL_C_ERROR_ARGUMENT == 1
-    !c_o> // c_o: /src/elpa_impl.F90 
+    !c_o> // c_o: /src/elpa_impl.F90
     !c_o> #if OPTIONAL_C_ERROR_ARGUMENT == 1
     !c_o> #define elpa_allocate(...) CONC(elpa_allocate, NARGS(__VA_ARGS__))(__VA_ARGS__)
     !c_o> #endif
@@ -387,7 +387,7 @@ module elpa_impl
       ptr = c_loc(obj)
     end function
 #else
-    !c_no> // c_no: /src/elpa_impl.F90 
+    !c_no> // c_no: /src/elpa_impl.F90
     !c_no> #if OPTIONAL_C_ERROR_ARGUMENT != 1
     !c_no> elpa_t elpa_allocate(int *error);
     !c_no> #endif
@@ -1085,7 +1085,7 @@ module elpa_impl
         if (np_rows .ne. present_np_rows) then
           write(error_unit, '(a)') "ELPA_SETUP: MPI row communicator not set correctly. Aborting..."
           error = ELPA_ERROR_SETUP
-          return   
+          return
         endif
 
 !#ifdef WITH_MPI
@@ -1094,7 +1094,7 @@ module elpa_impl
 !          error = ELPA_ERROR_SETUP
 !          return
 !        endif
-!#endif       
+!#endif
       else ! self%is_set("num_process_rows") == 1
         call self%set("num_process_rows", np_rows, error)
         if (check_elpa_set(error, ELPA_ERROR_SETUP)) return
@@ -1110,7 +1110,7 @@ module elpa_impl
         if (np_cols .ne. present_np_cols) then
           write(error_unit, '(a)') "ELPA_SETUP: MPI row communicator not set correctly. Aborting..."
           error = ELPA_ERROR_SETUP
-          return   
+          return
         endif
 !#ifdef WITH_MPI
 !        if (np_cols .eq. 1) then
@@ -1118,7 +1118,7 @@ module elpa_impl
 !          error = ELPA_ERROR_SETUP
 !          return
 !        endif
-!#endif       
+!#endif
       else
         call self%set("num_process_cols", np_cols, error)
         if (check_elpa_set(error, ELPA_ERROR_SETUP)) return
@@ -1129,7 +1129,7 @@ module elpa_impl
         if (np_total .ne. np_rows * np_cols) then
           write(error_unit, '(a)') "ELPA_SETUP: MPI parent communicator and row/col communicators do not match. Aborting..."
           error = ELPA_ERROR_SETUP
-          return   
+          return
         endif
       endif
 
@@ -1853,98 +1853,98 @@ module elpa_impl
         deallocate(self%gpu_setup%gpublasHandleArray, stat=istat, errmsg=errorMessage)
         if (istat .ne. 0) then
           write(error_unit, "(a,i0,a)") "ELPA: elpa_destroy cannot deallocate gpublasHandleArray: " // errorMessage
-        endif 
+        endif
         deallocate(self%gpu_setup%gpuDeviceArray, stat=istat, errmsg=errorMessage)
         if (istat .ne. 0) then
           write(error_unit, "(a,i0,a)") "ELPA: elpa_destroy cannot deallocate gpuDeviceArray: " // errorMessage
-        endif 
+        endif
 
 #ifdef WITH_NVIDIA_GPU_VERSION
         deallocate(self%gpu_setup%cublasHandleArray, stat=istat, errmsg=errorMessage)
         if (istat .ne. 0) then
           write(error_unit, "(a,i0,a)") "ELPA: elpa_destroy cannot deallocate cublasHandleArray: " // errorMessage
-        endif 
+        endif
         deallocate(self%gpu_setup%cudaDeviceArray, stat=istat, errmsg=errorMessage)
         if (istat .ne. 0) then
           write(error_unit, "(a,i0,a)") "ELPA: elpa_destroy cannot deallocate cudaDeviceArray: " // errorMessage
-        endif 
+        endif
 #endif
 
 #ifdef WITH_AMD_GPU_VERSION
         deallocate(self%gpu_setup%rocblasHandleArray, stat=istat, errmsg=errorMessage)
         if (istat .ne. 0) then
           write(error_unit, "(a,i0,a)") "ELPA: elpa_destroy cannot deallocate rocblasHandleArray: " // errorMessage
-        endif 
+        endif
         deallocate(self%gpu_setup%hipDeviceArray, stat=istat, errmsg=errorMessage)
         if (istat .ne. 0) then
           write(error_unit, "(a,i0,a)") "ELPA: elpa_destroy cannot deallocate hipDeviceArray: " // errorMessage
-        endif 
+        endif
 #endif
 
 #ifdef WITH_OPENMP_OFFLOAD_GPU_VERSION
         deallocate(self%gpu_setup%openmpOffloadHandleArray, stat=istat, errmsg=errorMessage)
         if (istat .ne. 0) then
           write(error_unit, "(a,i0,a)") "ELPA: elpa_destroy cannot deallocate openmpOffloadHandleArray: " // errorMessage
-        endif 
+        endif
         deallocate(self%gpu_setup%openmpOffloadDeviceArray, stat=istat, errmsg=errorMessage)
         if (istat .ne. 0) then
           write(error_unit, "(a,i0,a)") "ELPA: elpa_destroy cannot deallocate openmpOffloadDeviceArray: " // errorMessage
-        endif 
+        endif
 #endif
 
 #ifdef WITH_SYCL_GPU_VERSION
         deallocate(self%gpu_setup%syclHandleArray, stat=istat, errmsg=errorMessage)
         if (istat .ne. 0) then
           write(error_unit, "(a,i0,a)") "ELPA: elpa_destroy cannot deallocate syclHandleArray: " // errorMessage
-        endif 
+        endif
         deallocate(self%gpu_setup%syclDeviceArray, stat=istat, errmsg=errorMessage)
         if (istat .ne. 0) then
           write(error_unit, "(a,i0,a)") "ELPA: elpa_destroy cannot deallocate syclDeviceArray: " // errorMessage
-        endif 
+        endif
 #endif
 
 #if defined(WITH_NVIDIA_GPU_VERSION) && defined(WITH_NVIDIA_CUSOLVER)
         deallocate(self%gpu_setup%gpusolverHandleArray, stat=istat, errmsg=errorMessage)
         if (istat .ne. 0) then
           write(error_unit, "(a,i0,a)") "ELPA: elpa_destroy cannot deallocate gpusolverHandleArray: " // errorMessage
-        endif 
+        endif
         deallocate(self%gpu_setup%cusolverHandleArray, stat=istat, errmsg=errorMessage)
         if (istat .ne. 0) then
           write(error_unit, "(a,i0,a)") "ELPA: elpa_destroy cannot deallocate cusolverHandleArray: " // errorMessage
-        endif 
+        endif
 #endif
 
 #if defined(WITH_AMD_GPU_VERSION) && defined(WITH_AMD_ROCSOLVER)
         deallocate(self%gpu_setup%gpusolverHandleArray, stat=istat, errmsg=errorMessage)
         if (istat .ne. 0) then
           write(error_unit, "(a,i0,a)") "ELPA: elpa_destroy cannot deallocate gpusolverHandleArray: " // errorMessage
-        endif 
+        endif
         deallocate(self%gpu_setup%rocsolverHandleArray, stat=istat, errmsg=errorMessage)
         if (istat .ne. 0) then
           write(error_unit, "(a,i0,a)") "ELPA: elpa_destroy cannot deallocate rocsolverHandleArray: " // errorMessage
-        endif 
+        endif
 #endif
 
 #if defined(WITH_OPENMP_OFFLOAD_GPU_VERSION) && defined(WITH_OPENMP_OFFLOAD_SOLVER)
         deallocate(self%gpu_setup%gpusolverHandleArray, stat=istat, errmsg=errorMessage)
         if (istat .ne. 0) then
           write(error_unit, "(a,i0,a)") "ELPA: elpa_destroy cannot deallocate gpusolverHandleArray: " // errorMessage
-        endif 
+        endif
         deallocate(self%gpu_setup%openmpOffloadsolverHandleArray, stat=istat, errmsg=errorMessage)
         if (istat .ne. 0) then
           write(error_unit, "(a,i0,a)") "ELPA: elpa_destroy cannot deallocate openmpOffloadsolverHandleArray: " // errorMessage
-        endif 
+        endif
 #endif
 
 #if defined(WITH_SYCL_GPU_VERSION) && defined(WITH_SYCL_SOLVER)
         deallocate(self%gpu_setup%gpusolverHandleArray, stat=istat, errmsg=errorMessage)
         if (istat .ne. 0) then
           write(error_unit, "(a,i0,a)") "ELPA: elpa_destroy cannot deallocate gpusolverHandleArray: " // errorMessage
-        endif 
+        endif
         deallocate(self%gpu_setup%syclsolverHandleArray, stat=istat, errmsg=errorMessage)
         if (istat .ne. 0) then
           write(error_unit, "(a,i0,a)") "ELPA: elpa_destroy cannot deallocate openmpOffloadsolverHandleArray: " // errorMessage
-        endif 
+        endif
 #endif
 
 
@@ -2199,7 +2199,7 @@ module elpa_impl
             error = ELPA_ERROR
             return
 #endif
-          endif        
+          endif
         else ! no solver set, anyways ...
           ts_impl%sublevel_part1stage(level) = ELPA_AUTOTUNE_PART_ELPA1
           ts_impl%sublevel_part2stage(level) = ELPA_AUTOTUNE_PART_ELPA2
@@ -2251,8 +2251,8 @@ module elpa_impl
               error = ELPA_ERROR
               return
 #endif
-            endif        
-          else 
+            endif
+          else
             ts_impl%sublevel_part1stage(sublevel) = ELPA_AUTOTUNE_PART_ELPA1
             ts_impl%sublevel_part2stage(sublevel) = ELPA_AUTOTUNE_PART_ELPA2
           endif
@@ -2276,7 +2276,7 @@ module elpa_impl
                                                            ts_impl%sublevel_part2stage(level)) &
                                                            - sum(ts_impl%sublevel_cardinality2stage(1:sublevel-1))
           endif
-    
+
           if (ts_impl%sublevel_cardinality1stage(sublevel) .eq. 0) then
             autotune_substeps_done1stage(sublevel) = .true.
           endif
@@ -2484,7 +2484,7 @@ module elpa_impl
       endif
 
       if (ts_impl%new_stepping == 1) then
-        ! check whether the user fixed the solver. 
+        ! check whether the user fixed the solver.
         ! if not this routine will add a loop over the solvers, such
         ! that first with fixed SOLVER_1STAGE the tuning is done,
         ! then with SOLVER_2STAGE, and last the best of both tuning results is
@@ -2529,8 +2529,8 @@ module elpa_impl
               error = ELPA_ERROR_SETUP
               return
 #endif
-            endif        
-          else 
+            endif
+          else
             do_autotune_2stage = .true.
             do_autotune_1stage = .true.
             compare_solvers    = .true.
@@ -2605,7 +2605,7 @@ module elpa_impl
       else ! new_stepping
           unfinished = self%autotune_step_worker(tune_state, ELPA_SOLVER_2STAGE, error)
       endif ! new_stepping
-    end function    
+    end function
 
     !> \brief function to do the work of an autotunig step
     !> Parameters
@@ -2672,7 +2672,7 @@ module elpa_impl
           use2stage = .true.
         endif
       endif
-  
+
       if (ts_impl%new_stepping == 1) then
         if (use1stage) then
           ! check on which sublevel we should currently work on
@@ -2965,7 +2965,7 @@ module elpa_impl
           endif
         endif ! 1stage
       endif ! new stepping
-     
+
       if (ts_impl%new_stepping == 1) then
         ! check whether solver is set, if yes we can pass t
         if (use1stage) then
@@ -2985,7 +2985,7 @@ module elpa_impl
 
           if (ts_impl%sublevel_current1stage(sublevel) .ne. ts_impl%sublevel_cardinality1stage(sublevel)-1 ) then
              write(error_unit,*) "PANIC in autotune_step 1stage"
-             write(error_unit,*) ts_impl%sublevel_current1stage(sublevel),ts_impl%sublevel_cardinality1stage(sublevel) 
+             write(error_unit,*) ts_impl%sublevel_current1stage(sublevel),ts_impl%sublevel_cardinality1stage(sublevel)
 #ifdef USE_FORTRAN2008
                 if (present(error)) then
                   error = ELPA_ERROR
@@ -3015,7 +3015,7 @@ module elpa_impl
 
           if (ts_impl%sublevel_current2stage(sublevel) .ne. ts_impl%sublevel_cardinality2stage(sublevel)-1 ) then
              write(error_unit,*) "PANIC in autotune_step 2stage"
-             write(error_unit,*) ts_impl%sublevel_current2stage(sublevel),ts_impl%sublevel_cardinality2stage(sublevel) 
+             write(error_unit,*) ts_impl%sublevel_current2stage(sublevel),ts_impl%sublevel_cardinality2stage(sublevel)
 #ifdef USE_FORTRAN2008
                 if (present(error)) then
                   error = ELPA_ERROR
@@ -3190,8 +3190,8 @@ module elpa_impl
         !  else
         !    print *,"ELPA_AUTOTUNE_STEP: Unknown solver"
         !    stop 1
-        !  endif        
-        !else 
+        !  endif
+        !else
         !  ts_impl%sublevel_part(sublevel) = ELPA_AUTOTUNE_PART_ANY
         !endif
         ! loop over sublevels
@@ -3369,8 +3369,8 @@ module elpa_impl
         !  else
         !    print *,"ELPA_AUTOTUNE_STEP: Unknown solver"
         !    stop 1
-        !  endif        
-        !else 
+        !  endif
+        !else
         !  ts_impl%sublevel_part(sublevel) = ELPA_AUTOTUNE_PART_ANY
         !endif
 
@@ -3547,8 +3547,8 @@ module elpa_impl
           !  else
           !    print *,"ELPA_AUTOTUNE_STEP: Unknown solver"
           !    stop 1
-          !  endif        
-          !else 
+          !  endif
+          !else
           !  ts_impl%sublevel_part(sublevel) = ELPA_AUTOTUNE_PART_ANY
           !endif
         endif ! 1 stage
@@ -3632,8 +3632,8 @@ module elpa_impl
           !  else
           !    print *,"ELPA_AUTOTUNE_STEP: Unknown solver"
           !    stop 1
-          !  endif        
-          !else 
+          !  endif
+          !else
           !  ts_impl%sublevel_part(sublevel) = ELPA_AUTOTUNE_PART_ANY
           !endif
         endif ! 2 stage
@@ -3827,7 +3827,7 @@ module elpa_impl
       if (ts_impl%new_stepping == 1) then
 
         ! should already be set
-        ! 
+        !
         !if (self%is_set("solver") == 1) then
         !  call self%get("solver", solver, error)
         !  if (solver == ELPA_SOLVER_2STAGE) then
@@ -3837,8 +3837,8 @@ module elpa_impl
         !  else
         !    print *,"ELPA_AUTOTUNE_STEP: Unknown solver"
         !    stop 1
-        !  endif        
-        !else 
+        !  endif
+        !else
         !  ts_impl%sublevel_part(sublevel) = ELPA_AUTOTUNE_PART_ANY
         !endif
 

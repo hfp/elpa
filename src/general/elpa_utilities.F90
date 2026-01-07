@@ -1,4 +1,4 @@
-!    Copyright 2011, A. Marek    
+!    Copyright 2011, A. Marek
 !
 !    This file is part of ELPA.
 !
@@ -71,7 +71,7 @@ module ELPA_utilities
   public :: local_index                ! Get local index of a block cyclic distributed matrix
   public :: greatest_common_divisor    ! Get greatest common divisor
   public :: least_common_multiple      ! Get least common multiple
-  
+
 #ifndef HAVE_ISO_FORTRAN_ENV
   integer, parameter :: error_unit = 0
   integer, parameter :: output_unit = 6

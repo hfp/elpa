@@ -96,13 +96,13 @@ __global__ void hip_copy_double_a_tmat2_kernel(double *a_dev, double *tmat2_dev,
 }
 
 extern "C" void hip_copy_double_a_tmat2_FromC(double *a_dev, double *tmat2_dev, int *nblk_in, int *matrixRows_in, int *l_cols_in, int *l_colx_in, int *l_row1_in, int *nb_in, hipStream_t my_stream){
-  int nblk = *nblk_in;   
+  int nblk = *nblk_in;
   int matrixRows = *matrixRows_in;
   int l_cols = *l_cols_in;
   int l_colx = *l_colx_in;
   int l_row1 = *l_row1_in;
   int nb     = *nb_in;
- 
+
 //#ifdef WITH_GPU_STREAMS
 //  hipStream_t elpa_hip_stm = *((hipStream_t*)my_stream);
 //#endif
@@ -162,13 +162,13 @@ __global__ void hip_copy_float_a_tmat2_kernel(float *a_dev, float *tmat2_dev, co
 }
 
 extern "C" void hip_copy_float_a_tmat2_FromC(float *a_dev, float *tmat2_dev, int *nblk_in, int *matrixRows_in, int *l_cols_in, int *l_colx_in, int *l_row1_in, int *nb_in, hipStream_t my_stream){
-  int nblk = *nblk_in;   
+  int nblk = *nblk_in;
   int matrixRows = *matrixRows_in;
   int l_cols = *l_cols_in;
   int l_colx = *l_colx_in;
   int l_row1 = *l_row1_in;
   int nb     = *nb_in;
- 
+
 //#ifdef WITH_GPU_STREAMS
 //  hipStream_t elpa_hip_stm = *((hipStream_t*)my_stream);
 //#endif
@@ -227,13 +227,13 @@ __global__ void hip_copy_double_complex_a_tmat2_kernel(hipDoubleComplex *a_dev, 
 }
 
 extern "C" void hip_copy_double_complex_a_tmat2_FromC(double _Complex *a_dev, double _Complex *tmat2_dev, int *nblk_in, int *matrixRows_in, int *l_cols_in, int *l_colx_in, int *l_row1_in, int *nb_in, hipStream_t my_stream){
-  int nblk = *nblk_in;   
+  int nblk = *nblk_in;
   int matrixRows = *matrixRows_in;
   int l_cols = *l_cols_in;
   int l_colx = *l_colx_in;
   int l_row1 = *l_row1_in;
   int nb     = *nb_in;
- 
+
 //#ifdef WITH_GPU_STREAMS
 //  hipStream_t elpa_hip_stm = *((hipStream_t*)my_stream);
 //#endif
@@ -294,13 +294,13 @@ __global__ void hip_copy_float_complex_a_tmat2_kernel(hipFloatComplex *a_dev, hi
 }
 
 extern "C" void hip_copy_float_complex_a_tmat2_FromC(float _Complex *a_dev, float _Complex *tmat2_dev, int *nblk_in, int *matrixRows_in, int *l_cols_in, int *l_colx_in, int *l_row1_in, int *nb_in, hipStream_t my_stream){
-  int nblk = *nblk_in;   
+  int nblk = *nblk_in;
   int matrixRows = *matrixRows_in;
   int l_cols = *l_cols_in;
   int l_colx = *l_colx_in;
   int l_row1 = *l_row1_in;
   int nb     = *nb_in;
- 
+
 //#ifdef WITH_GPU_STREAMS
 //  hipStream_t elpa_hip_stm = *((hipStream_t*)my_stream);
 //#endif
@@ -362,10 +362,10 @@ __global__ void hip_copy_double_tmp2_tmat2_kernel(double *tmp2_dev, double *tmat
 }
 
 extern "C" void hip_copy_double_tmp2_tmat2_FromC(double *tmp2_dev, double *tmat2_dev, int *nblk_in, int *l_col1_in, int *nb_in, hipStream_t my_stream){
-  int nblk   = *nblk_in;   
+  int nblk   = *nblk_in;
   int l_col1 = *l_col1_in;
   int nb     = *nb_in;
- 
+
 //#ifdef WITH_GPU_STREAMS
 //  hipStream_t elpa_hip_stm = *((hipStream_t*)my_stream);
 //#endif
@@ -395,10 +395,10 @@ __global__ void hip_copy_float_tmp2_tmat2_kernel(float *tmp2_dev, float *tmat2_d
 }
 
 extern "C" void hip_copy_float_tmp2_tmat2_FromC(float *tmp2_dev, float *tmat2_dev, int *nblk_in, int *l_col1_in, int *nb_in, hipStream_t my_stream){
-  int nblk   = *nblk_in;   
+  int nblk   = *nblk_in;
   int l_col1 = *l_col1_in;
   int nb     = *nb_in;
- 
+
 //#ifdef WITH_GPU_STREAMS
 //  hipStream_t elpa_hip_stm = *((hipStream_t*)my_stream);
 //#endif
@@ -427,10 +427,10 @@ __global__ void hip_copy_double_complex_tmp2_tmat2_kernel(hipDoubleComplex *tmp2
 }
 
 extern "C" void hip_copy_double_complex_tmp2_tmat2_FromC(double _Complex *tmp2_dev, double _Complex *tmat2_dev, int *nblk_in, int *l_col1_in, int *nb_in, hipStream_t my_stream){
-  int nblk   = *nblk_in;   
+  int nblk   = *nblk_in;
   int l_col1 = *l_col1_in;
   int nb     = *nb_in;
- 
+
 //#ifdef WITH_GPU_STREAMS
 //  hipStream_t elpa_hip_stm = *((hipStream_t*)my_stream);
 //#endif
@@ -463,10 +463,10 @@ __global__ void hip_copy_float_complex_tmp2_tmat2_kernel(hipFloatComplex *tmp2_d
 }
 
 extern "C" void hip_copy_float_complex_tmp2_tmat2_FromC(float _Complex *tmp2_dev, float _Complex *tmat2_dev, int *nblk_in, int *l_col1_in, int *nb_in, hipStream_t my_stream){
-  int nblk   = *nblk_in;   
+  int nblk   = *nblk_in;
   int l_col1 = *l_col1_in;
   int nb     = *nb_in;
- 
+
 //#ifdef WITH_GPU_STREAMS
 //  hipStream_t elpa_hip_stm = *((hipStream_t*)my_stream);
 //#endif
@@ -525,12 +525,12 @@ __global__ void hip_copy_double_a_tmat1_kernel(double *a_dev, double *tmat1_dev,
 }
 
 extern "C" void hip_copy_double_a_tmat1_FromC(double *a_dev, double *tmat1_dev, int *l_rows_in, int *matrixRows_in, int *nb_in, int *l_row1_in, int *l_col1_in, hipStream_t my_stream){
-  int l_rows = *l_rows_in;   
+  int l_rows = *l_rows_in;
   int matrixRows = *matrixRows_in;
   int nb = *nb_in;
   int l_row1 = *l_row1_in;
   int l_col1 = *l_col1_in;
- 
+
 //#ifdef WITH_GPU_STREAMS
 //  hipStream_t elpa_hip_stm = *((hipStream_t*)my_stream);
 //#endif
@@ -586,12 +586,12 @@ __global__ void hip_copy_float_a_tmat1_kernel(float *a_dev, float *tmat1_dev, co
 }
 
 extern "C" void hip_copy_float_a_tmat1_FromC(float *a_dev, float *tmat1_dev, int *l_rows_in, int *matrixRows_in, int *nb_in, int *l_row1_in, int *l_col1_in, hipStream_t my_stream){
-  int l_rows = *l_rows_in;   
+  int l_rows = *l_rows_in;
   int matrixRows = *matrixRows_in;
   int nb = *nb_in;
   int l_row1 = *l_row1_in;
   int l_col1 = *l_col1_in;
- 
+
 //#ifdef WITH_GPU_STREAMS
 //  hipStream_t elpa_hip_stm = *((hipStream_t*)my_stream);
 //#endif
@@ -676,12 +676,12 @@ __global__ void hip_copy_double_complex_a_tmat1_kernel(hipDoubleComplex *a_dev, 
 }
 
 extern "C" void hip_copy_double_complex_a_tmat1_FromC(double _Complex *a_dev, double _Complex *tmat1_dev, int *l_rows_in, int *matrixRows_in, int *nb_in, int *l_row1_in, int *l_col1_in, hipStream_t my_stream){
-  int l_rows = *l_rows_in;   
+  int l_rows = *l_rows_in;
   int matrixRows = *matrixRows_in;
   int nb = *nb_in;
   int l_row1 = *l_row1_in;
   int l_col1 = *l_col1_in;
- 
+
 //#ifdef WITH_GPU_STREAMS
 //  hipStream_t elpa_hip_stm = *((hipStream_t*)my_stream);
 //#endif
@@ -709,10 +709,10 @@ extern "C" void hip_copy_double_complex_a_tmat1_FromC(double _Complex *a_dev, do
       printf("called elpa_invert_trm_hip tmat1 double complex ...... hipcc\n");
 #endif
 #ifdef WITH_GPU_STREAMS
-      hipLaunchKernelGGL(hip_copy_a_tmat1_complex_kernel<hipDoubleComplex>, blocks, threadsPerBlock, 0, my_stream, 
+      hipLaunchKernelGGL(hip_copy_a_tmat1_complex_kernel<hipDoubleComplex>, blocks, threadsPerBlock, 0, my_stream,
               a_casted, tmat1_casted, l_rows, matrixRows, l_col1, nb, l_row1);
 #else
-      hipLaunchKernelGGL(hip_copy_a_tmat1_complex_kernel<hipDoubleComplex>, blocks, threadsPerBlock, 0, 0, 
+      hipLaunchKernelGGL(hip_copy_a_tmat1_complex_kernel<hipDoubleComplex>, blocks, threadsPerBlock, 0, 0,
               a_casted, tmat1_casted, l_rows, matrixRows, l_col1, nb, l_row1);
 #endif
   }
@@ -746,12 +746,12 @@ __global__ void hip_copy_float_complex_a_tmat1_kernel(hipFloatComplex *a_dev, hi
 }
 
 extern "C" void hip_copy_float_complex_a_tmat1_FromC(float _Complex *a_dev, float _Complex *tmat1_dev, int *l_rows_in, int *matrixRows_in, int *nb_in, int *l_row1_in, int *l_col1_in, hipStream_t my_stream){
-  int l_rows = *l_rows_in;   
+  int l_rows = *l_rows_in;
   int matrixRows = *matrixRows_in;
   int nb = *nb_in;
   int l_row1 = *l_row1_in;
   int l_col1 = *l_col1_in;
- 
+
 //#ifdef WITH_GPU_STREAMS
 //  hipStream_t elpa_hip_stm = *((hipStream_t*)my_stream);
 //#endif
@@ -778,10 +778,10 @@ extern "C" void hip_copy_float_complex_a_tmat1_FromC(float _Complex *a_dev, floa
       printf("called elpa_invert_trm_hip tmat1 float complex ...... hipcc\n");
 #endif
 #ifdef WITH_GPU_STREAMS
-      hipLaunchKernelGGL(hip_copy_a_tmat1_complex_kernel<hipFloatComplex>, blocks, threadsPerBlock, 0, my_stream, 
+      hipLaunchKernelGGL(hip_copy_a_tmat1_complex_kernel<hipFloatComplex>, blocks, threadsPerBlock, 0, my_stream,
               a_casted, tmat1_casted, l_rows, matrixRows, l_col1, nb, l_row1);
 #else
-      hipLaunchKernelGGL(hip_copy_a_tmat1_complex_kernel<hipFloatComplex>, blocks, threadsPerBlock, 0, 0, 
+      hipLaunchKernelGGL(hip_copy_a_tmat1_complex_kernel<hipFloatComplex>, blocks, threadsPerBlock, 0, 0,
               a_casted, tmat1_casted, l_rows, matrixRows, l_col1, nb, l_row1);
 #endif
   }
@@ -817,7 +817,7 @@ __global__ void hip_copy_double_tmp1_tmp2_kernel(double *tmp1_dev, double *tmp2_
 extern "C" void hip_copy_double_tmp1_tmp2_FromC(double *tmp1_dev, double *tmp2_dev, int *nblk_in, int *nb_in, hipStream_t my_stream){
   int nblk = *nblk_in;
   int nb = *nb_in;
- 
+
 //#ifdef WITH_GPU_STREAMS
 //  hipStream_t elpa_hip_stm = *((hipStream_t*)my_stream);
 //#endif
@@ -850,7 +850,7 @@ __global__ void hip_copy_float_tmp1_tmp2_kernel(float *tmp1_dev, float *tmp2_dev
 extern "C" void hip_copy_float_tmp1_tmp2_FromC(float *tmp1_dev, float *tmp2_dev, int *nblk_in, int *nb_in, hipStream_t my_stream){
   int nblk = *nblk_in;
   int nb = *nb_in;
- 
+
 //#ifdef WITH_GPU_STREAMS
 //  hipStream_t elpa_hip_stm = *((hipStream_t*)my_stream);
 //#endif
@@ -883,7 +883,7 @@ __global__ void hip_copy_double_complex_tmp1_tmp2_kernel(hipDoubleComplex *tmp1_
 extern "C" void hip_copy_double_complex_tmp1_tmp2_FromC(double _Complex *tmp1_dev, double _Complex *tmp2_dev, int *nblk_in, int *nb_in, hipStream_t my_stream){
   int nblk = *nblk_in;
   int nb = *nb_in;
- 
+
 //#ifdef WITH_GPU_STREAMS
 //  hipStream_t elpa_hip_stm = *((hipStream_t*)my_stream);
 //#endif
@@ -920,7 +920,7 @@ __global__ void hip_copy_float_complex_tmp1_tmp2_kernel(hipFloatComplex *tmp1_de
 extern "C" void hip_copy_float_complex_tmp1_tmp2_FromC(float _Complex *tmp1_dev, float _Complex *tmp2_dev, int *nblk_in, int *nb_in, hipStream_t my_stream){
   int nblk = *nblk_in;
   int nb = *nb_in;
- 
+
 //#ifdef WITH_GPU_STREAMS
 //  hipStream_t elpa_hip_stm = *((hipStream_t*)my_stream);
 //#endif
@@ -958,7 +958,7 @@ extern "C" void hip_copy_double_a_tmp1_FromC(double *a_dev, double *tmp1_dev, in
   int l_col1 = *l_col1_in;
   int matrixRows = *matrixRows_in;
   int nb = *nb_in;
- 
+
 //#ifdef WITH_GPU_STREAMS
 //  hipStream_t elpa_hip_stm = *((hipStream_t*)my_stream);
 //#endif
@@ -993,7 +993,7 @@ extern "C" void hip_copy_float_a_tmp1_FromC(float *a_dev, float *tmp1_dev, int *
   int l_col1 = *l_col1_in;
   int matrixRows = *matrixRows_in;
   int nb = *nb_in;
- 
+
 //#ifdef WITH_GPU_STREAMS
 //  hipStream_t elpa_hip_stm = *((hipStream_t*)my_stream);
 //#endif
@@ -1027,7 +1027,7 @@ extern "C" void hip_copy_double_complex_a_tmp1_FromC(double _Complex *a_dev, dou
   int l_col1 = *l_col1_in;
   int matrixRows = *matrixRows_in;
   int nb = *nb_in;
- 
+
 //#ifdef WITH_GPU_STREAMS
 //  hipStream_t elpa_hip_stm = *((hipStream_t*)my_stream);
 //#endif
@@ -1065,7 +1065,7 @@ extern "C" void hip_copy_float_complex_a_tmp1_FromC(float _Complex *a_dev, float
   int l_col1 = *l_col1_in;
   int matrixRows = *matrixRows_in;
   int nb = *nb_in;
- 
+
 //#ifdef WITH_GPU_STREAMS
 //  hipStream_t elpa_hip_stm = *((hipStream_t*)my_stream);
 //#endif

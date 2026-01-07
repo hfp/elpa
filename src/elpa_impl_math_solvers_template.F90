@@ -69,7 +69,7 @@
     !>                                              Must be always dimensioned to the full size (corresponding to (na,na))
     !>                                              even if only a part of the eigenvalues is needed.
     !>
-    !>  \param error                                integer, optional: returns an error code, which can be queried with elpa_strerr   
+    !>  \param error                                integer, optional: returns an error code, which can be queried with elpa_strerr
 
     subroutine elpa_eigenvectors_a_h_a_&
                     &ELPA_IMPL_SUFFIX&
@@ -159,7 +159,7 @@
         error = ELPA_ERROR_DURING_COMPUTATION
       endif
 #endif
-    end subroutine 
+    end subroutine
 
     !>  \brief elpa_eigenvectors_ptr_d: class method to solve the eigenvector problem, using device pointers
     !>
@@ -185,7 +185,7 @@
     !>                                              Must be always dimensioned to the full size (corresponding to (na,na))
     !>                                              even if only a part of the eigenvalues is needed.
     !>
-    !>  \param error                                integer, optional: returns an error code, which can be queried with elpa_strerr   
+    !>  \param error                                integer, optional: returns an error code, which can be queried with elpa_strerr
 
     subroutine elpa_eigenvectors_d_ptr_&
                     &ELPA_IMPL_SUFFIX&
@@ -273,10 +273,10 @@
         error = ELPA_ERROR_DURING_COMPUTATION
       endif
 #endif
-    end subroutine 
-    
-    !c> // /src/elpa_impl_math_solvers_template.F90 
-    
+    end subroutine
+
+    !c> // /src/elpa_impl_math_solvers_template.F90
+
 #ifdef REALCASE
 #ifdef DOUBLE_PRECISION_REAL
     !c> void elpa_eigenvectors_a_h_a_d(elpa_t handle, double *a, double *ev, double *q, int *error);
@@ -297,10 +297,10 @@
                     &ELPA_IMPL_SUFFIX&
                     &_c(handle, a_p, ev_p, q_p, error) &
 #ifdef REALCASE
-#ifdef DOUBLE_PRECISION_REAL  
+#ifdef DOUBLE_PRECISION_REAL
                     bind(C, name="elpa_eigenvectors_a_h_a_d")
 #endif
-#ifdef SINGLE_PRECISION_REAL  
+#ifdef SINGLE_PRECISION_REAL
                     bind(C, name="elpa_eigenvectors_a_h_a_f")
 #endif
 #endif
@@ -331,7 +331,7 @@
       call elpa_eigenvectors_a_h_a_&
               &ELPA_IMPL_SUFFIX&
               & (self, a, ev, q, error)
-    end subroutine    
+    end subroutine
 
 #ifdef REALCASE
 #ifdef DOUBLE_PRECISION_REAL
@@ -353,10 +353,10 @@
                     &ELPA_IMPL_SUFFIX&
                     &_c(handle, a_p, ev_p, q_p, error) &
 #ifdef REALCASE
-#ifdef DOUBLE_PRECISION_REAL  
+#ifdef DOUBLE_PRECISION_REAL
                     bind(C, name="elpa_eigenvectors_d_ptr_d")
 #endif
-#ifdef SINGLE_PRECISION_REAL  
+#ifdef SINGLE_PRECISION_REAL
                     bind(C, name="elpa_eigenvectors_d_ptr_f")
 #endif
 #endif
@@ -390,7 +390,7 @@
     end subroutine
 
 #ifdef HAVE_SKEWSYMMETRIC
-#ifdef REALCASE 
+#ifdef REALCASE
     !>  \brief elpa_skew_eigenvectors_d: class method to solve the real valued skew-symmetric eigenvalue problem
     !>
     !>  The dimensions of the matrix a (locally ditributed and global), the block-cyclic distribution
@@ -415,7 +415,7 @@
     !>                                              Must be always dimensioned to the full size (corresponding to (na,na))
     !>                                              even if only a part of the eigenvalues is needed.
     !>
-    !>  \param error                                integer, optional: returns an error code, which can be queried with elpa_strerr   
+    !>  \param error                                integer, optional: returns an error code, which can be queried with elpa_strerr
 
     subroutine elpa_skew_eigenvectors_a_h_a_&
                     &ELPA_IMPL_SUFFIX&
@@ -578,7 +578,7 @@
     !>                                              Must be always dimensioned to the full size (corresponding to (na,na))
     !>                                              even if only a part of the eigenvalues is needed.
     !>
-    !>  \param error                                integer, optional: returns an error code, which can be queried with elpa_strerr   
+    !>  \param error                                integer, optional: returns an error code, which can be queried with elpa_strerr
 
     subroutine elpa_skew_eigenvectors_d_ptr_&
                     &ELPA_IMPL_SUFFIX&
@@ -951,7 +951,7 @@
                     &ELPA_IMPL_SUFFIX&
                     &_c(handle, a_p, ev_p, error) &
 #ifdef REALCASE
-#ifdef DOUBLE_PRECISION_REAL    
+#ifdef DOUBLE_PRECISION_REAL
                     bind(C, name="elpa_eigenvalues_a_h_a_d")
 #endif
 #ifdef SINGLE_PRECISION_REAL
@@ -959,7 +959,7 @@
 #endif
 #endif
 #ifdef COMPLEXCASE
-#ifdef DOUBLE_PRECISION_COMPLEX 
+#ifdef DOUBLE_PRECISION_COMPLEX
                     bind(C, name="elpa_eigenvalues_a_h_a_dc")
 #endif
 #ifdef SINGLE_PRECISION_COMPLEX
@@ -981,7 +981,7 @@
       call elpa_eigenvalues_a_h_a_&
               &ELPA_IMPL_SUFFIX&
               & (self, a, ev, error)
-    end subroutine    
+    end subroutine
 
 #ifdef REALCASE
 #ifdef DOUBLE_PRECISION_REAL
@@ -1003,7 +1003,7 @@
                     &ELPA_IMPL_SUFFIX&
                     &_c(handle, a_p, ev_p, error) &
 #ifdef REALCASE
-#ifdef DOUBLE_PRECISION_REAL    
+#ifdef DOUBLE_PRECISION_REAL
                     bind(C, name="elpa_eigenvalues_d_ptr_d")
 #endif
 #ifdef SINGLE_PRECISION_REAL
@@ -1011,7 +1011,7 @@
 #endif
 #endif
 #ifdef COMPLEXCASE
-#ifdef DOUBLE_PRECISION_COMPLEX 
+#ifdef DOUBLE_PRECISION_COMPLEX
                     bind(C, name="elpa_eigenvalues_d_ptr_dc")
 #endif
 #ifdef SINGLE_PRECISION_COMPLEX
@@ -1033,7 +1033,7 @@
       call elpa_eigenvalues_d_ptr_&
               &ELPA_IMPL_SUFFIX&
               & (self, a_p, ev_p, error)
-    end subroutine    
+    end subroutine
 
 #ifdef HAVE_SKEWSYMMETRIC
 #ifdef REALCASE

@@ -32,7 +32,7 @@ ccl::communicator* testOnecclInitializationWithElpaWrappers(char *addr_space) {
     numDevices = elpa::gpu::sycl::getNumDevices();
     elpa::gpu::sycl::selectGpuDevice(myrank % numDevices);
     sycl::queue q = elpa::gpu::sycl::getQueue();
-    
+
     if (!myrank) {
 	onecclGetUniqueIdFromC(addr_space);
         MPI_Bcast(addr_space, 256, MPI_CHAR, 0, MPI_COMM_WORLD);
@@ -161,7 +161,7 @@ template<typename DT> void testReduceWithElpaWrappers(ccl::communicator *comm) {
 	    static_cast<ccl::datatype>(cclDatatype()),
 	    static_cast<ccl::reduction>(reduction()),
 	    0,
-	    comm, 
+	    comm,
 	    elpa::gpu::sycl::getCclStream()
 	);
 	if (myrank == 0) {
@@ -174,7 +174,7 @@ template<typename DT> void testReduceWithElpaWrappers(ccl::communicator *comm) {
 
 template<typename DT> void testBroadcastWithElpaWrappers(ccl::communicator *comm) {
     using namespace std::string_literals;
-    
+
     int myrank, totalRanks, numDevices;
     MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
     MPI_Comm_size(MPI_COMM_WORLD, &totalRanks);
@@ -202,7 +202,7 @@ template<typename DT> void testBroadcastWithElpaWrappers(ccl::communicator *comm
 	    1,
 	    static_cast<ccl::datatype>(cclDatatype()),
 	    i,
-	    comm, 
+	    comm,
 	    elpa::gpu::sycl::getCclStream()
 	);
 	if (myrank == 0) {
@@ -214,7 +214,7 @@ template<typename DT> void testBroadcastWithElpaWrappers(ccl::communicator *comm
 }
 template<typename DT> void testAllReduceWithElpaWrappers(ccl::communicator *comm) {
     using namespace std::string_literals;
-    
+
     int myrank, totalRanks, numDevices;
     MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
     MPI_Comm_size(MPI_COMM_WORLD, &totalRanks);
@@ -270,7 +270,7 @@ void testOnecclDirectly() {
     int myrank, totalRanks;
     MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
     MPI_Comm_size(MPI_COMM_WORLD, &totalRanks);
-    
+
     ccl::kvs::address_type addr;
     std::unordered_map<void *, ccl::shared_ptr_class<ccl::kvs>> kvsMap;
 
@@ -287,7 +287,7 @@ void testOnecclDirectly() {
     sycl::queue q;
     ccl::device cclDevice = ccl::create_device(q.get_device());
     ccl::context cclContext = ccl::create_context(q.get_context());
-    
+
     ccl::shared_ptr_class<ccl::kvs> kvs;
     if (kvsMap.find(&addr) != kvsMap.end()) {
 	kvs = kvsMap[&addr];
@@ -336,26 +336,26 @@ int main() {
 
     std::unique_ptr<char []> addr_space = std::make_unique<char[]>(256);
     ccl::communicator *comm = testOnecclInitializationWithElpaWrappers(addr_space.get());
-    
+
     testAllReduceWithElpaWrappers<float>(comm);
     testAllReduceWithElpaWrappers<double>(comm);
     testAllReduceWithElpaWrappers<int>(comm);
     testAllReduceWithElpaWrappers<int64_t>(comm);
-    
+
     testReduceWithElpaWrappers<float>(comm);
     testReduceWithElpaWrappers<double>(comm);
     testReduceWithElpaWrappers<int>(comm);
     testReduceWithElpaWrappers<int64_t>(comm);
-    
+
     testBroadcastWithElpaWrappers<float>(comm);
     testBroadcastWithElpaWrappers<double>(comm);
     testBroadcastWithElpaWrappers<int>(comm);
     testBroadcastWithElpaWrappers<int64_t>(comm);
-    
+
     testSendRecvWithElpaWrappers<float>(comm);
     testSendRecvWithElpaWrappers<double>(comm);
     testSendRecvWithElpaWrappers<int>(comm);
     testSendRecvWithElpaWrappers<int64_t>(comm);
-    
+
     onecclCommDestroyFromC(comm);
 }

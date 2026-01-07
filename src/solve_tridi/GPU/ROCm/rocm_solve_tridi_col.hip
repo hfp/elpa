@@ -45,9 +45,9 @@
 //    the original distribution, the GNU Lesser General Public License.
 //
 //    This file was written by A. Marek, MPCDF
-  
+
 #include "config-f90.h"
-  
+
 #include <stdio.h>
 #include <math.h>
 #include <stdio.h>
@@ -58,7 +58,7 @@
 #include <complex.h>
 #include "hip/hip_runtime.h"
 #include <hip/hip_complex.h>
-#include <stdint.h> 
+#include <stdint.h>
 #include "config-f90.h"
 #include "../../../GPU/common_device_functions.h"
 #include "../../../GPU/gpu_to_cuda_and_hip_interface.h"

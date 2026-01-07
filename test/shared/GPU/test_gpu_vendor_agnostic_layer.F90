@@ -53,4 +53,4 @@ module test_gpu
   use iso_c_binding
 
 #include "../../../src/GPU/vendor_agnostic_general_layer_template.F90"
-end module 
+end module

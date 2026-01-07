@@ -1,10 +1,10 @@
 !    Copyright 2024, A. Marek
-!            
+!
 !    This file is part of ELPA.
-!     
+!
 !    The ELPA library was originally created by the ELPA consortium,
 !    consisting of the following organizations:
-!   
+!
 !    - Max Planck Computing and Data Facility (MPCDF), formerly known as
 !      Rechenzentrum Garching der Max-Planck-Gesellschaft (RZG),
 !    - Bergische Universität Wuppertal, Lehrstuhl für angewandte
@@ -15,17 +15,17 @@
 !    - Max-Plack-Institut für Mathematik in den Naturwissenschaften,
 !      Leipzig, Abt. Komplexe Strukutren in Biologie und Kognition,
 !      and
-!    - IBM Deutschland GmbH            
-!   
-! 
+!    - IBM Deutschland GmbH
+!
+!
 !    More information can be found here:
 !    http://elpa.mpcdf.mpg.de/
-!   
+!
 !    ELPA is free software: you can redistribute it and/or modify
 !    it under the terms of the version 3 of the license of the
 !    GNU Lesser General Public License as published by the Free
 !    Software Foundation.
-!     
+!
 !    ELPA is distributed in the hope that it will be useful,
 !    but WITHOUT ANY WARRANTY; without even the implied warranty of
 !    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -33,19 +33,19 @@
 !
 !    You should have received a copy of the GNU Lesser General Public License
 !    along with ELPA.  If not, see <http://www.gnu.org/licenses/>
-!   
+!
 !    ELPA reflects a substantial effort on the part of the original
 !    ELPA consortium, and we ask you to respect the spirit of the
 !    license that we chose: i.e., please contribute any changes you
 !    may have back to the original ELPA library distribution, and keep
 !    any derivatives of ELPA under the same license that we chose for
 !    the original distribution, the GNU Lesser General Public License.
-! 
+!
 ! Authors: Alexander Pöppl, Intel Corporation,
 !          Andreas Marek, MPCDF
 ! This file is the generated version. Do NOT edit
-    
-             
+
+
   !integer(kind=c_int) :: onecclSum
   !integer(kind=c_int) :: onecclMax
   !integer(kind=c_int) :: onecclMin
@@ -173,7 +173,7 @@
     end function
   end interface
 
-  interface  
+  interface
     function oneccl_group_start_c() result(istat) &
              bind(C, name="onecclGroupStartFromC")
       use, intrinsic :: iso_c_binding
@@ -183,7 +183,7 @@
   end interface
 
 
-  interface  
+  interface
     function oneccl_group_end_c() result(istat) &
              bind(C, name="onecclGroupEndFromC")
       use, intrinsic :: iso_c_binding
@@ -191,7 +191,7 @@
       integer(kind=C_INT)      :: istat
     end function
   end interface
-  
+
   interface
     function oneccl_get_unique_id_c(onecclId) result(istat) &
              bind(C, name="onecclGetUniqueIdFromC")
@@ -223,28 +223,28 @@
       integer(kind=C_INT)             :: istat
     end function
   end interface
-   
-  ! only for version >=2.13  
+
+  ! only for version >=2.13
   !interface
   !  function oneccl_comm_finalize_c(onecclComm) result(istat) &
   !           bind(C, name="onecclCommFinalizeFromC")
   !    use, intrinsic :: iso_c_binding
   !    implicit none
   !    integer(kind=C_intptr_T), value :: onecclComm
-  !    integer(kind=C_INT)             :: istat  
-  !  end function                                
+  !    integer(kind=C_INT)             :: istat
+  !  end function
   !end interface
-      
+
   interface
     function oneccl_comm_destroy_c(onecclComm) result(istat) &
              bind(C, name="onecclCommDestroyFromC")
       use, intrinsic :: iso_c_binding
       implicit none
       integer(kind=C_intptr_T), value :: onecclComm
-      integer(kind=C_INT)             :: istat  
-    end function                                
+      integer(kind=C_INT)             :: istat
+    end function
   end interface
-  
+
   interface
     function oneccl_stream_synchronize_c(syclStream) result(istat) &
              bind(C, name="onecclStreamSynchronizeFromC")
@@ -600,7 +600,7 @@
       success = .true.
 #endif
     end function
-    
+
     function oneccl_get_unique_id(onecclId) result(success)
       use, intrinsic :: iso_c_binding
       implicit none
@@ -609,12 +609,12 @@
       integer :: i
 #ifdef WITH_ONEAPI_ONECCL
       success = oneccl_get_unique_id_c(onecclId) /= 0
-#else 
+#else
       success = .true.
 #endif
     end function
-  
-    
+
+
     function oneccl_comm_init_rank(onecclComm, nRanks, onecclId, myRank) result(success)
       use, intrinsic :: iso_c_binding
       implicit none
@@ -626,12 +626,12 @@
 
 #ifdef WITH_ONEAPI_ONECCL
       success = oneccl_comm_init_rank_c(onecclComm, nRanks, onecclId, myRank) /= 0
-#else 
+#else
       success = .true.
 #endif
     end function
- 
-! only for version >= 2.13    
+
+! only for version >= 2.13
 !    function oneccl_comm_finalize(onecclComm) result(success)
 !      use, intrinsic :: iso_c_binding
 !      implicit none
@@ -643,7 +643,7 @@
 !      success = .true.
 !#endif
 !    end function
-  
+
     function oneccl_comm_destroy(onecclComm) result(success)
       use, intrinsic :: iso_c_binding
       implicit none
@@ -655,7 +655,7 @@
       success = .true.
 #endif
     end function
-  
+
     function oneccl_stream_synchronize(syclStream) result(success)
       use, intrinsic :: iso_c_binding
       implicit none
@@ -682,7 +682,7 @@
       success = .true.
 #endif
     end function
-  
+
     function oneccl_allreduce_cptr(sendbuff, recvbuff, nrElements, onecclDatatype, onecclOp, onecclComm, syclStream) result(success)
       use, intrinsic :: iso_c_binding
       implicit none
@@ -721,7 +721,7 @@
       success = .true.
 #endif
     end function
-  
+
     function oneccl_reduce_cptr(sendbuff, recvbuff, nrElements, onecclDatatype, onecclOp, root, onecclComm, syclStream) result(success)
       use, intrinsic :: iso_c_binding
       implicit none
@@ -741,7 +741,7 @@
       success = .true.
 #endif
     end function
-  
+
     function oneccl_bcast_intptr(sendbuff, recvbuff, nrElements, onecclDatatype, root, onecclComm, syclStream) result(success)
       use, intrinsic :: iso_c_binding
       implicit none
@@ -760,7 +760,7 @@
       success = .true.
 #endif
     end function
-  
+
     function oneccl_bcast_cptr(sendbuff, recvbuff, nrElements, onecclDatatype, root, onecclComm, syclStream) result(success)
       use, intrinsic :: iso_c_binding
       implicit none
@@ -779,7 +779,7 @@
       success = .true.
 #endif
     end function
-  
+
     function oneccl_send_intptr(sendbuff, nrElements, onecclDatatype, peer, onecclComm, syclStream) result(success)
       use, intrinsic :: iso_c_binding
       implicit none
@@ -797,7 +797,7 @@
       success = .true.
 #endif
     end function
-  
+
     function oneccl_send_cptr(sendbuff, nrElements, onecclDatatype, peer, onecclComm, syclStream) result(success)
       use, intrinsic :: iso_c_binding
       implicit none
@@ -815,7 +815,7 @@
       success = .true.
 #endif
     end function
-  
+
     function oneccl_recv_intptr(recvbuff, nrElements, onecclDatatype, peer, onecclComm, syclStream) result(success)
       use, intrinsic :: iso_c_binding
       implicit none
@@ -833,7 +833,7 @@
       success = .true.
 #endif
     end function
-  
+
     function oneccl_recv_cptr(recvbuff, nrElements, onecclDatatype, peer, onecclComm, syclStream) result(success)
       use, intrinsic :: iso_c_binding
       implicit none

@@ -389,7 +389,7 @@
           successGPU = gpu_malloc(tmp_dev, num)
           check_alloc_gpu("merge_systems: tmp_dev", successGPU)
         endif
-        
+
         num = 1 * size_of_datatype
         successGPU = gpu_malloc(zero_dev, num)
         check_alloc_gpu("merge_systems: zero_dev", successGPU)
@@ -567,7 +567,7 @@
 
         call obj%timer%stop("merge_systems" // PRECISION_SUFFIX)
 
-        if (wantDebug) then 
+        if (wantDebug) then
           write(error_unit,*) "Returing early from merge_systems (RHO*zmax <= TOL): matrix is block-diagonal"
           ! tested by validate_real_double_solve_tridiagonal_1stage_blocktridi
         endif
@@ -821,7 +821,7 @@
           call gpu_fill_array(PRECISION_CHAR, ztmp_extended_dev, one_dev, na1*SM_count, SM_count, debug, my_stream)
 
           call gpu_fill_array(PRECISION_CHAR, z_dev, one_dev, na1, SM_count, debug, my_stream)
-          
+
           num = na1 * size_of_datatype
 #ifdef WITH_GPU_STREAMS
           successGPU = gpu_memset_async(dbase_dev, 0, num, my_stream)
@@ -886,7 +886,7 @@
           if (wantDebug) call obj%timer%stop("gpu_solve_secular_equation_loop")
 
           call gpu_local_product(PRECISION_CHAR, z_dev, ztmp_extended_dev, na1, SM_count, debug, my_stream)
-          
+
           successGPU = gpu_free(delta_dev)
           check_dealloc_gpu("merge_systems: delta_dev", successGPU)
 
@@ -1255,7 +1255,7 @@
           enddo
           NVTX_RANGE_POP("loop_idxq1")
         !endif
-        
+
 
         if (useGPU) then
           num = na * size_of_int
@@ -1326,7 +1326,7 @@
           endif
         endif ! useGPU
 
-        
+
         if (useGPU) then
           num = gemm_dim_k * gemm_dim_l * size_of_datatype
 #ifdef WITH_GPU_STREAMS
@@ -1367,7 +1367,7 @@
 
           NVTX_RANGE_PUSH("gpu_copy_qtmp1_q_compute_nnzu_nnzl_kernel")
           if (wantDebug) call obj%timer%start("gpu_copy_qtmp1_q_compute_nnzu_nnzl_kernel")
-          
+
           call gpu_copy_qtmp1_q_compute_nnzu_nnzl(PRECISION_CHAR, qtmp1_dev, q_dev, &
                                                   p_col_dev, l_col_dev, idx1_dev, coltyp_dev, nnzul_dev, &
                                                   na1, l_rnm, l_rqs, l_rqm, l_rows, my_pcol, gemm_dim_k, matrixRows, &

@@ -53,22 +53,22 @@ extern int gpuMemcpyHostToDevice;
 extern int gpuMemcpyDeviceToHost;
 
 #ifdef __cplusplus
-extern "C" {    
+extern "C" {
 #endif
-    
+
 void set_gpu_parameters_tests();
 
 int gpuGetDeviceCount_tests(int *count);
-int gpuSetDevice_tests(int n); 
-   
+int gpuSetDevice_tests(int n);
+
 int gpuMalloc_tests(intptr_t *a, size_t width_height);
 
 int gpuFree_tests(intptr_t *a);
-   
+
 int gpuMemcpy_tests(intptr_t *dest, intptr_t *src, size_t count, int dir);
 
 int syclGetCpuCount(int numberOfDevices);
 
 #ifdef __cplusplus
-}    
+}
 #endif

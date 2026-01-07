@@ -69,12 +69,12 @@
   !> \param   a           single real matrix a: defines the problem to solve
   !> \param   ev          single real: on output stores the eigenvalues
   !> \param   q           single real matrix q: on output stores the eigenvectors
-#endif  
+#endif
 #if ELPA_IMPL_SUFFIX == dc
   !> \param   a           double complex matrix a: defines the problem to solve
   !> \param   ev          double real: on output stores the eigenvalues
   !> \param   q           double complex matrix q: on output stores the eigenvectors
-#endif  
+#endif
 #if ELPA_IMPL_SUFFIX == fc
   !> \param   a           single complex matrix a: defines the problem to solve
   !> \param   ev          single real: on output stores the eigenvalues
@@ -127,12 +127,12 @@
   !> \param   a           single real matrix a: defines the problem to solve
   !> \param   ev          single real: on output stores the eigenvalues
   !> \param   q           single real matrix q: on output stores the eigenvectors
-#endif  
+#endif
 #if ELPA_IMPL_SUFFIX == dc
   !> \param   a           double complex matrix a: defines the problem to solve
   !> \param   ev          double real: on output stores the eigenvalues
   !> \param   q           double complex matrix q: on output stores the eigenvectors
-#endif  
+#endif
 #if ELPA_IMPL_SUFFIX == fc
   !> \param   a           single complex matrix a: defines the problem to solve
   !> \param   ev          single real: on output stores the eigenvalues
@@ -181,7 +181,7 @@
   !> \param   a           single real matrix a: defines the problem to solve
   !> \param   ev          single real: on output stores the eigenvalues
   !> \param   q           single real matrix q: on output stores the eigenvectors
-#endif  
+#endif
   !> \result  error       integer, optional : error code, which can be queried with elpa_strerr
   abstract interface
     subroutine elpa_skew_eigenvectors_a_h_a_&
@@ -229,7 +229,7 @@
   !> \param   a           single real matrix a: defines the problem to solve
   !> \param   ev          single real: on output stores the eigenvalues
   !> \param   q           single real matrix q: on output stores the eigenvectors
-#endif  
+#endif
   !> \result  error       integer, optional : error code, which can be queried with elpa_strerr
   abstract interface
     subroutine elpa_skew_eigenvectors_d_ptr_&
@@ -249,7 +249,7 @@
 #endif
     end subroutine
   end interface
-  
+
 #endif /* HAVE_SKEWSYMMETRIC */
 
 
@@ -276,11 +276,11 @@
 #if ELPA_IMPL_SUFFIX == dc
   !> \param   a           double complex matrix a: defines the problem to solve
   !> \param   ev          double real: on output stores the eigenvalues
-#endif  
+#endif
 #if ELPA_IMPL_SUFFIX ==fc
   !> \param   a           single complex matrix a: defines the problem to solve
   !> \param   ev          single real: on output stores the eigenvalues
-#endif  
+#endif
   !> \result  error       integer, optional : error code, which can be queried with elpa_strerr
   abstract interface
     subroutine elpa_eigenvalues_a_h_a_&
@@ -303,7 +303,7 @@
       integer             :: error
 #endif
     end subroutine
-  end interface       
+  end interface
 
 
   !> \brief abstract definition of interface to solve a eigenvalue problem
@@ -329,11 +329,11 @@
 #if ELPA_IMPL_SUFFIX == dc
   !> \param   a           double complex matrix a: defines the problem to solve
   !> \param   ev          double real: on output stores the eigenvalues
-#endif  
+#endif
 #if ELPA_IMPL_SUFFIX ==fc
   !> \param   a           single complex matrix a: defines the problem to solve
   !> \param   ev          single real: on output stores the eigenvalues
-#endif  
+#endif
   !> \result  error       integer, optional : error code, which can be queried with elpa_strerr
   abstract interface
     subroutine elpa_eigenvalues_d_ptr_&
@@ -351,7 +351,7 @@
       integer             :: error
 #endif
     end subroutine
-  end interface       
+  end interface
 
 
 #ifdef HAVE_SKEWSYMMETRIC
@@ -437,7 +437,7 @@
       integer             :: error
 #endif
     end subroutine
-  end interface       
+  end interface
 #endif /* HAVE_SKEWSYMMETRIC */
 
 ! _________________________________________________________________________________________________
@@ -454,19 +454,19 @@
   !> Parameters
   !> \details
   !> \param   self        class(elpa_t), the ELPA object
-#if ELPA_IMPL_SUFFIX == d   
+#if ELPA_IMPL_SUFFIX == d
   !> \param   a           double real matrix a: defines the problem to solve
   !> \param   b           double real matrix b: defines the problem to solve
   !> \param   ev          double real: on output stores the eigenvalues
   !> \param   q           double real matrix q: on output stores the eigenvalues
 #endif
-#if ELPA_IMPL_SUFFIX == f  
+#if ELPA_IMPL_SUFFIX == f
   !> \param   a           single real matrix a: defines the problem to solve
   !> \param   b           single real matrix b: defines the problem to solve
   !> \param   ev          single real: on output stores the eigenvalues
   !> \param   q           single real matrix q: on output stores the eigenvalues
 #endif
-#if ELPA_IMPL_SUFFIX == dc  
+#if ELPA_IMPL_SUFFIX == dc
   !> \param   a           double complex matrix a: defines the problem to solve
   !> \param   b           double complex matrix b: defines the problem to solve
   !> \param   ev          double real: on output stores the eigenvalues
@@ -515,19 +515,19 @@
   !> Parameters
   !> \details
   !> \param   self        class(elpa_t), the ELPA object
-#if ELPA_IMPL_SUFFIX == d   
+#if ELPA_IMPL_SUFFIX == d
   !> \param   a           double real matrix a: defines the problem to solve
   !> \param   b           double real matrix b: defines the problem to solve
   !> \param   ev          double real: on output stores the eigenvalues
   !> \param   q           double real matrix q: on output stores the eigenvalues
 #endif
-#if ELPA_IMPL_SUFFIX == f  
+#if ELPA_IMPL_SUFFIX == f
   !> \param   a           single real matrix a: defines the problem to solve
   !> \param   b           single real matrix b: defines the problem to solve
   !> \param   ev          single real: on output stores the eigenvalues
   !> \param   q           single real matrix q: on output stores the eigenvalues
 #endif
-#if ELPA_IMPL_SUFFIX == dc  
+#if ELPA_IMPL_SUFFIX == dc
   !> \param   a           double complex matrix a: defines the problem to solve
   !> \param   b           double complex matrix b: defines the problem to solve
   !> \param   ev          double real: on output stores the eigenvalues
@@ -550,14 +550,14 @@
       import elpa_t
       implicit none
       class(elpa_t)       :: self
-      
+
       type(c_ptr)         :: aDev, bDev, evDev, qDev
 
       logical             :: is_already_decomposed
       integer, optional   :: error
     end subroutine
   end interface
-  
+
 ! _________________________________________________________________________________________________
 
   !> \brief abstract definition of interface to solve a generalized eigenvalue problem, using host arrays
@@ -572,17 +572,17 @@
   !> Parameters
   !> \details
   !> \param   self        class(elpa_t), the ELPA object
-#if ELPA_IMPL_SUFFIX == d   
+#if ELPA_IMPL_SUFFIX == d
   !> \param   a           double real matrix a: defines the problem to solve
   !> \param   b           double real matrix b: defines the problem to solve
   !> \param   ev          double real: on output stores the eigenvalues
 #endif
-#if ELPA_IMPL_SUFFIX == f  
+#if ELPA_IMPL_SUFFIX == f
   !> \param   a           single real matrix a: defines the problem to solve
   !> \param   b           single real matrix b: defines the problem to solve
   !> \param   ev          single real: on output stores the eigenvalues
 #endif
-#if ELPA_IMPL_SUFFIX == dc  
+#if ELPA_IMPL_SUFFIX == dc
   !> \param   a           double complex matrix a: defines the problem to solve
   !> \param   b           double complex matrix b: defines the problem to solve
   !> \param   ev          double real: on output stores the eigenvalues
@@ -629,17 +629,17 @@
   !> Parameters
   !> \details
   !> \param   self        class(elpa_t), the ELPA object
-#if ELPA_IMPL_SUFFIX == d   
+#if ELPA_IMPL_SUFFIX == d
   !> \param   a           double real matrix a: defines the problem to solve
   !> \param   b           double real matrix b: defines the problem to solve
   !> \param   ev          double real: on output stores the eigenvalues
 #endif
-#if ELPA_IMPL_SUFFIX == f  
+#if ELPA_IMPL_SUFFIX == f
   !> \param   a           single real matrix a: defines the problem to solve
   !> \param   b           single real matrix b: defines the problem to solve
   !> \param   ev          single real: on output stores the eigenvalues
 #endif
-#if ELPA_IMPL_SUFFIX == dc  
+#if ELPA_IMPL_SUFFIX == dc
   !> \param   a           double complex matrix a: defines the problem to solve
   !> \param   b           double complex matrix b: defines the problem to solve
   !> \param   ev          double real: on output stores the eigenvalues
@@ -667,7 +667,7 @@
       logical             :: is_already_decomposed
       integer, optional   :: error
     end subroutine
-  end interface  
+  end interface
 
 ! _________________________________________________________________________________________________
 
@@ -917,8 +917,8 @@
     end subroutine
   end interface
 
-! _________________________________________________________________________________________________________________________________ 
-  
+! _________________________________________________________________________________________________________________________________
+
   !> \brief abstract definition of interface to do a cholesky decomposition of a matrix
   !>
   !>  The dimensions of the matrix a (locally distributed and global), the block-cylic-distribution

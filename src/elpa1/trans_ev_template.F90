@@ -116,7 +116,7 @@ subroutine trans_ev_cpu_&
   use trans_ev_gpu
 #if defined(WITH_NVIDIA_GPU_VERSION) && defined(WITH_NVTX)
   use cuda_functions ! for NVTX labels
-#elif defined(WITH_AMD_GPU_VERSION) && defined(WITH_ROCTX) 
+#elif defined(WITH_AMD_GPU_VERSION) && defined(WITH_ROCTX)
   use hip_functions  ! for ROCTX labels
 #endif
   use elpa_ccl_gpu
@@ -160,12 +160,12 @@ subroutine trans_ev_cpu_&
   MATH_DATATYPE(kind=rck), allocatable          :: h(:), tmp_debug(:)
   MATH_DATATYPE(kind=rck), pointer              :: tmat(:,:)
   MATH_DATATYPE(kind=rck), pointer              :: hvm1(:)
-  
+
   type(c_ptr)                                   :: tmp_host, hvm1_host, tmat_host
   integer(kind=c_intptr_t)                      :: tmp_dev, hvb_dev, hvm_dev, tmat_dev, h_dev, h1_buffer_dev
   integer(kind=c_intptr_t)                      :: shift_dev, shift_h_dev
   integer(kind=c_intptr_t)                      :: num, num_el
-  
+
   character(200)                                :: errorMessage
   integer(kind=ik)                              :: istat, error
   integer(kind=MPI_KIND)                        :: bcast_request1, allreduce_request1, allreduce_request2
@@ -228,7 +228,7 @@ subroutine trans_ev_cpu_&
     if (useCCL) then
       useCCL_int = 1
     endif
-  
+
     ccl_comm_rows = obj%gpu_setup%ccl_comm_rows
     ccl_comm_cols = obj%gpu_setup%ccl_comm_cols
 
@@ -296,7 +296,7 @@ subroutine trans_ev_cpu_&
   np_rows = obj%mpi_setup%nRanks_comm_rows
   np_cols = obj%mpi_setup%nRanks_comm_cols
 
-  call obj%get("max_stored_rows",max_stored_rows_fac, error)  ! PETERDEBUG: default 256. 
+  call obj%get("max_stored_rows",max_stored_rows_fac, error)  ! PETERDEBUG: default 256.
                                                               ! check whether for GPU it should be increased
                                                               ! size for GEMM should be at least 5000 (A100)
 
@@ -364,7 +364,7 @@ subroutine trans_ev_cpu_&
       else
         allocate(tmp(max_local_cols*max_stored_rows))
       endif
-    endif ! (.not. useCCL) 
+    endif ! (.not. useCCL)
 
     successGPU = gpu_malloc(tmat_dev, max_stored_rows * max_stored_rows * size_of_datatype)
     check_alloc_gpu("trans_ev", successGPU)
@@ -513,7 +513,7 @@ subroutine trans_ev_cpu_&
 
         successGPU = gpu_stream_synchronize(my_stream)
         check_stream_synchronize_gpu("trans_ev: ccl_bcast", successGPU)
-        
+
         call obj%timer%stop("ccl_bcast")
         NVTX_RANGE_POP("ccl_bcast")
       else ! useCCL
@@ -591,7 +591,7 @@ subroutine trans_ev_cpu_&
   !     end do
   !     write(*,*)  ! move to next line
   !  end do
-    
+
     ! PETERDEBUG: for GPU, and big max_stored_rows, isn't it more efficient to do one MPI_send instead of many?
     ! Please note: for smaller matix sizes (na/np_rows<=256), a value of 32 for nstor is enough!
     if (nstor+nblk > max_stored_rows .or. istep+nblk > na .or. (na/np_rows <= 256 .and. nstor >= 32)) then
@@ -632,7 +632,7 @@ subroutine trans_ev_cpu_&
             num = max_local_rows*max_stored_rows * size_of_datatype
             successGPU = gpu_memcpy(int(loc(hvm(1,1)),kind=c_intptr_t), hvm_dev, num, gpuMemcpyDeviceToHost)
             check_memcpy_gpu("trans_ev hvm_dev -> hvm", successGPU)
-            
+
             tmat = 0
           endif ! is_sycl_cpu
 
@@ -647,7 +647,7 @@ subroutine trans_ev_cpu_&
                             int(nstor,kind=BLAS_KIND), int(l_rows,kind=BLAS_KIND), ONE, &
                             hvm, int(ubound(hvm,dim=1),kind=BLAS_KIND), ZERO, &
                             tmat, int(max_stored_rows,kind=BLAS_KIND))
-          
+
           NVTX_RANGE_POP("blas_syrk")
           call obj%timer%stop("blas_syrk")
 
@@ -666,7 +666,7 @@ subroutine trans_ev_cpu_&
                 ("trans_ev: tmat_dev -> tmat", tmat_dev, 0_c_intptr_t, &
                 tmat(1:max_stored_rows,1:max_stored_rows), &
                 1, 1, num_el*size_of_datatype, gpuMemcpyDeviceToHost, my_stream, .false., .true., .false.)
-#else              
+#else
         successGPU = gpu_memcpy(int(loc(tmat(1,1)),kind=c_intptr_t), tmat_dev, num_el*size_of_datatype, gpuMemcpyDeviceToHost)
         check_memcpy_gpu("trans_ev", successGPU)
 #endif
@@ -689,7 +689,7 @@ subroutine trans_ev_cpu_&
         nc = 0
         do n = 1, nstor-1
           h(nc+1:nc+n) = tmat(1:n,n+1)
-          nc = nc+n ! PETERDEBUG: on GPU: nc += max_stored_rows 
+          nc = nc+n ! PETERDEBUG: on GPU: nc += max_stored_rows
         enddo
       endif ! useCCL
 
@@ -700,7 +700,7 @@ subroutine trans_ev_cpu_&
           call obj%timer%start("ccl_allreduce")
           successGPU = ccl_allreduce(h_dev, h_dev, int(k_datatype*nc,kind=c_size_t), &
                                      cclDatatype, cclSum, ccl_comm_rows, my_stream)
-          
+
           if (.not. successGPU) then
             print *,"Error in ccl_allreduce"
             stop 1
@@ -740,7 +740,7 @@ subroutine trans_ev_cpu_&
       endif ! useGPU
 
 
-      ! Calculate triangular matrix T. 
+      ! Calculate triangular matrix T.
       ! What was previously stored in (upper part of) tmat is now stored in h, old values of tmat are not needed anymore
 
       ! PETERDEBUG: we can write a kernel here
@@ -816,7 +816,7 @@ subroutine trans_ev_cpu_&
         if (wantDebug) successGPU = gpu_DeviceSynchronize()
         call obj%timer%stop("gpu_trmv_kernel_loop")
         NVTX_RANGE_POP("trmv_loop")
-        
+
         !NVTX_RANGE_POP("gpublas_trmv+gpu_update_tmat loop")
       else ! useGPU
         nc = 0
@@ -837,7 +837,7 @@ subroutine trans_ev_cpu_&
 #elif COMPLEXCASE == 1
           tmat(n+1,1:n) = -conjg(h(nc+1:nc+n)) *tau(ice-nstor+n+1)
 #endif
-          
+
           tmat(n+1,n+1) = tau(ice-nstor+n+1)
           nc = nc+n
         enddo
@@ -923,7 +923,7 @@ subroutine trans_ev_cpu_&
           print *,"Error in ccl_allreduce"
           stop
         endif
-          
+
         successGPU = gpu_stream_synchronize(my_stream)
         check_stream_synchronize_gpu("trans_ev", successGPU)
         NVTX_RANGE_POP("ccl_allreduce")

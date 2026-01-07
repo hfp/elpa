@@ -31,7 +31,7 @@ subroutine elpa_cssr2(n, x, y,  a, lda )
   ! test the input parameters.
   info = 0
   if (n == 0) then
-    return 
+    return
   end if
   if ( n < 0 ) then
     info = 1
@@ -48,7 +48,7 @@ subroutine elpa_cssr2(n, x, y,  a, lda )
     jc = min( nb, n-jj+1 )
     jx = 1 + (jj-1)
     jy = 1 + (jj-1)
-     
+
     do j = 1, jc-1
     ! Do local update for blocks on the diagonal
       if ( ( x( jx + j -1) /= zero ) .or. &
@@ -60,7 +60,7 @@ subroutine elpa_cssr2(n, x, y,  a, lda )
         end do
       end if
     end do
-            
+
     ! Use dger for other blocks
     do ii = jj+nb, n, nb
       ic = min( nb, n-ii+1 )

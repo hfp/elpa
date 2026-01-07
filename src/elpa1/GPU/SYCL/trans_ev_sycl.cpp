@@ -73,7 +73,7 @@ void sycl_scale_qmat_complex(int *ldq_in, int *l_cols_in, std::complex<T> *q_dev
   sycl::queue q = getQueueOrDefault(my_stream);
   sycl::range<1> threadsPerBlock = maxWorkgroupSize<1>(q);
   sycl::range<1> blocks((l_cols + threadsPerBlock - 1) / threadsPerBlock);
-  
+
   q.parallel_for(sycl::nd_range<1>(blocks * threadsPerBlock, threadsPerBlock), [=](sycl::nd_item<1> it) {
       T one(1.0);
       T zero(0.0);
@@ -155,7 +155,7 @@ void gpu_copy_hvb_a(T *hvb_dev, T *a_dev, int *ld_hvb_in, int *lda_in, int *my_p
   int ice = *ice_in;
   int SM_count = *SM_count_in;
   int debug = *debug_in;
-  
+
   if (SM_count <= 0) {
     errormessage("gpu_copy_hvb_a: SM_count must be greater than 0, but is %d\n", SM_count);
     return;
@@ -172,7 +172,7 @@ void gpu_copy_hvb_a(T *hvb_dev, T *a_dev, int *ld_hvb_in, int *lda_in, int *my_p
 
 extern "C" void CONCATENATE(ELPA_GPU,  _copy_hvb_a_FromC) (char dataType, intptr_t hvb_dev, intptr_t a_dev,
                                       int *ld_hvb_in, int *lda_in, int *my_prow_in, int *np_rows_in,
-                                      int *my_pcol_in, int *np_cols_in, int *nblk_in, int *ics_in, int *ice_in, 
+                                      int *my_pcol_in, int *np_cols_in, int *nblk_in, int *ics_in, int *ice_in,
                                       int *SM_count_in, int *debug_in, gpuStream_t my_stream){
   if      (dataType=='D') gpu_copy_hvb_a<double>((double *) hvb_dev, (double *) a_dev, ld_hvb_in, lda_in, my_prow_in, np_rows_in, my_pcol_in, np_cols_in, nblk_in, ics_in, ice_in, SM_count_in, debug_in, my_stream);
   else if (dataType=='S') gpu_copy_hvb_a<float> ((float  *) hvb_dev, (float  *) a_dev, ld_hvb_in, lda_in, my_prow_in, np_rows_in, my_pcol_in, np_cols_in, nblk_in, ics_in, ice_in, SM_count_in, debug_in, my_stream);
@@ -237,7 +237,7 @@ void gpu_copy_hvm_hvb(T *hvm_dev, T *hvb_dev, int *ld_hvm_in, int *ld_hvb_in, in
   q.parallel_for(sycl::nd_range<1>(blocks * threadsPerBlock, threadsPerBlock), [=](sycl::nd_item<1> it) {
     gpu_copy_hvm_hvb_kernel(hvm_dev, hvb_dev, ld_hvm, ld_hvb, my_prow, np_rows, nstor, nblk, ics, ice, it);
   });
-  
+
   if (debug) {
     q.wait_and_throw();
     syclDeviceSynchronizeFromC();
@@ -246,7 +246,7 @@ void gpu_copy_hvm_hvb(T *hvm_dev, T *hvb_dev, int *ld_hvm_in, int *ld_hvb_in, in
 
 extern "C" void CONCATENATE(ELPA_GPU,  _copy_hvm_hvb_FromC) (char dataType, intptr_t hvm_dev, intptr_t hvb_dev,
                                       int *ld_hvm_in, int *ld_hvb_in, int *my_prow_in, int *np_rows_in,
-                                      int *nstor_in, int *nblk_in, int *ics_in, int *ice_in, 
+                                      int *nstor_in, int *nblk_in, int *ics_in, int *ice_in,
                                       int *SM_count_in, int *debug_in, gpuStream_t my_stream){
   if      (dataType=='D') gpu_copy_hvm_hvb<double>((double *) hvm_dev, (double *) hvb_dev, ld_hvm_in, ld_hvb_in, my_prow_in, np_rows_in, nstor_in, nblk_in, ics_in, ice_in, SM_count_in, debug_in, my_stream);
   else if (dataType=='S') gpu_copy_hvm_hvb<float> ((float  *) hvm_dev, (float  *) hvb_dev, ld_hvm_in, ld_hvb_in, my_prow_in, np_rows_in, nstor_in, nblk_in, ics_in, ice_in, SM_count_in, debug_in, my_stream);
@@ -273,7 +273,7 @@ void gpu_update_tmat(T *tmat_dev, T *h_dev, T *tau_curr_dev, int *max_stored_row
   int n = *n_in;
   int SM_count = *SM_count_in;
   int debug = *debug_in;
-  
+
   sycl::queue q = getQueueOrDefault(my_stream);
   sycl::range<1> threadsPerBlock(1);
   sycl::range<1> blocks(SM_count);
@@ -374,7 +374,7 @@ void gpu_trmv(T *tmat_dev, T *h_dev, T *result_buffer_dev, T *tau_curr_dev, int 
     });
   });
 
-  
+
   // PETERDEBUG: cleanup. too much overhead, if called in tight loop?
   if (debug) {
     q.wait_and_throw();

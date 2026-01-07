@@ -290,7 +290,7 @@ module tridiag_gpu
   end subroutine
 
   !________________________________________________________________
-  
+
   subroutine gpu_dot_product_and_assign_double(v_row_dev, l_rows, isOurProcessRow, aux1_dev, wantDebug, my_stream)
     use, intrinsic :: iso_c_binding
     use precision
@@ -380,7 +380,7 @@ module tridiag_gpu
 
   !________________________________________________________________
 
-  subroutine gpu_set_e_vec_scale_set_one_store_v_row_double(e_vec_dev, vrl_dev, a_dev, v_row_dev, tau_dev, xf_host_or_dev, & 
+  subroutine gpu_set_e_vec_scale_set_one_store_v_row_double(e_vec_dev, vrl_dev, a_dev, v_row_dev, tau_dev, xf_host_or_dev, &
                                                             l_rows, l_cols, matrixRows, istep, isOurProcessRow, useCCL, &
                                                             wantDebug, my_stream)
     use, intrinsic :: iso_c_binding
@@ -410,7 +410,7 @@ module tridiag_gpu
   end subroutine
 
 
-  subroutine gpu_set_e_vec_scale_set_one_store_v_row_float(e_vec_dev, vrl_dev, a_dev, v_row_dev, tau_dev, xf_host_or_dev, & 
+  subroutine gpu_set_e_vec_scale_set_one_store_v_row_float(e_vec_dev, vrl_dev, a_dev, v_row_dev, tau_dev, xf_host_or_dev, &
                                                             l_rows, l_cols, matrixRows, istep, isOurProcessRow, useCCL, &
                                                             wantDebug, my_stream)
     use, intrinsic :: iso_c_binding
@@ -440,7 +440,7 @@ module tridiag_gpu
   end subroutine
 
 
-  subroutine gpu_set_e_vec_scale_set_one_store_v_row_double_complex(e_vec_dev, vrl_dev, a_dev, v_row_dev, tau_dev, xf_host_or_dev, & 
+  subroutine gpu_set_e_vec_scale_set_one_store_v_row_double_complex(e_vec_dev, vrl_dev, a_dev, v_row_dev, tau_dev, xf_host_or_dev, &
                                                             l_rows, l_cols, matrixRows, istep, isOurProcessRow, useCCL, &
                                                             wantDebug, my_stream)
     use, intrinsic :: iso_c_binding
@@ -470,7 +470,7 @@ module tridiag_gpu
   end subroutine
 
 
-  subroutine gpu_set_e_vec_scale_set_one_store_v_row_float_complex(e_vec_dev, vrl_dev, a_dev, v_row_dev, tau_dev, xf_host_or_dev, & 
+  subroutine gpu_set_e_vec_scale_set_one_store_v_row_float_complex(e_vec_dev, vrl_dev, a_dev, v_row_dev, tau_dev, xf_host_or_dev, &
                                                             l_rows, l_cols, matrixRows, istep, isOurProcessRow, useCCL, &
                                                             wantDebug, my_stream)
     use, intrinsic :: iso_c_binding
@@ -501,7 +501,7 @@ module tridiag_gpu
 
   !________________________________________________________________
 
-  subroutine gpu_store_u_v_in_uv_vu_double(vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, & 
+  subroutine gpu_store_u_v_in_uv_vu_double(vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, &
                                            v_col_dev, u_col_dev, tau_dev, aux_complex_dev, &
                                            vav_host_or_dev, tau_istep_host_or_dev, &
                                            l_rows, l_cols, n_stored_vecs, max_local_rows, max_local_cols, istep, &
@@ -518,21 +518,21 @@ module tridiag_gpu
     integer(kind=c_intptr_t)            :: my_stream
 
 #ifdef WITH_NVIDIA_GPU_VERSION
-    call cuda_store_u_v_in_uv_vu_double(vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, & 
+    call cuda_store_u_v_in_uv_vu_double(vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, &
                                         v_col_dev, u_col_dev, tau_dev, aux_complex_dev, &
                                         vav_host_or_dev, tau_istep_host_or_dev, &
                                         l_rows, l_cols, n_stored_vecs, max_local_rows, max_local_cols, istep, &
                                         useCCL, wantDebug, my_stream)
 #endif
 #ifdef WITH_AMD_GPU_VERSION
-    call hip_store_u_v_in_uv_vu_double (vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, & 
+    call hip_store_u_v_in_uv_vu_double (vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, &
                                         v_col_dev, u_col_dev, tau_dev, aux_complex_dev, &
                                         vav_host_or_dev, tau_istep_host_or_dev, &
                                         l_rows, l_cols, n_stored_vecs, max_local_rows, max_local_cols, istep, &
                                         useCCL, wantDebug, my_stream)
 #endif
 #ifdef WITH_SYCL_GPU_VERSION
-    call sycl_store_u_v_in_uv_vu_double(vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, & 
+    call sycl_store_u_v_in_uv_vu_double(vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, &
                                         v_col_dev, u_col_dev, tau_dev, aux_complex_dev, &
                                         vav_host_or_dev, tau_istep_host_or_dev, &
                                         l_rows, l_cols, n_stored_vecs, max_local_rows, max_local_cols, istep, &
@@ -541,7 +541,7 @@ module tridiag_gpu
   end subroutine
 
 
-  subroutine gpu_store_u_v_in_uv_vu_float(vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, & 
+  subroutine gpu_store_u_v_in_uv_vu_float(vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, &
                                            v_col_dev, u_col_dev, tau_dev, aux_complex_dev, &
                                            vav_host_or_dev, tau_istep_host_or_dev, &
                                            l_rows, l_cols, n_stored_vecs, max_local_rows, max_local_cols, istep, &
@@ -558,21 +558,21 @@ module tridiag_gpu
     integer(kind=c_intptr_t)            :: my_stream
 
 #ifdef WITH_NVIDIA_GPU_VERSION
-    call cuda_store_u_v_in_uv_vu_float(vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, & 
+    call cuda_store_u_v_in_uv_vu_float(vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, &
                                         v_col_dev, u_col_dev, tau_dev, aux_complex_dev, &
                                         vav_host_or_dev, tau_istep_host_or_dev, &
                                         l_rows, l_cols, n_stored_vecs, max_local_rows, max_local_cols, istep, &
                                         useCCL, wantDebug, my_stream)
 #endif
 #ifdef WITH_AMD_GPU_VERSION
-    call hip_store_u_v_in_uv_vu_float (vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, & 
+    call hip_store_u_v_in_uv_vu_float (vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, &
                                         v_col_dev, u_col_dev, tau_dev, aux_complex_dev, &
                                         vav_host_or_dev, tau_istep_host_or_dev, &
                                         l_rows, l_cols, n_stored_vecs, max_local_rows, max_local_cols, istep, &
                                         useCCL, wantDebug, my_stream)
 #endif
 #ifdef WITH_SYCL_GPU_VERSION
-    call sycl_store_u_v_in_uv_vu_float(vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, & 
+    call sycl_store_u_v_in_uv_vu_float(vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, &
                                         v_col_dev, u_col_dev, tau_dev, aux_complex_dev, &
                                         vav_host_or_dev, tau_istep_host_or_dev, &
                                         l_rows, l_cols, n_stored_vecs, max_local_rows, max_local_cols, istep, &
@@ -581,7 +581,7 @@ module tridiag_gpu
   end subroutine
 
 
-    subroutine gpu_store_u_v_in_uv_vu_double_complex(vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, & 
+    subroutine gpu_store_u_v_in_uv_vu_double_complex(vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, &
                                            v_col_dev, u_col_dev, tau_dev, aux_complex_dev, &
                                            vav_host_or_dev, tau_istep_host_or_dev, &
                                            l_rows, l_cols, n_stored_vecs, max_local_rows, max_local_cols, istep, &
@@ -598,21 +598,21 @@ module tridiag_gpu
     integer(kind=c_intptr_t)            :: my_stream
 
 #ifdef WITH_NVIDIA_GPU_VERSION
-    call cuda_store_u_v_in_uv_vu_double_complex(vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, & 
+    call cuda_store_u_v_in_uv_vu_double_complex(vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, &
                                         v_col_dev, u_col_dev, tau_dev, aux_complex_dev, &
                                         vav_host_or_dev, tau_istep_host_or_dev, &
                                         l_rows, l_cols, n_stored_vecs, max_local_rows, max_local_cols, istep, &
                                         useCCL, wantDebug, my_stream)
 #endif
 #ifdef WITH_AMD_GPU_VERSION
-    call hip_store_u_v_in_uv_vu_double_complex (vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, & 
+    call hip_store_u_v_in_uv_vu_double_complex (vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, &
                                         v_col_dev, u_col_dev, tau_dev, aux_complex_dev, &
                                         vav_host_or_dev, tau_istep_host_or_dev, &
                                         l_rows, l_cols, n_stored_vecs, max_local_rows, max_local_cols, istep, &
                                         useCCL, wantDebug, my_stream)
 #endif
 #ifdef WITH_SYCL_GPU_VERSION
-    call sycl_store_u_v_in_uv_vu_double_complex(vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, & 
+    call sycl_store_u_v_in_uv_vu_double_complex(vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, &
                                         v_col_dev, u_col_dev, tau_dev, aux_complex_dev, &
                                         vav_host_or_dev, tau_istep_host_or_dev, &
                                         l_rows, l_cols, n_stored_vecs, max_local_rows, max_local_cols, istep, &
@@ -621,7 +621,7 @@ module tridiag_gpu
   end subroutine
 
 
-  subroutine gpu_store_u_v_in_uv_vu_float_complex(vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, & 
+  subroutine gpu_store_u_v_in_uv_vu_float_complex(vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, &
                                            v_col_dev, u_col_dev, tau_dev, aux_complex_dev, &
                                            vav_host_or_dev, tau_istep_host_or_dev, &
                                            l_rows, l_cols, n_stored_vecs, max_local_rows, max_local_cols, istep, &
@@ -638,21 +638,21 @@ module tridiag_gpu
     integer(kind=c_intptr_t)            :: my_stream
 
 #ifdef WITH_NVIDIA_GPU_VERSION
-    call cuda_store_u_v_in_uv_vu_float_complex(vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, & 
+    call cuda_store_u_v_in_uv_vu_float_complex(vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, &
                                         v_col_dev, u_col_dev, tau_dev, aux_complex_dev, &
                                         vav_host_or_dev, tau_istep_host_or_dev, &
                                         l_rows, l_cols, n_stored_vecs, max_local_rows, max_local_cols, istep, &
                                         useCCL, wantDebug, my_stream)
 #endif
 #ifdef WITH_AMD_GPU_VERSION
-    call hip_store_u_v_in_uv_vu_float_complex (vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, & 
+    call hip_store_u_v_in_uv_vu_float_complex (vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, &
                                         v_col_dev, u_col_dev, tau_dev, aux_complex_dev, &
                                         vav_host_or_dev, tau_istep_host_or_dev, &
                                         l_rows, l_cols, n_stored_vecs, max_local_rows, max_local_cols, istep, &
                                         useCCL, wantDebug, my_stream)
 #endif
 #ifdef WITH_SYCL_GPU_VERSION
-    call sycl_store_u_v_in_uv_vu_float_complex(vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, & 
+    call sycl_store_u_v_in_uv_vu_float_complex(vu_stored_rows_dev, uv_stored_cols_dev, v_row_dev, u_row_dev, &
                                         v_col_dev, u_col_dev, tau_dev, aux_complex_dev, &
                                         vav_host_or_dev, tau_istep_host_or_dev, &
                                         l_rows, l_cols, n_stored_vecs, max_local_rows, max_local_cols, istep, &
@@ -661,7 +661,7 @@ module tridiag_gpu
   end subroutine
 
   !________________________________________________________________
-  
+
   subroutine gpu_update_matrix_element_add_double(vu_stored_rows_dev, uv_stored_cols_dev, a_dev, d_vec_dev, &
                                             l_rows, l_cols, matrixRows, max_local_rows, max_local_cols, istep, n_stored_vecs, &
                                             isSkewsymmetric, wantDebug, my_stream)
@@ -719,7 +719,7 @@ module tridiag_gpu
                                                l_rows, l_cols, matrixRows, max_local_rows, max_local_cols, istep, n_stored_vecs, &
                                                isSkewsymmetric, wantDebug, my_stream)
 #endif
-  end subroutine 
+  end subroutine
 
 
   subroutine gpu_update_matrix_element_add_double_complex(vu_stored_rows_dev, uv_stored_cols_dev, a_dev, d_vec_dev, &
@@ -779,7 +779,7 @@ module tridiag_gpu
                                                l_rows, l_cols, matrixRows, max_local_rows, max_local_cols, istep, n_stored_vecs, &
                                                isSkewsymmetric, wantDebug, my_stream)
 #endif
-  end subroutine 
+  end subroutine
 
   !________________________________________________________________
 
@@ -894,7 +894,7 @@ module tridiag_gpu
 #ifdef WITH_SYCL_GPU_VERSION
     call sycl_hh_transform_double(alpha_dev, xnorm_sq_dev, xf_dev, tau_dev, wantDebug, my_stream)
 #endif
-    
+
     if (wantDebug) call obj%timer%stop("gpu_hh_transform")
   end subroutine
 
@@ -920,7 +920,7 @@ module tridiag_gpu
 #ifdef WITH_SYCL_GPU_VERSION
     call sycl_hh_transform_float(alpha_dev, xnorm_sq_dev, xf_dev, tau_dev, wantDebug, my_stream)
 #endif
-    
+
     if (wantDebug) call obj%timer%stop("gpu_hh_transform")
   end subroutine
 
@@ -946,7 +946,7 @@ module tridiag_gpu
 #ifdef WITH_SYCL_GPU_VERSION
     call sycl_hh_transform_double_complex(alpha_dev, xnorm_sq_dev, xf_dev, tau_dev, wantDebug, my_stream)
 #endif
-    
+
     if (wantDebug) call obj%timer%stop("gpu_hh_transform")
   end subroutine
 
@@ -971,13 +971,13 @@ module tridiag_gpu
 #ifdef WITH_SYCL_GPU_VERSION
     call sycl_hh_transform_float_complex(alpha_dev, xnorm_sq_dev, xf_dev, tau_dev, wantDebug, my_stream)
 #endif
-    
+
     if (wantDebug) call obj%timer%stop("gpu_hh_transform")
   end subroutine
 
   !________________________________________________________________
 
-  subroutine gpu_transpose_reduceadd_vectors_copy_block_double(aux_transpose_dev, vmat_st_dev, & 
+  subroutine gpu_transpose_reduceadd_vectors_copy_block_double(aux_transpose_dev, vmat_st_dev, &
                                               nvc, nvr, n_block, nblks_skip, nblks_tot, &
                                               lcm_s_t, nblk, auxstride, np_st, ld_st, direction, &
                                               isSkewsymmetric, isReduceadd, wantDebug, sm_count, my_stream)
@@ -985,7 +985,7 @@ module tridiag_gpu
     use precision
     implicit none
 
-    integer(kind=c_int), intent(in)     :: nvc, nvr, n_block, nblks_skip, nblks_tot, lcm_s_t, nblk, auxstride, &  
+    integer(kind=c_int), intent(in)     :: nvc, nvr, n_block, nblks_skip, nblks_tot, lcm_s_t, nblk, auxstride, &
                                            np_st, ld_st, direction, sm_count
     integer(kind=c_intptr_t)            :: aux_transpose_dev, vmat_st_dev
     logical, intent(in)                 :: isSkewsymmetric, isReduceadd, wantDebug
@@ -1012,7 +1012,7 @@ module tridiag_gpu
   end subroutine
 
 
-  subroutine gpu_transpose_reduceadd_vectors_copy_block_float(aux_transpose_dev, vmat_st_dev, & 
+  subroutine gpu_transpose_reduceadd_vectors_copy_block_float(aux_transpose_dev, vmat_st_dev, &
                                               nvc, nvr, n_block, nblks_skip, nblks_tot, &
                                               lcm_s_t, nblk, auxstride, np_st, ld_st, direction, &
                                               isSkewsymmetric, isReduceadd, wantDebug, sm_count, my_stream)
@@ -1020,7 +1020,7 @@ module tridiag_gpu
     use precision
     implicit none
 
-    integer(kind=c_int), intent(in)     :: nvc, nvr, n_block, nblks_skip, nblks_tot, lcm_s_t, nblk, auxstride, &  
+    integer(kind=c_int), intent(in)     :: nvc, nvr, n_block, nblks_skip, nblks_tot, lcm_s_t, nblk, auxstride, &
                                            np_st, ld_st, direction, sm_count
     integer(kind=c_intptr_t)            :: aux_transpose_dev, vmat_st_dev
     logical, intent(in)                 :: isSkewsymmetric, isReduceadd, wantDebug
@@ -1047,7 +1047,7 @@ module tridiag_gpu
   end subroutine
 
 
-  subroutine gpu_transpose_reduceadd_vectors_copy_block_double_complex(aux_transpose_dev, vmat_st_dev, & 
+  subroutine gpu_transpose_reduceadd_vectors_copy_block_double_complex(aux_transpose_dev, vmat_st_dev, &
                                               nvc, nvr, n_block, nblks_skip, nblks_tot, &
                                               lcm_s_t, nblk, auxstride, np_st, ld_st, direction, &
                                               isSkewsymmetric, isReduceadd, wantDebug, sm_count, my_stream)
@@ -1055,7 +1055,7 @@ module tridiag_gpu
     use precision
     implicit none
 
-    integer(kind=c_int), intent(in)     :: nvc, nvr, n_block, nblks_skip, nblks_tot, lcm_s_t, nblk, auxstride, &  
+    integer(kind=c_int), intent(in)     :: nvc, nvr, n_block, nblks_skip, nblks_tot, lcm_s_t, nblk, auxstride, &
                                            np_st, ld_st, direction, sm_count
     integer(kind=c_intptr_t)            :: aux_transpose_dev, vmat_st_dev
     logical, intent(in)                 :: isSkewsymmetric, isReduceadd, wantDebug
@@ -1082,7 +1082,7 @@ module tridiag_gpu
   end subroutine
 
 
-  subroutine gpu_transpose_reduceadd_vectors_copy_block_float_complex(aux_transpose_dev, vmat_st_dev, & 
+  subroutine gpu_transpose_reduceadd_vectors_copy_block_float_complex(aux_transpose_dev, vmat_st_dev, &
                                               nvc, nvr, n_block, nblks_skip, nblks_tot, &
                                               lcm_s_t, nblk, auxstride, np_st, ld_st, direction, &
                                               isSkewsymmetric, isReduceadd, wantDebug, sm_count, my_stream)
@@ -1090,7 +1090,7 @@ module tridiag_gpu
     use precision
     implicit none
 
-    integer(kind=c_int), intent(in)     :: nvc, nvr, n_block, nblks_skip, nblks_tot, lcm_s_t, nblk, auxstride, &  
+    integer(kind=c_int), intent(in)     :: nvc, nvr, n_block, nblks_skip, nblks_tot, lcm_s_t, nblk, auxstride, &
                                            np_st, ld_st, direction, sm_count
     integer(kind=c_intptr_t)            :: aux_transpose_dev, vmat_st_dev
     logical, intent(in)                 :: isSkewsymmetric, isReduceadd, wantDebug

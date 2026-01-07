@@ -64,7 +64,7 @@ using namespace sycl_be;
 extern "C" int syclDeviceSynchronizeFromC();
 
 template <typename T>
-void gpu_update_d_kernel (T *d, T *e, int *limits, const int ndiv, const int na, 
+void gpu_update_d_kernel (T *d, T *e, int *limits, const int ndiv, const int na,
                           const sycl::nd_item<1> &it) {
   //int i = it.get_group(0) * it.get_local_range(0) + it.get_local_id(0);
 
@@ -101,7 +101,7 @@ extern "C" void CONCATENATE(ELPA_GPU,  _update_d_FromC)(char dataType, intptr_t 
 //________________________________________________________________
 
 template <typename T>
-void gpu_copy_qmat1_to_qmat2_kernel(T *qmat1, T *qmat2, const int max_size, 
+void gpu_copy_qmat1_to_qmat2_kernel(T *qmat1, T *qmat2, const int max_size,
                                     const sycl::nd_item<3> &it) {
   int i = it.get_group(0) * it.get_local_range(0) + it.get_local_id(0);
   int j = it.get_group(0) * it.get_local_range(0) + it.get_local_id(0);
@@ -119,7 +119,7 @@ void gpu_copy_qmat1_to_qmat2(T *qmat1_dev, T *qmat2_dev, int max_size, int debug
   sycl::queue q = getQueueOrDefault(my_stream);
   sycl::range<3> threadsPerBlock(1,32,32);
   sycl::range<3> blocks( 1,
-                        (max_size + threadsPerBlock.get(1) - 1) / threadsPerBlock.get(1), 
+                        (max_size + threadsPerBlock.get(1) - 1) / threadsPerBlock.get(1),
                         (max_size + threadsPerBlock.get(2) - 1) / threadsPerBlock.get(2));
 
   if (blocks.get(2)==0 || blocks.get(1)==0) return;
@@ -130,7 +130,7 @@ void gpu_copy_qmat1_to_qmat2(T *qmat1_dev, T *qmat2_dev, int max_size, int debug
   if (debug) syclDeviceSynchronizeFromC();
 }
 
-extern "C" void CONCATENATE(ELPA_GPU,  _copy_qmat1_to_qmat2_FromC)(char dataType, intptr_t qmat1_dev, intptr_t qmat2_dev, 
+extern "C" void CONCATENATE(ELPA_GPU,  _copy_qmat1_to_qmat2_FromC)(char dataType, intptr_t qmat1_dev, intptr_t qmat2_dev,
                                                                    int max_size, int debug, gpuStream_t my_stream) {
   if      (dataType=='D') gpu_copy_qmat1_to_qmat2<double>((double *) qmat1_dev, (double *) qmat2_dev, max_size, debug, my_stream);
   else if (dataType=='S') gpu_copy_qmat1_to_qmat2<float> ((float  *) qmat1_dev, (float  *) qmat2_dev, max_size, debug, my_stream);

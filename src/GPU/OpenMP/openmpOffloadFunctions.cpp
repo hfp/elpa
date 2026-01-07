@@ -42,8 +42,8 @@
 //    the original distribution, the GNU Lesser General Public License.
 //
 // This file was written by A. Marek, MPCDF (2022)
-// it is based on a prototype implementation developed for MPCDF 
-// by A. Poeppl, Intel (2022) 
+// it is based on a prototype implementation developed for MPCDF
+// by A. Poeppl, Intel (2022)
 */
 #include "config-f90.h"
 
@@ -94,7 +94,7 @@ extern "C" {
     //stub function
     return 1;
   }
-  
+
   int openmpOffloadsolverCreateFromC(intptr_t* handle){
     //stub function
     return 1;
@@ -104,7 +104,7 @@ extern "C" {
     //stub function
     return 1;
   }
-  
+
   int openmpOffloadMallocFromC(intptr_t *a, size_t elems) {
       int device = openmpOffloadChosenGpu;
       *a = (intptr_t) omp_target_alloc(elems, device);
@@ -187,7 +187,7 @@ extern "C" {
 #ifdef OPENMP_OFFLOAD_DEBUG
       std::cout << "DGEMM" << std::endl;
 #endif
-  }  
+  }
 
   void mklOpenmpOffloadSgemmFromC(intptr_t *handle, char cta, char ctb, int m, int n, int k, float alpha, void *a, int lda, void *b, int ldb, float beta, void *c, int ldc) {
       //handle not needed
@@ -229,7 +229,7 @@ extern "C" {
 #ifdef OPENMP_OFFLOAD_DEBUG
       std::cout << "DTRTRI" << std::endl;
 #endif
-  }  
+  }
 
   void mklOpenmpOffloadStrtriFromC(intptr_t *handle, char uplo, char diag, int n, void *a, int lda, int info) {
       //handle not needed
@@ -238,7 +238,7 @@ extern "C" {
 #ifdef OPENMP_OFFLOAD_DEBUG
       std::cout << "STRTRI" << std::endl;
 #endif
-  }  
+  }
 
   void mklOpenmpOffloadZtrtriFromC(intptr_t *handle, char uplo, char diag, int n, void *a, int lda, int info) {
       //handle not needed
@@ -247,7 +247,7 @@ extern "C" {
 #ifdef OPENMP_OFFLOAD_DEBUG
       std::cout << "ZTRTRI" << std::endl;
 #endif
-  }  
+  }
 
   void mklOpenmpOffloadCtrtriFromC(intptr_t *handle, char uplo, char diag, int n, void *a, int lda, int info) {
       //handle not needed
@@ -256,7 +256,7 @@ extern "C" {
 #ifdef OPENMP_OFFLOAD_DEBUG
       std::cout << "CTRTRI" << std::endl;
 #endif
-  }  
+  }
 
   void mklOpenmpOffloadDpotrfFromC(intptr_t *handle, char uplo, int n, void *a, int lda, int info) {
       //handle not needed
@@ -265,7 +265,7 @@ extern "C" {
 #ifdef OPENMP_OFFLOAD_DEBUG
       std::cout << "DPOTRF" << std::endl;
 #endif
-  }  
+  }
 
   void mklOpenmpOffloadSpotrfFromC(intptr_t *handle, char uplo, int n, void *a, int lda, int info) {
       //handle not needed
@@ -274,7 +274,7 @@ extern "C" {
 #ifdef OPENMP_OFFLOAD_DEBUG
       std::cout << "SPOTRF" << std::endl;
 #endif
-  }  
+  }
 
   void mklOpenmpOffloadZpotrfFromC(intptr_t *handle, char uplo, int n, void *a, int lda, int info) {
       //handle not needed
@@ -283,7 +283,7 @@ extern "C" {
 #ifdef OPENMP_OFFLOAD_DEBUG
       std::cout << "ZPOTRF" << std::endl;
 #endif
-  }  
+  }
 
   void mklOpenmpOffloadCpotrfFromC(intptr_t *handle, char uplo, int n, void *a, int lda, int info) {
       //handle not needed
@@ -301,7 +301,7 @@ extern "C" {
 #ifdef OPENMP_OFFLOAD_DEBUG
       std::cout << "DCOPY" << std::endl;
 #endif
-  }  
+  }
 
   void mklOpenmpOffloadScopyFromC(intptr_t *handle, int n, void *x, int incx, void *y, int incy) {
       //handle not needed
@@ -310,7 +310,7 @@ extern "C" {
 #ifdef OPENMP_OFFLOAD_DEBUG
       std::cout << "SCOPY" << std::endl;
 #endif
-  }  
+  }
 
   void mklOpenmpOffloadZcopyFromC(intptr_t *handle, int n, void *x, int incx, void *y, int incy) {
       //handle not needed
@@ -319,7 +319,7 @@ extern "C" {
 #ifdef OPENMP_OFFLOAD_DEBUG
       std::cout << "ZCOPY" << std::endl;
 #endif
-  }  
+  }
 
   void mklOpenmpOffloadCcopyFromC(intptr_t *handle, int n, void *x, int incx, void *y, int incy) {
       //handle not needed
@@ -328,7 +328,7 @@ extern "C" {
 #ifdef OPENMP_OFFLOAD_DEBUG
       std::cout << "CCOPY" << std::endl;
 #endif
-  }  
+  }
 
 
   void mklOpenmpOffloadDtrmmFromC(intptr_t *handle, char side, char uplo, char trans, char diag, int m, int n, double alpha, void *a, int lda, void *b, int ldb) {
@@ -338,7 +338,7 @@ extern "C" {
 #ifdef OPENMP_OFFLOAD_DEBUG
       std::cout << "DTRMM" << std::endl;
 #endif
-  }  
+  }
 
   void mklOpenmpOffloadStrmmFromC(intptr_t *handle, char side, char uplo, char trans, char diag, int m, int n, float alpha, void *a, int lda, void *b, int ldb) {
       //handle not needed
@@ -347,7 +347,7 @@ extern "C" {
 #ifdef OPENMP_OFFLOAD_DEBUG
       std::cout << "STRMM" << std::endl;
 #endif
-  }  
+  }
 
   void mklOpenmpOffloadZtrmmFromC(intptr_t *handle, char side, char uplo, char trans, char diag, int m, int n, MKL_Complex16 alpha, void *a, int lda, void *b, int ldb) {
       //handle not needed
@@ -356,7 +356,7 @@ extern "C" {
 #ifdef OPENMP_OFFLOAD_DEBUG
       std::cout << "ZTRMM" << std::endl;
 #endif
-  }  
+  }
 
   void mklOpenmpOffloadCtrmmFromC(intptr_t *handle, char side, char uplo, char trans,  char diag, int m, int n, MKL_Complex8 alpha, void *a, int lda, void *b, int ldb) {
       //handle not needed
@@ -365,7 +365,7 @@ extern "C" {
 #ifdef OPENMP_OFFLOAD_DEBUG
       std::cout << "CTRMM" << std::endl;
 #endif
-  }  
+  }
 
 
   void mklOpenmpOffloadDtrsmFromC(intptr_t *handle, char side, char uplo, char trans, char diag, int m, int n, double alpha, void *a, int lda, void *b, int ldb) {
@@ -375,7 +375,7 @@ extern "C" {
 #ifdef OPENMP_OFFLOAD_DEBUG
       std::cout << "DTRSM" << std::endl;
 #endif
-  }  
+  }
 
   void mklOpenmpOffloadStrsmFromC(intptr_t *handle, char side, char uplo, char trans, char diag, int m, int n, float alpha, void *a, int lda, void *b, int ldb) {
       //handle not needed
@@ -384,7 +384,7 @@ extern "C" {
 #ifdef OPENMP_OFFLOAD_DEBUG
       std::cout << "STRSM" << std::endl;
 #endif
-  }  
+  }
 
   void mklOpenmpOffloadZtrsmFromC(intptr_t *handle, char side, char uplo, char trans, char diag, int m, int n, MKL_Complex16 alpha, void *a, int lda, void *b, int ldb) {
       //handle not needed
@@ -393,7 +393,7 @@ extern "C" {
 #ifdef OPENMP_OFFLOAD_DEBUG
       std::cout << "ZTRSM" << std::endl;
 #endif
-  }  
+  }
 
   void mklOpenmpOffloadCtrsmFromC(intptr_t *handle, char side, char uplo, char trans, char diag, int m, int n, MKL_Complex8 alpha, void *a, int lda, void *b, int ldb) {
       //handle not needed
@@ -411,7 +411,7 @@ extern "C" {
 #ifdef OPENMP_OFFLOAD_DEBUG
       std::cout << "DGEMV" << std::endl;
 #endif
-  }  
+  }
 
   void mklOpenmpOffloadSgemvFromC(intptr_t *handle, char cta, int m, int n, float alpha, void *a, int lda, void *x, int incx, float beta, void *y, int incy) {
       //handle not needed
@@ -420,7 +420,7 @@ extern "C" {
 #ifdef OPENMP_OFFLOAD_DEBUG
       std::cout << "SGEMV" << std::endl;
 #endif
-  }  
+  }
 
   void mklOpenmpOffloadZgemvFromC(intptr_t *handle, char cta, int m, int n, MKL_Complex16 alpha, void *a, int lda, void *x, int incx, MKL_Complex16 beta, void *y, int incy) {
       //handle not needed
@@ -429,7 +429,7 @@ extern "C" {
 #ifdef OPENMP_OFFLOAD_DEBUG
       std::cout << "ZGEMV" << std::endl;
 #endif
-  }  
+  }
 
   void mklOpenmpOffloadCgemvFromC(intptr_t *handle, char cta, int m, int n, MKL_Complex8 alpha, void *a, int lda, void *x, int incx, MKL_Complex8 beta, void *y, int incy) {
       //handle not needed
@@ -438,7 +438,7 @@ extern "C" {
 #ifdef OPENMP_OFFLOAD_DEBUG
       std::cout << "CGEMV" << std::endl;
 #endif
-  }  
+  }
 
 
 

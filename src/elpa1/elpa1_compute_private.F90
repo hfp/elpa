@@ -112,7 +112,7 @@ module elpa1_compute
   interface elpa_transpose_vectors_real
     module procedure elpa_transpose_vectors_real_double
   end interface
-  
+
   interface elpa_transpose_vectors_ss_real
     module procedure elpa_transpose_vectors_ss_real_double
   end interface
@@ -144,7 +144,7 @@ module elpa1_compute
   interface elpa_transpose_vectors_complex
     module procedure elpa_transpose_vectors_complex_double
   end interface
-  
+
   interface elpa_transpose_vectors_ss_complex
     module procedure elpa_transpose_vectors_ss_complex_double
   end interface

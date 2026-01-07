@@ -48,18 +48,18 @@
 #include <cstdio>
 
 extern "C" {
-  
+
   int is_device_ptr(void *a_void_ptr) {
     cudaPointerAttributes attributes;
-    cudaError_t cuerr = cudaPointerGetAttributes(&attributes, a_void_ptr);  
+    cudaError_t cuerr = cudaPointerGetAttributes(&attributes, a_void_ptr);
     if (cuerr != cudaSuccess)
-		  {    
+		  {
 		  printf("Error in is_device_ptr: cudaPointerGetAttributes: %s\n", cudaGetErrorString(cuerr));
 		  exit(1);
 		  }
-    
+
     if (attributes.type==cudaMemoryTypeDevice) return 1;
     else return 0;
   }
-  
+
 }

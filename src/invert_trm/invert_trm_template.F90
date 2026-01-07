@@ -170,7 +170,7 @@
   else
     wantDebug = .true.
   endif
-  
+
 #if !defined(DEVICE_POINTER)
 
 #if defined(WITH_NVIDIA_GPU_VERSION) || defined(WITH_AMD_GPU_VERSION) || defined(WITH_OPENMP_OFFLOAD_GPU_VERSION) || defined(WITH_SYCL_GPU_VERSION)
@@ -191,9 +191,9 @@
       useGPU = .false.
     else if (.not.(useGPU) .and. gpu_invert_trm .eq. 1) then
       useGPU = .true.
-    else 
+    else
     endif
-  else 
+  else
     ! no override by user
     ! keep seeting as found before
   endif
@@ -218,7 +218,7 @@
   if (useGPU) then
     call obj%timer%start("check_for_gpu")
     if (check_for_gpu(obj, myid, numGPU, wantDebug)) then
-       ! set the neccessary parameters       
+       ! set the neccessary parameters
       call set_gpu_parameters()
     else
       print *,"ELPA_INVERT_TRM: GPUs are requested but not detected! Aborting..."
@@ -233,7 +233,7 @@
   if (useGPU) then
     ccl_comm_rows = obj%gpu_setup%ccl_comm_rows
     ccl_comm_cols = obj%gpu_setup%ccl_comm_cols
-  
+
 #if   REALCASE == 1 && defined(DOUBLE_PRECISION)
     cclDataType = cclDouble
     k_datatype = 1
@@ -427,7 +427,7 @@
           NVTX_RANGE_POP("gpusolver_TRTRI")
           call obj%timer%stop("gpusolver")
 #else /* defined(INVERT_TRM_GPU_SOLVER) */
-         
+
           ! still have to use cpu blas -> a generic GPU implementation would be needed
 #ifndef DEVICE_POINTER
           call obj%timer%start("lapack")
@@ -565,7 +565,7 @@
 
 ! #ifdef WITH_CUDA_AWARE_MPI
 !       if (useGPU) then
-!         tmp1_mpi_dev = transfer(tmp1_dev, tmp1_mpi_dev) 
+!         tmp1_mpi_dev = transfer(tmp1_dev, tmp1_mpi_dev)
 !         ! and associate a fortran pointer
 !         call c_f_pointer(tmp1_mpi_dev, tmp1_mpi_fortran_ptr, [nblk*nblk])
 !         if (wantDebug) call obj%timer%start("cuda_aware_device_synchronize")
@@ -585,7 +585,7 @@
         call obj%timer%start("ccl_bcast")
         my_stream = obj%gpu_setup%my_stream
         ccl_comm_cols = obj%gpu_setup%ccl_comm_cols
-        
+
         successGPU = ccl_bcast(tmp1_dev, tmp1_dev, k_datatype*int(nb*(nb+1)/2,kind=c_size_t), &
                                cclDataType, int(pcol(n, nblk, np_cols),kind=c_int), ccl_comm_cols, my_stream)
         if (.not. successGPU) then
@@ -605,7 +605,7 @@
           call obj%timer%stop("mpi_communication")
       endif ! useCCL
 
-      if (useGPU .and. .not. useCCL) then  
+      if (useGPU .and. .not. useCCL) then
         num = nblk*(nblk+1)/2
 #ifdef WITH_GPU_STREAMS
         my_stream = obj%gpu_setup%my_stream
@@ -619,7 +619,7 @@
 #endif /* WITH_GPU_STREAMS */
       endif ! (useGPU .and. .not. useCCL)
 #endif /* WITH_MPI */
-      
+
       if (useGPU) then
         call gpu_copy_PRECISION_tmp1_tmp2 (tmp1_dev, tmp2_dev, nblk, nb, my_stream)
       else ! useGPU
@@ -640,7 +640,7 @@
 
           call gpublas_PRECISION_TRMM('L', 'U', 'N', 'N', nb, l_cols-l_colx+1, ONE, tmp2_dev, &
                                       nblk, a_dev+a_off, matrixRows, gpublasHandle)
-          
+
           if (wantDebug) successGPU = gpu_DeviceSynchronize()
           NVTX_RANGE_POP("gpublas_TRMM")
         endif
@@ -648,13 +648,13 @@
 
         if (l_colx <= l_cols) then
           my_stream = obj%gpu_setup%my_stream
-          call gpu_copy_PRECISION_a_tmat2 (a_dev, tmat2_dev, nblk, matrixRows, l_cols, l_colx, & 
+          call gpu_copy_PRECISION_a_tmat2 (a_dev, tmat2_dev, nblk, matrixRows, l_cols, l_colx, &
                                        l_row1, nb, my_stream)
         endif
 
         if (my_pcol==pcol(n, nblk, np_cols)) then
            ! tmp2 has the lower left triangle 0
-          call gpu_copy_PRECISION_tmp2_tmat2 (tmp2_dev, tmat2_dev, nblk, l_col1, nb, my_stream) 
+          call gpu_copy_PRECISION_tmp2_tmat2 (tmp2_dev, tmat2_dev, nblk, l_col1, nb, my_stream)
         endif
       else ! useGPU
         call obj%timer%start("blas")
@@ -719,7 +719,7 @@
 !         call obj%timer%start("mpi_cuda_communication")
 !         do i=1,nb
 !           call MPI_Bcast(tmat1_mpi_fortran_ptr(1,i), int(l_row1-1,kind=MPI_KIND), MPI_MATH_DATATYPE_PRECISION, &
-!                        int(pcol(n, nblk, np_cols),kind=MPI_KIND), & 
+!                        int(pcol(n, nblk, np_cols),kind=MPI_KIND), &
 !                        int(mpi_comm_cols,kind=MPI_KIND), mpierr)
 
 !         enddo
@@ -770,7 +770,7 @@
         NVTX_RANGE_PUSH("MPI_Bcast tmat1")
         ! do i=1,nb
         !   call MPI_Bcast(tmat1(1,i), int(l_row1-1,kind=MPI_KIND), MPI_MATH_DATATYPE_PRECISION, &
-        !                  int(pcol(n, nblk, np_cols),kind=MPI_KIND), & 
+        !                  int(pcol(n, nblk, np_cols),kind=MPI_KIND), &
         !                  int(mpi_comm_cols,kind=MPI_KIND), mpierr)
         ! enddo
         call MPI_Bcast(tmat1(1,1), int(l_rows*nblk,kind=MPI_KIND), MPI_MATH_DATATYPE_PRECISION, &
@@ -801,17 +801,17 @@
 
 ! #ifdef WITH_CUDA_AWARE_MPI
 !     if (useGPU) then
-!       tmat2_mpi_dev = transfer(tmat2_dev, tmat2_mpi_dev)     
+!       tmat2_mpi_dev = transfer(tmat2_dev, tmat2_mpi_dev)
 !       call c_f_pointer(tmat2_mpi_dev, tmat2_mpi_fortran_ptr, [nblk,l_cols])
-      
+
 !       if (wantDebug) call obj%timer%start("cuda_aware_device_synchronize")
 !       successGPU = gpu_devicesynchronize()
 !       check_memcpy_gpu("invert_trm: device_synchronize", successGPU)
 !       if (wantDebug) call obj%timer%stop("cuda_aware_device_synchronize")
 !       call obj%timer%start("mpi_cuda_communication")
 !       if (l_cols-l_col1+1 > 0) &
-!         call MPI_Bcast(tmat2_mpi_fortran_ptr(1,l_col1), int((l_cols-l_col1+1)*nblk,kind=MPI_KIND), & 
-!                        MPI_MATH_DATATYPE_PRECISION, int(prow(n, nblk, np_rows),kind=MPI_KIND), & 
+!         call MPI_Bcast(tmat2_mpi_fortran_ptr(1,l_col1), int((l_cols-l_col1+1)*nblk,kind=MPI_KIND), &
+!                        MPI_MATH_DATATYPE_PRECISION, int(prow(n, nblk, np_rows),kind=MPI_KIND), &
 !                        int(mpi_comm_rows,kind=MPI_KIND), mpierr)
 !       call obj%timer%stop("mpi_cuda_communication")
 !     endif ! useGPU
@@ -882,7 +882,7 @@
 
     if (useGPU) then
       gpublasHandle = obj%gpu_setup%gpublasHandleArray(0)
-      tmat2_off = (1 - 1 + (l_col1-1) * nblk) * size_of_datatype      
+      tmat2_off = (1 - 1 + (l_col1-1) * nblk) * size_of_datatype
       a_off = (1 - 1 + (l_col1-1) * matrixRows) * size_of_datatype
       if (l_row1>1 .and. l_cols-l_col1+1>0) then
         call obj%timer%start("gpublas")
@@ -892,7 +892,7 @@
         if (wantDebug) successGPU = gpu_DeviceSynchronize()
         call obj%timer%stop("gpublas")
       endif
-      
+
     else ! useGPU
       if (l_row1>1 .and. l_cols-l_col1+1>0) then
         call obj%timer%start("blas")

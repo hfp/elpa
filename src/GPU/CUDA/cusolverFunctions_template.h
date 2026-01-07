@@ -182,7 +182,7 @@ void cusolverDtrtri_elpa_wrapper (cusolverDnHandle_t cudaHandle, char uplo, char
 
   int info_gpu = 0;
 
-  int *devInfo = NULL; 
+  int *devInfo = NULL;
   cudaError_t cuerr = cudaMalloc((void**)&devInfo, sizeof(int));
   if (cuerr != cudaSuccess) {
     errormessage("Error in cusolver_Dtrtri devInfo: %s\n",cudaGetErrorString(cuerr));
@@ -255,7 +255,7 @@ void cusolverStrtri_elpa_wrapper (cusolverDnHandle_t cudaHandle, char uplo, char
 
   int info_gpu = 0;
 
-  int *devInfo = NULL; 
+  int *devInfo = NULL;
   cudaError_t cuerr = cudaMalloc((void**)&devInfo, sizeof(int));
 #ifdef DEBUG_CUDA
   printf("CUDA Malloc, cusolverStrtri_elpa_wrapper, pointer address: %p, size: %d \n", (void*)devInfo, sizeof(int));
@@ -325,7 +325,7 @@ void cusolverZtrtri_elpa_wrapper (cusolverDnHandle_t cudaHandle, char uplo, char
 
   int info_gpu = 0;
 
-  int *devInfo = NULL; 
+  int *devInfo = NULL;
   cudaError_t cuerr = cudaMalloc((void**)&devInfo, sizeof(int));
 #ifdef DEBUG_CUDA
   printf("CUDA Malloc, cusolverZtrtri_elpa_wrapper, pointer address: %p, size: %d \n", (void*)devInfo, sizeof(int));
@@ -396,7 +396,7 @@ void cusolverCtrtri_elpa_wrapper (cusolverDnHandle_t cudaHandle, char uplo, char
 
   int info_gpu = 0;
 
-  int *devInfo = NULL; 
+  int *devInfo = NULL;
   cudaError_t cuerr = cudaMalloc((void**)&devInfo, sizeof(int));
 #ifdef DEBUG_CUDA
   printf("CUDA Malloc, cusolverCtrtri_elpa_wrapper, pointer address: %p, size: %d \n", (void*)devInfo, sizeof(int));
@@ -598,13 +598,13 @@ void cusolverCpotrf_elpa_wrapper (cusolverDnHandle_t cudaHandle, char uplo, int 
 
 // Introduced with CUDA 11.1 (CUDA_VERSION >= 11010)
 
-void cusolverXpotrf_bufferSize_elpa_wrapper(cusolverDnHandle_t cusolverHandle, char uplo, int n, char dataType, intptr_t A, int lda, 
+void cusolverXpotrf_bufferSize_elpa_wrapper(cusolverDnHandle_t cusolverHandle, char uplo, int n, char dataType, intptr_t A, int lda,
                                           size_t *workspaceInBytesOnDevice, size_t *workspaceInBytesOnHost){
 
   cusolverStatus_t status;
   cudaDataType cuda_data_type =  getCudaDataType(dataType);
 
-  status = cusolverDnXpotrf_bufferSize(cusolverHandle, NULL, fill_mode_new_api(uplo), (int64_t) n, cuda_data_type, (void *) A, (int64_t) lda, 
+  status = cusolverDnXpotrf_bufferSize(cusolverHandle, NULL, fill_mode_new_api(uplo), (int64_t) n, cuda_data_type, (void *) A, (int64_t) lda,
                                         cuda_data_type, workspaceInBytesOnDevice, workspaceInBytesOnHost);
 
   if (status != CUSOLVER_STATUS_SUCCESS){
@@ -614,8 +614,8 @@ void cusolverXpotrf_bufferSize_elpa_wrapper(cusolverDnHandle_t cusolverHandle, c
 }
 
 
-void cusolverXpotrf_elpa_wrapper(cusolverDnHandle_t cusolverHandle, char uplo, int n, char dataType, intptr_t A, int lda, 
-                                intptr_t buffer_dev , size_t *workspaceInBytesOnDevice, 
+void cusolverXpotrf_elpa_wrapper(cusolverDnHandle_t cusolverHandle, char uplo, int n, char dataType, intptr_t A, int lda,
+                                intptr_t buffer_dev , size_t *workspaceInBytesOnDevice,
                                 intptr_t buffer_host, size_t *workspaceInBytesOnHost, int *info_dev){
 
   cusolverStatus_t status;
@@ -624,7 +624,7 @@ void cusolverXpotrf_elpa_wrapper(cusolverDnHandle_t cusolverHandle, char uplo, i
   status = cusolverDnXpotrf(cusolverHandle, NULL, fill_mode_new_api(uplo), (int64_t) n, cuda_data_type, (void *) A, (int64_t) lda, cuda_data_type,
                             (void *) buffer_dev , *workspaceInBytesOnDevice,
                             (void *) buffer_host, *workspaceInBytesOnHost, info_dev);
-  
+
   if (status != CUSOLVER_STATUS_SUCCESS){
     elpa_cusolverPrintError(status);
     errormessage("Error in cusolverDnXpotrf %s \n", "aborting");
@@ -704,5 +704,5 @@ void cusolverSsyevd_elpa_wrapper (cusolverDnHandle_t cudaHandle, int n, float *A
   }
 }
 
-  
+
 } // extern "C"

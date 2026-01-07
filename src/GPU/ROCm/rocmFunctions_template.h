@@ -134,7 +134,7 @@ int rocblasGetVersionFromC(BLAS_handle rocblasHandle, int *version) {
 
 int hipGetLastErrorFromC() {
   hipError_t status = hipGetLastError();
-  
+
   if (status == hipSuccess) {
     return 1;
   }
@@ -908,26 +908,26 @@ void rocblasCtrmv_elpa_wrapper(BLAS_handle rocblasHandle, char uplo, char trans,
 
 //_________________________________________________________________________________________________
 
-void rocblasDsyrk_elpa_wrapper(BLAS_handle rocblasHandle, char uplo, char trans, 
-                              int n, int k, 
+void rocblasDsyrk_elpa_wrapper(BLAS_handle rocblasHandle, char uplo, char trans,
+                              int n, int k,
                               double alpha, const double *A, int lda,
                               double beta, double *C, int ldc){
-  
+
   BLAS_status status = BLAS_dsyrk(rocblasHandle, hip_fill_mode(uplo), hip_operation(trans),
                                   n, k, &alpha, A, lda, &beta, C, ldc);
 }
 
-void rocblasSsyrk_elpa_wrapper(BLAS_handle rocblasHandle, char uplo, char trans, 
-                              int n, int k, 
+void rocblasSsyrk_elpa_wrapper(BLAS_handle rocblasHandle, char uplo, char trans,
+                              int n, int k,
                               float alpha, const float *A, int lda,
                               float beta, float *C, int ldc){
-  
+
   BLAS_status status = BLAS_ssyrk(rocblasHandle, hip_fill_mode(uplo), hip_operation(trans),
                                   n, k, &alpha, A, lda, &beta, C, ldc);
 }
 
-void rocblasZherk_elpa_wrapper(BLAS_handle rocblasHandle, char uplo, char trans, 
-                              int n, int k, 
+void rocblasZherk_elpa_wrapper(BLAS_handle rocblasHandle, char uplo, char trans,
+                              int n, int k,
                               std::complex<double> alpha, const double _Complex *A, int lda,
                               std::complex<double> beta, double _Complex *C, int ldc){
 
@@ -945,8 +945,8 @@ void rocblasZherk_elpa_wrapper(BLAS_handle rocblasHandle, char uplo, char trans,
                                   n, k, &alpha_real, A_casted, lda, &beta_real, C_casted, ldc);
 }
 
-void rocblasCherk_elpa_wrapper(BLAS_handle rocblasHandle, char uplo, char trans, 
-                              int n, int k, 
+void rocblasCherk_elpa_wrapper(BLAS_handle rocblasHandle, char uplo, char trans,
+                              int n, int k,
                               std::complex<float> alpha, const float _Complex *A, int lda,
                               std::complex<float> beta, float _Complex *C, int ldc){
 

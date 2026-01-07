@@ -69,9 +69,9 @@ module test_blacs_infrastructure
 
   contains
 
-    !c> void set_up_blacsgrid_f(TEST_C_INT_TYPE mpi_comm_parent, TEST_C_INT_TYPE np_rows, 
+    !c> void set_up_blacsgrid_f(TEST_C_INT_TYPE mpi_comm_parent, TEST_C_INT_TYPE np_rows,
     !c>                         TEST_C_INT_TYPE np_cols, char layout,
-    !c>                         TEST_C_INT_TYPE_PTR my_blacs_ctxt, TEST_C_INT_TYPE_PTR my_prow, 
+    !c>                         TEST_C_INT_TYPE_PTR my_blacs_ctxt, TEST_C_INT_TYPE_PTR my_prow,
     !c>                         TEST_C_INT_TYPE_PTR my_pcol);
     subroutine set_up_blacsgrid(mpi_comm_parent, np_rows, np_cols, layout, &
                                 my_blacs_ctxt, my_prow, my_pcol) bind(C, name="set_up_blacsgrid_f")
@@ -176,18 +176,18 @@ module test_blacs_infrastructure
 
     end subroutine
 
-    !c> void set_up_blacs_descriptor_f(TEST_C_INT_TYPE na, TEST_C_INT_TYPE nblk, 
+    !c> void set_up_blacs_descriptor_f(TEST_C_INT_TYPE na, TEST_C_INT_TYPE nblk,
     !c>                                TEST_C_INT_TYPE my_prow, TEST_C_INT_TYPE my_pcol,
     !c>                                TEST_C_INT_TYPE np_rows, TEST_C_INT_TYPE np_cols,
     !c>                                TEST_C_INT_TYPE_PTR na_rows, TEST_C_INT_TYPE_PTR na_cols,
     !c>                                TEST_C_INT_TYPE sc_desc[9],
     !c>                                TEST_C_INT_TYPE my_blacs_ctxt,
     !c>                                TEST_C_INT_TYPE_PTR info, TEST_C_INT_TYPE_PTR blacs_ok);
-    
+
     !c> #ifdef __cplusplus
     !c> }
     !c> #endif
-    
+
     subroutine set_up_blacs_descriptor_f(na, nblk, my_prow, my_pcol, &
                                          np_rows, np_cols, na_rows,  &
                                          na_cols, sc_desc,           &
@@ -209,7 +209,7 @@ module test_blacs_infrastructure
 
     end subroutine
 
-    
+
    function index_l2g(idx_loc, nblk, iproc, nprocs) result(indexl2g)
      use precision_for_tests
      implicit none

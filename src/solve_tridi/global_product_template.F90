@@ -8,7 +8,7 @@ subroutine global_product_&
   use ELPA_utilities
 #ifdef WITH_OPENMP_TRADITIONAL
   !use elpa_omp
-#endif          
+#endif
   implicit none
   class(elpa_abstract_impl_t), intent(inout) :: obj
   integer(kind=ik), intent(in)               :: mpi_comm_cols, mpi_comm_rows
@@ -133,7 +133,7 @@ subroutine global_product_&
 #endif  /* WITH_MPI */
       z(1:n) = z(1:n)*tmp(1:n)
     enddo
-    
+
     do np = npc_0+1, npc_0+npc_n-1
 #ifdef WITH_MPI
       call obj%timer%start("mpi_communication")

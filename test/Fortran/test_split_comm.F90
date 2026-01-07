@@ -172,7 +172,7 @@ program test
 
    group_size = nprocs / num_groups
 
-   if(num_groups * group_size .ne. nprocs) then 
+   if(num_groups * group_size .ne. nprocs) then
      print *, "Something went wrong before splitting the communicator"
      stop 1
    else
@@ -192,7 +192,7 @@ program test
    mpi_sub_comm = int(mpi_sub_commMPI,kind=BLAS_KIND)
    color = int(colorMPI,kind=BLAS_KIND)
    key = int(keyMPI,kind=BLAS_KIND)
-   if(mpierr .ne. MPI_SUCCESS) then 
+   if(mpierr .ne. MPI_SUCCESS) then
      print *, "communicator splitting not successfull", mpierr
      stop 1
    endif
@@ -330,7 +330,7 @@ program test
    deallocate(ev)
 
    call mpi_comm_free(mpi_sub_commMPI, mpierr)
-   if(mpierr .ne. MPI_SUCCESS) then 
+   if(mpierr .ne. MPI_SUCCESS) then
      print *, "communicator freeing is not successfull", mpierr
      stop 1
    endif

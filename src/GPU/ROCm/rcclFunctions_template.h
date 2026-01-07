@@ -5,7 +5,7 @@
 #else
 #define debugmessage(x, ...)
 #endif
-  
+
 ncclUniqueId globalIDFixThis;
 
 #ifdef WITH_AMD_RCCL
@@ -71,7 +71,7 @@ extern "C" {
        //DEBUG
        //printf("a %c \n",ncclID->internal[i]);
     }
-    
+
     if (ncclError != ncclSuccess) {
       if (ncclError == ncclUnhandledCudaError) {
         errormessage("Error in ncclGetUniqueId: %s\n", "ncclUnhandledCudaError");

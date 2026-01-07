@@ -574,7 +574,7 @@ module tridiag_cuda
     subroutine cuda_copy_and_set_zeros_double(v_row_dev, a_dev, l_rows, l_cols, matrixRows, istep,  &
                                                  aux1_dev, vav_dev, d_vec_dev, &
                                                  isOurProcessRow, isOurProcessCol, isOurProcessCol_prev, &
-                                                 isSkewsymmetric, useCCL, wantDebug, my_stream) 
+                                                 isSkewsymmetric, useCCL, wantDebug, my_stream)
       use, intrinsic :: iso_c_binding
 
       implicit none
@@ -798,7 +798,7 @@ module tridiag_cuda
     subroutine cuda_copy_and_set_zeros_float(v_row_dev, a_dev, l_rows, l_cols, matrixRows, istep,  &
                                                  aux1_dev, vav_dev, d_vec_dev, &
                                                  isOurProcessRow, isOurProcessCol, isOurProcessCol_prev, &
-                                                 isSkewsymmetric, useCCL, wantDebug, my_stream) 
+                                                 isSkewsymmetric, useCCL, wantDebug, my_stream)
       use, intrinsic :: iso_c_binding
 
       implicit none
@@ -1022,7 +1022,7 @@ module tridiag_cuda
     subroutine cuda_copy_and_set_zeros_double_complex(v_row_dev, a_dev, l_rows, l_cols, matrixRows, istep,  &
                                                  aux1_dev, vav_dev, d_vec_dev, &
                                                  isOurProcessRow, isOurProcessCol, isOurProcessCol_prev, &
-                                                 isSkewsymmetric, useCCL, wantDebug, my_stream) 
+                                                 isSkewsymmetric, useCCL, wantDebug, my_stream)
       use, intrinsic :: iso_c_binding
 
       implicit none
@@ -1246,7 +1246,7 @@ module tridiag_cuda
     subroutine cuda_copy_and_set_zeros_float_complex(v_row_dev, a_dev, l_rows, l_cols, matrixRows, istep,  &
                                                  aux1_dev, vav_dev, d_vec_dev, &
                                                  isOurProcessRow, isOurProcessCol, isOurProcessCol_prev, &
-                                                 isSkewsymmetric, useCCL, wantDebug, my_stream) 
+                                                 isSkewsymmetric, useCCL, wantDebug, my_stream)
       use, intrinsic :: iso_c_binding
 
       implicit none

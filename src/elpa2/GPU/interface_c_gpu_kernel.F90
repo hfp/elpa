@@ -213,7 +213,7 @@ module gpu_c_kernel
       !call launch_compute_hh_trafo_c_hip_kernel_complex_single(q, hh, hh_tau, nev, nb, ldq, ncols)
 #endif
 #ifdef WITH_SYCL_GPU_VERSION
-      print *,"not implemented. oh no"     
+      print *,"not implemented. oh no"
       stop
       !call launch_compute_hh_trafo_c_sycl_kernel_complex_single(q, hh, hh_tau, nev, nb, ldq, ncols)
 #endif
@@ -498,4 +498,3 @@ call launch_extract_hh_tau_c_hip_kernel_complex_single(hh, hh_tau, nb, n, is_zer
 #endif
 
 end module gpu_c_kernel
- 

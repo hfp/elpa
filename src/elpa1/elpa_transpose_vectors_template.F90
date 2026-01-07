@@ -63,7 +63,7 @@ subroutine ROUTINE_NAME&
 &MATH_DATATYPE&
 &_&
 &PRECISION &
-(obj, vmat_s, ld_s, comm_s, vmat_t, ld_t, comm_t, & 
+(obj, vmat_s, ld_s, comm_s, vmat_t, ld_t, comm_t, &
  nvs, nvr, nvc, nblk, nrThreads, comm_s_isRows, success)
 
 !-------------------------------------------------------------------------------
@@ -196,7 +196,7 @@ subroutine ROUTINE_NAME&
     call obj%get("mpi_comm_parent", mpi_comm_all, error)
     call mpi_comm_rank(int(mpi_comm_all,kind=MPI_KIND), my_mpi_rank, mpierr)
     ld_st = min(ld_s,ld_t)
-    
+
     if (myps==mypt) then
       vmat_t(1:ld_st,1:nvc) = vmat_s(1:ld_st,1:nvc)
     else
@@ -221,14 +221,14 @@ subroutine ROUTINE_NAME&
       else
         print *, "ERROR: matrix_order not set correctly"
       endif
-      
+
       ! TODO_23_11 - delete after implementing and testing
       ! print *, "my_mpi_rank=", my_mpi_rank, ", transposed_mpi_rank=", transposed_mpi_rank
       ! print *, "my_mpi_rank=", my_mpi_rank, ", nvc=", nvc, ", ld_s=", ld_s, ", ld_t=", ld_t
 
       message_size = ld_st*nvc
 
-#ifdef WITH_MPI      
+#ifdef WITH_MPI
       if (myps>mypt .and. message_size>0) then
         call MPI_Send(vmat_s, int(message_size,kind=MPI_KIND), MPI_MATH_DATATYPE_PRECISION, & ! TODO_23_11: implement also a non-blocking version with MPI_Isend
                       int(transposed_mpi_rank,kind=MPI_KIND), 0, int(mpi_comm_all, kind=MPI_KIND), mpierr)
@@ -237,10 +237,10 @@ subroutine ROUTINE_NAME&
       else if (myps<mypt  .and. message_size>0) then
         call MPI_Recv(vmat_t, int(message_size,kind=MPI_KIND), MPI_MATH_DATATYPE_PRECISION, &
                       int(transposed_mpi_rank,kind=MPI_KIND), 0, int(mpi_comm_all, kind=MPI_KIND), MPI_STATUS_IGNORE, mpierr)
-        call MPI_Send(vmat_s, int(message_size,kind=MPI_KIND), MPI_MATH_DATATYPE_PRECISION, & 
+        call MPI_Send(vmat_s, int(message_size,kind=MPI_KIND), MPI_MATH_DATATYPE_PRECISION, &
                       int(transposed_mpi_rank,kind=MPI_KIND), 0, int(mpi_comm_all, kind=MPI_KIND), mpierr)
       endif
-#endif      
+#endif
     endif
 
     call obj%timer%stop("&
@@ -251,7 +251,7 @@ subroutine ROUTINE_NAME&
         )
     return
   endif
-#endif /* !defined(SKEW_SYMMETRIC_BUILD) */     
+#endif /* !defined(SKEW_SYMMETRIC_BUILD) */
 #endif /* 0 */
 
   ! The basic idea of this routine is that for every block (in the block cyclic

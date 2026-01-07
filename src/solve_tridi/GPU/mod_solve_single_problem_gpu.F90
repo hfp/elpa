@@ -124,5 +124,5 @@ module solve_single_problem_gpu
       call gpu_construct_full_from_tridi_matrix_c(dataType, q_dev, d_dev, e_dev, nlen, ldq, debug, my_stream)
 #endif
     end subroutine
-  
+
 end module

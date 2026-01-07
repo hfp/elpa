@@ -72,11 +72,11 @@
 #ifdef DEVICE_POINTER
        if (present(qDevExtern)) then
          ! data is provided via {a|q|ev}DevExtern
-     
+
          ! allocate dummy HOST arrays and copy
          allocate(qIntern(1:matrixRows,1:matrixCols), stat=istat, errmsg=errorMessage)
          check_allocate("redistribute: qIntern", istat, errorMessage)
-   
+
          allocate(qExtern(1:na_rowsExt,1:na_colsExt), stat=istat, errmsg=errorMessage)
          check_allocate("redistribute: qExtern", istat, errorMessage)
 

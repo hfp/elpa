@@ -57,7 +57,7 @@
 
 #undef USE_CCL_SOLVE_TRIDI
 #if defined(WITH_NVIDIA_NCCL) || defined(WITH_AMD_RCCL)
-#define USE_CCL_SOLVE_TRIDI                   
+#define USE_CCL_SOLVE_TRIDI
 #endif
 
 #ifdef SOLVE_TRIDI_GPU_BUILD
@@ -117,7 +117,7 @@
 
       integer(kind=ik), parameter   :: min_submatrix_size = 16 ! Minimum size of the submatrices to be used
 
-      real(kind=REAL_DATATYPE), allocatable    :: qmat1(:,:), qmat2(:,:) ! qmat2 is needed since for ndiv>1, so qmat1 stays intact  
+      real(kind=REAL_DATATYPE), allocatable    :: qmat1(:,:), qmat2(:,:) ! qmat2 is needed since for ndiv>1, so qmat1 stays intact
       integer(kind=ik)              :: i, n, np
       integer(kind=ik)              :: ndiv, noff, nmid, nlen, max_size
       integer(kind=ik)              :: my_prow, np_rows
@@ -139,7 +139,7 @@
 
       integer(kind=c_intptr_t)      :: d_dev, e_dev ! shifted
       integer(kind=c_intptr_t)      :: q_dev, qtmp_dev, qmat1_dev, qmat2_dev
-                                       
+
       integer(kind=c_intptr_t)      :: limits_dev
 
       logical                       :: successGPU
@@ -157,7 +157,7 @@
       success = .true.
 
       call obj%timer%start("solve_tridi_col" // PRECISION_SUFFIX)
-      
+
       debug = 0
       if (wantDebug) debug = 1
 
@@ -171,14 +171,14 @@
 #endif
 
       useCCL = .false.
-#if defined(USE_CCL_SOLVE_TRIDI)                
+#if defined(USE_CCL_SOLVE_TRIDI)
       if (useGPU) then
         useCCL = obj%gpu_setup%useCCL
-        ccl_comm_rows = obj%gpu_setup%ccl_comm_rows 
-        ccl_comm_cols = obj%gpu_setup%ccl_comm_cols 
+        ccl_comm_rows = obj%gpu_setup%ccl_comm_rows
+        ccl_comm_cols = obj%gpu_setup%ccl_comm_cols
 
 #if defined(DOUBLE_PRECISION)
-       cclDataType_real = cclDouble                  
+       cclDataType_real = cclDouble
 #elif defined(SINGLE_PRECISION)
        cclDataType_real = cclFloat
 #endif
@@ -228,7 +228,7 @@
       ! and the matrix size is big enough, then use 2 subdivisions
       ! so that merge_systems is called once and only the needed
       ! eigenvectors are calculated for the final problem.
-      
+
       ! In the current implementation, GPU codebranch doesn't have special handling for np_rows=1. So we switch it off here
       if (.not. useGPU .and. np_rows==1 .and. nev<na_local .and. na_local>2*min_submatrix_size) ndiv = 2
 
@@ -268,9 +268,9 @@
         successGPU = gpu_memcpy      (limits_dev, int(loc(limits(1)),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
 #endif
         check_memcpy_gpu("solve_tridi_col: limits_dev", successGPU)
-        
+
         call gpu_update_d (PRECISION_CHAR, d_dev, e_dev, limits_dev, ndiv, na_local, debug, my_stream)
-        
+
         successGPU = gpu_free(limits_dev)
         check_dealloc_gpu("solve_tridi_col: limits_dev", successGPU)
 
@@ -299,7 +299,7 @@
           !                               ldq, qtmp_dev, wantDebug, success)
           !   NVTX_RANGE_POP("solve_tridi_single_problem_gpu")
           ! else ! useGPU
-          
+
             call solve_tridi_single_problem_cpu_&
             &PRECISION_AND_SUFFIX &
                                     (obj, nlen,d(noff+1),e(noff+1), &
@@ -307,7 +307,7 @@
           ! endif ! useGPU
 
           if (.not.(success)) then
-               print *,"solve_tridi single failed"  
+               print *,"solve_tridi single failed"
             call obj%timer%stop("solve_tridi_col" // PRECISION_SUFFIX)
             return
           endif
@@ -327,7 +327,7 @@
         if (.not. useGPU) then
           qmat1 = 0 ! Make sure that all elements are defined
         endif
-        
+
         if (useGPU) then
           num = max_size*max_size * size_of_datatype_real
           successGPU = gpu_malloc(qmat1_dev, num)
@@ -410,7 +410,7 @@
           if (useCCL) then
 #if defined(USE_CCL_SOLVE_TRIDI)
             successGPU = ccl_bcast(d_dev + (noff+1-1) * size_of_datatype_real,   &
-                                  d_dev + (noff+1-1) * size_of_datatype_real,  & 
+                                  d_dev + (noff+1-1) * size_of_datatype_real,  &
                                   int(nlen,kind=c_size_t), cclDataType_real, &
                                   int(np,kind=c_int), ccl_comm_rows, my_stream)
 
@@ -423,7 +423,7 @@
             check_stream_synchronize_gpu("solve_tridi_col: ccl_bcast", successGPU)
 
             call gpu_copy_qmat1_to_qmat2(PRECISION_CHAR, qmat1_dev, qmat2_dev, max_size, debug, my_stream)
-      
+
             successGPU = ccl_bcast(qmat1_dev, qmat2_dev, int(max_size*max_size,kind=c_size_t), cclDataType_real, &
                                   int(np,kind=c_int), ccl_comm_rows, my_stream)
 
@@ -494,7 +494,7 @@
             do i=1,nlen
               call distribute_global_column_&
               &PRECISION &
-                       (obj, qmat2(1,i), q(1,noff+i), nqoff+noff, nlen, my_prow, np_rows, nblk)  
+                       (obj, qmat2(1,i), q(1,noff+i), nqoff+noff, nlen, my_prow, np_rows, nblk)
             enddo ! i=1,nlen
           endif
 #else /* WITH_MPI */
@@ -513,7 +513,7 @@
 
           ! assume d is on the host
         enddo ! np = 0, ndiv-1
-        
+
         if (useGPU) then
           successGPU = gpu_free(qmat1_dev)
           check_dealloc_gpu("solve_tridi_col: qmat1_dev", successGPU)
@@ -551,7 +551,7 @@
         successGPU = gpu_memcpy      (int(loc(e(1)),kind=c_intptr_t), e_dev, num, gpuMemcpyDeviceToHost)
 #endif
         check_memcpy_gpu("solve_tridi_col: e_dev2", successGPU)
-        
+
         num = na_local * size_of_datatype_real
 #ifdef WITH_GPU_STREAMS
         successGPU = gpu_memcpy_async(int(loc(d(1)),kind=c_intptr_t), d_dev, num, gpuMemcpyDeviceToHost, my_stream)

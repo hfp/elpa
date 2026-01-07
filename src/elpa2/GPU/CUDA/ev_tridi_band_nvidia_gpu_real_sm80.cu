@@ -203,9 +203,9 @@ ncols     : N_R (==n+b-1)
 */
 extern "C" {
   void launch_compute_hh_trafo_c_cuda_sm80_kernel_real_double(double *q, const double *hh, const double *hh_tau, const int nev, const int nb, const int ldq, const int ncols, cudaStream_t my_stream)
-  
+
   {
-  
+
       switch (nb) {
         case 1024: launch_NVIDIA_sm80_kernel<1024>(q, hh, hh_tau, nev, nb, ldq, ncols, my_stream); break;
         case  512: launch_NVIDIA_sm80_kernel< 512>(q, hh, hh_tau, nev, nb, ldq, ncols, my_stream); break;
@@ -220,7 +220,7 @@ extern "C" {
         //case    1: launch_new_kernel<   1>(q, hh, hh_tau, nev, nb, ldq, ncols); break;
         default: printf("Unsupported nb = %d for new kernel \n", nb);
       }
-  
+
       cudaError_t err = cudaGetLastError();
       if (err != cudaSuccess)
       {

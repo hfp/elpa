@@ -869,7 +869,7 @@
        end if
       call MPI_Comm_rank(int(communicator,kind=MPI_KIND) , mpirankMPI, mpierr)
       call MPI_Comm_size(int(communicator,kind=MPI_KIND) , mpiprocsMPI, mpierr)
- 
+
       mpirank = int(mpirankMPI, kind=c_int)
       mpiprocs = int(mpiprocsMPI, kind=c_int)
 
@@ -2550,7 +2550,7 @@
       real(kind=C_DATATYPE_KIND)               :: alpha
       integer(kind=ik)            :: coffset,zoffset,yoffset,voffset,buffersize
       integer(kind=ik)            :: mpirank,mpiprocs,mpirank_top
-      integer(kind=MPI_KIND)      :: mpirankMPI, mpierr,mpiprocsMPI 
+      integer(kind=MPI_KIND)      :: mpirankMPI, mpierr,mpiprocsMPI
 
       integer(kind=ik)            :: localsize,baseoffset,localoffset,topidx
       integer(kind=ik)            :: lidx

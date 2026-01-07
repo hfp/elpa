@@ -64,13 +64,13 @@ using namespace sycl_be;
 extern "C" int syclDeviceSynchronizeFromC();
 
 template <typename T>
-void gpu_transform_one_column_kernel (T *a_dev, T *b_dev, T *c_dev, T *alpha_dev, T *beta_dev, int n_elements, 
+void gpu_transform_one_column_kernel (T *a_dev, T *b_dev, T *c_dev, T *alpha_dev, T *beta_dev, int n_elements,
                                       const sycl::nd_item<1> &it){
-  
+
   // c = alpha*a + beta*b
 
   int i0 = it.get_local_id(0) + it.get_group(0) * it.get_local_range(0);
-  
+
   for (int i=i0; i<n_elements; i += it.get_group_range(0)*it.get_local_range(0))
     {
     c_dev[i] = alpha_dev[0]*a_dev[i] + beta_dev[0]*b_dev[i];
@@ -78,7 +78,7 @@ void gpu_transform_one_column_kernel (T *a_dev, T *b_dev, T *c_dev, T *alpha_dev
 }
 
 template <typename T>
-void gpu_transform_one_column(T *a_dev, T *b_dev, T *c_dev, T *alpha_dev, T *beta_dev, 
+void gpu_transform_one_column(T *a_dev, T *b_dev, T *c_dev, T *alpha_dev, T *beta_dev,
                               int n_elements, int SM_count, int debug, gpuStream_t my_stream){
 
   sycl::queue q = getQueueOrDefault(my_stream);
@@ -92,15 +92,15 @@ void gpu_transform_one_column(T *a_dev, T *b_dev, T *c_dev, T *alpha_dev, T *bet
 }
 
 
-extern "C" void CONCATENATE(ELPA_GPU,  _transform_one_column_FromC)(char dataType, intptr_t a_dev, intptr_t b_dev, intptr_t c_dev, 
-                                                      intptr_t alpha_dev, intptr_t beta_dev, 
+extern "C" void CONCATENATE(ELPA_GPU,  _transform_one_column_FromC)(char dataType, intptr_t a_dev, intptr_t b_dev, intptr_t c_dev,
+                                                      intptr_t alpha_dev, intptr_t beta_dev,
                                                       int n_elements, int SM_count, int debug, gpuStream_t my_stream){
 
-  if      (dataType=='D') gpu_transform_one_column<double>((double *) a_dev, (double *) b_dev, (double *) c_dev, 
-                                             (double *) alpha_dev, (double *) beta_dev, 
+  if      (dataType=='D') gpu_transform_one_column<double>((double *) a_dev, (double *) b_dev, (double *) c_dev,
+                                             (double *) alpha_dev, (double *) beta_dev,
                                              n_elements, SM_count, debug, my_stream);
-  else if (dataType=='S') gpu_transform_one_column<float> ((float  *) a_dev, (float  *) b_dev, (float  *) c_dev, 
-                                             (float  *) alpha_dev, (float  *) beta_dev, 
+  else if (dataType=='S') gpu_transform_one_column<float> ((float  *) a_dev, (float  *) b_dev, (float  *) c_dev,
+                                             (float  *) alpha_dev, (float  *) beta_dev,
                                              n_elements, SM_count, debug, my_stream);
   else {
     printf("Error in elpa_transform_one_column: Unsupported data type\n");
@@ -111,9 +111,9 @@ extern "C" void CONCATENATE(ELPA_GPU,  _transform_one_column_FromC)(char dataTyp
 
 template <typename T>
 void gpu_transform_two_columns_kernel(T *q_dev, T *qtrans_dev, T *tmp_dev,
-                                      int ldq, int l_rows, int l_rqs, int l_rqe, int lc1, int lc2, 
+                                      int ldq, int l_rows, int l_rqs, int l_rqe, int lc1, int lc2,
                                       const sycl::nd_item<1> &it){
-  
+
   // tmp(1:l_rows)      = q(l_rqs:l_rqe,lc1)*qtrans(1,1) + q(l_rqs:l_rqe,lc2)*qtrans(2,1)
   // q(l_rqs:l_rqe,lc2) = q(l_rqs:l_rqe,lc1)*qtrans(1,2) + q(l_rqs:l_rqe,lc2)*qtrans(2,2)
   // q(l_rqs:l_rqe,lc1) = tmp(1:l_rows)
@@ -134,7 +134,7 @@ void gpu_transform_two_columns_kernel(T *q_dev, T *qtrans_dev, T *tmp_dev,
 }
 
 template <typename T>
-void gpu_transform_two_columns(T *q_dev, T *qtrans_dev, T *tmp_dev, int ldq, int l_rows, int l_rqs, int l_rqe, int lc1, int lc2, 
+void gpu_transform_two_columns(T *q_dev, T *qtrans_dev, T *tmp_dev, int ldq, int l_rows, int l_rqs, int l_rqe, int lc1, int lc2,
                                int SM_count, int debug, gpuStream_t my_stream){
 
   sycl::queue q = getQueueOrDefault(my_stream);
@@ -148,10 +148,10 @@ void gpu_transform_two_columns(T *q_dev, T *qtrans_dev, T *tmp_dev, int ldq, int
 }
 
 extern "C" void CONCATENATE(ELPA_GPU,  _transform_two_columns_FromC)(char dataType, intptr_t q_dev, intptr_t qtrans_dev, intptr_t tmp_dev,
-                                                                     int ldq, int l_rows, int l_rqs, int l_rqe, int lc1, int lc2, 
+                                                                     int ldq, int l_rows, int l_rqs, int l_rqe, int lc1, int lc2,
                                                                      int SM_count, int debug, gpuStream_t my_stream){
 
-  if      (dataType=='D') gpu_transform_two_columns<double>((double *) q_dev, (double *) qtrans_dev, (double *) tmp_dev, 
+  if      (dataType=='D') gpu_transform_two_columns<double>((double *) q_dev, (double *) qtrans_dev, (double *) tmp_dev,
                                              ldq, l_rows, l_rqs, l_rqe, lc1, lc2, SM_count, debug, my_stream);
   else if (dataType=='S') gpu_transform_two_columns<float> ((float  *) q_dev, (float  *) qtrans_dev, (float  *) tmp_dev,
                                              ldq, l_rows, l_rqs, l_rqe, lc1, lc2, SM_count, debug, my_stream);

@@ -287,9 +287,9 @@
       endif
     endif ! useGPU
   endif ! is_set
-  
+
   if (wantDebug .and. myid==0) print *, "blocking_in_multiply=", blocking, "nblk_mult=", nblk_mult
-  
+
   useCCL = .false.
   if (useGPU) then
     call obj%timer%start("check_for_gpu")
@@ -302,10 +302,10 @@
       return
     endif
     call obj%timer%stop("check_for_gpu")
-    
+
     SM_count = obj%gpu_setup%gpuSMcount
 
-#ifdef WITH_GPU_STREAMS    
+#ifdef WITH_GPU_STREAMS
     my_stream = obj%gpu_setup%my_stream
 #endif
 
@@ -393,22 +393,22 @@
     check_allocate("elpa_hermitian_multiply: tmp1", istat, errorMessage)
 
     if (useGPU) then
-#if !defined(WITH_OPENMP_OFFLOAD_GPU_VERSION) && !defined(WITH_SYCL_GPU_VERSION)     
+#if !defined(WITH_OPENMP_OFFLOAD_GPU_VERSION) && !defined(WITH_SYCL_GPU_VERSION)
     successGPU = gpu_host_register(int(loc(tmp1),kind=c_intptr_t), nblk_mult*l_cols*size_of_datatype, gpuHostRegisterDefault)
     check_host_register_gpu("elpa_hermitian_multiply: tmp1", successGPU)
 #endif
     endif
-  endif ! (.not. useCCL) 
-  
+  endif ! (.not. useCCL)
+
   allocate(lrs_save(nblk), stat=istat, errmsg=errorMessage)
   check_allocate("elpa_hermitian_multiply: lrs_save", istat, errorMessage)
 
   allocate(lre_save(nblk), stat=istat, errmsg=errorMessage)
   check_allocate("elpa_hermitian_multiply: lre_save", istat, errorMessage)
-  
+
   allocate(n_aux_bc_save(nblk), stat=istat, errmsg=errorMessage)
   check_allocate("elpa_hermitian_multiply: n_aux_bc_save", istat, errorMessage)
-  
+
   if (useGPU) then
     num = nblk*size_of_int
     successGPU = gpu_malloc(lrs_save_dev, num)
@@ -423,7 +423,7 @@
 
   allocate(aux_bc(l_rows*nblk), stat=istat, errmsg=errorMessage)
   check_allocate("elpa_hermitian_multiply: aux_bc", istat, errorMessage)
-  
+
   if (useGPU .and. .not. useCCL) then
     if (wantDebug) call obj%timer%start("gpu_host_register")
 #if !defined(WITH_OPENMP_OFFLOAD_GPU_VERSION) && !defined(WITH_SYCL_GPU_VERSION)
@@ -517,15 +517,15 @@
 #endif
 
       goff  = nb*np_rows + np ! offset in the global grid of blocks
-      
+
       ! Get the processor column which owns this block
       ! and the offset in blocks within this column.
       ! The corresponding block column in A is then broadcast to all for multiplication with B
 
       np_bc = MOD(goff, np_cols) ! np, that posesses the given column of blocks; trans_a='T'; "bc"=block column; rename: np_bc -> np_col_b / np_col_curr
-      
+
       noff = goff/np_cols   ! offset in the local grid of blocks
-      
+
       ! Gather up the complete column/row of blocks of A (for T/N case) on the owner in contigous memory of aux_bc array
       ! if not for upper/lower cases: aux_bc_2D(1:l_rows,1:l_cols) = a(1:l_rows,1:l_cols)
       n_aux_bc = 0
@@ -539,7 +539,7 @@
           lre = l_rows  ! last (end)  local row number for broadcast
           if (a_lower) lrs = local_index(gcol, my_prow, np_rows, nblk, +1)
           if (a_upper) lre = local_index(gcol, my_prow, np_rows, nblk, -1)
-          
+
           lrs_save(n) = lrs
           lre_save(n) = lre
 
@@ -572,7 +572,7 @@
                                       noff, nblk, matrixRows, min(nblk, l_rows_np-nb*nblk), debug, my_stream)
           if (wantDebug) call obj%timer%stop("gpu_copy_a_aux_bc_loop_kernel")
         endif
-        
+
       else ! useGPU
         if (wantDebug) call obj%timer%start("loop_copy_a_aux_bc")
         do n = 1, min(nblk, l_rows_np-nb*nblk) ! Loop over local columns for the broadcast
@@ -584,7 +584,7 @@
           lre = l_rows  ! last (end)  local row number for broadcast
           if (a_lower) lrs = local_index(gcol, my_prow, np_rows, nblk, +1)
           if (a_upper) lre = local_index(gcol, my_prow, np_rows, nblk, -1)
-          
+
           lrs_save(n) = lrs
           lre_save(n) = lre
 
@@ -619,7 +619,7 @@
 #ifdef USE_CCL_HERMITIAN_MULTIPLY
 #ifdef WITH_NVTX
         call nvtxRangePush("ccl_bcast aux_bc_dev")
-#endif      
+#endif
         call obj%timer%start("ccl_bcast")
 
         ccl_comm_cols = obj%gpu_setup%ccl_comm_cols
@@ -691,7 +691,7 @@
         successGPU = gpu_memcpy      (lrs_save_dev, int(loc(lrs_save),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
         successGPU = gpu_memcpy      (lre_save_dev, int(loc(lre_save),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
         successGPU = gpu_memcpy      (n_aux_bc_save_dev, int(loc(n_aux_bc_save),kind=c_intptr_t), num, gpuMemcpyHostToDevice)
-#endif     
+#endif
         check_memcpy_gpu("elpa_hermitian_multiply: n_aux_bc_save to n_aux_bc_save_dev 2", successGPU)
         if (wantDebug) call obj%timer%stop("gpu_memcpy")
 
@@ -752,7 +752,7 @@
                                             tmp1_dev, nstor, gpuHandle)
               else ! C = A^T * A
                 a_off = ((lcs-1)*matrixRows+lrs-1)*size_of_datatype
-                
+
                 ! tmp1_dev = aux_mat_dev^{T/N} * a_dev
                 call gpublas_PRECISION_GEMM(BLAS_TRANS_OR_CONJ, 'N', nstor, lce-lcs+1, lre-lrs+1, ONE, &
                                             aux_mat_dev+aux_off, l_rows, &
@@ -904,7 +904,7 @@
           aux_mat(:,:) = 0
         endif ! useGPU
       endif ! (nstor==nblk_mult .or. nb*nblk+nblk >= l_rows_np)
-    
+
 #ifdef WITH_NVTX
       call nvtxRangePop() ! do nb = 0, (l_rows_np-1)/nblk
 #endif
@@ -915,7 +915,7 @@
 #endif
   enddo ! main loop: np = 0, np_rows-1
   call obj%timer%stop("main_loop")
-  
+
 !_______________________________________________
 
   if (useGPU) then
@@ -1006,7 +1006,7 @@
   if (wantDebug) call obj%timer%start("deallocate")
   deallocate(aux_bc, lrs_save, lre_save, n_aux_bc_save, stat=istat, errmsg=errorMessage)
   check_deallocate("elpa_hermitian_multiply: aux_bc, lrs_save, lre_save", istat, errorMessage)
-  
+
   if (.not. useCCL) then
       if (useGPU) then
 #if !defined(WITH_OPENMP_OFFLOAD_GPU_VERSION) && !defined(WITH_SYCL_GPU_VERSION)

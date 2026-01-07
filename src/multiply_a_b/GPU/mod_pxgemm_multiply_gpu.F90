@@ -135,7 +135,7 @@ module pxgemm_multiply_gpu
                                             SM_count, debug
       integer(kind=c_intptr_t), value    :: my_stream
     end subroutine
-  end interface 
+  end interface
 
 
   interface

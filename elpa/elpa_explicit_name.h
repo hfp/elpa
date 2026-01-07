@@ -50,7 +50,7 @@
 #include <elpa/elpa_configured_options.h>
 
 #ifdef __cplusplus
-#define double_complex std::complex<double> 
+#define double_complex std::complex<double>
 #define float_complex std::complex<float>
 extern "C" {
 #else
@@ -109,5 +109,5 @@ void elpa_invert_triangular_double_complex(elpa_t handle, double_complex *a, int
 void elpa_invert_triangular_float_complex(elpa_t handle, float_complex *a, int *error);
 
 #ifdef __cplusplus
-}  
+}
 #endif

@@ -63,7 +63,7 @@ subroutine elpa_gpu_ccl_transpose_vectors_&
   (obj, vmat_s_dev, ld_s, ccl_comm_s, comm_s, vmat_t_dev, ld_t, ccl_comm_t, comm_t, &
     nvs, nvr, nvc, nblk, nrThreads, comm_s_isRows, myps, mypt, nps, npt, &
     aux_transpose_dev, isSkewsymmetric, isSquareGridGPU, wantDebug, my_stream, success)
-  
+
   !-------------------------------------------------------------------------------
   ! This is the gpu version of the routine elpa_transpose_vectors
   ! This routine transposes an array of vectors which are distributed in
@@ -85,7 +85,7 @@ subroutine elpa_gpu_ccl_transpose_vectors_&
   ! nblk        block size of block cyclic distribution
   !
   !-------------------------------------------------------------------------------
-  
+
   use precision
   use elpa_abstract_impl
   use elpa_mpi
@@ -127,8 +127,8 @@ subroutine elpa_gpu_ccl_transpose_vectors_&
 
   integer(kind=c_intptr_t)                          :: ccl_comm_s, ccl_comm_t
   integer(kind=c_intptr_t)                          :: ccl_comm_all
-  integer(kind=c_intptr_t)                          :: vmat_s_dev 
-  integer(kind=c_intptr_t)                          :: vmat_t_dev 
+  integer(kind=c_intptr_t)                          :: vmat_s_dev
+  integer(kind=c_intptr_t)                          :: vmat_t_dev
   integer(kind=c_intptr_t)                          :: aux_transpose_dev
   logical                                           :: successGPU
   integer(kind=c_intptr_t), parameter               :: size_of_datatype = size_of_&
@@ -159,7 +159,7 @@ subroutine elpa_gpu_ccl_transpose_vectors_&
 #endif
 
   ! ! TODO_23_11: check if moving this outside speeds up the subroutine
-  ! ! TODO_23_11 -- move this outside (?) and change mpi to ccl 
+  ! ! TODO_23_11 -- move this outside (?) and change mpi to ccl
   ! if (wantDebug) call obj%timer%start("mpi_communication")
   ! call mpi_comm_rank(int(comm_s,kind=MPI_KIND),mypsMPI, mpierr)
   ! call mpi_comm_size(int(comm_s,kind=MPI_KIND),npsMPI ,mpierr)
@@ -175,13 +175,13 @@ subroutine elpa_gpu_ccl_transpose_vectors_&
   ! this codepath doesn't work for ELPA2 (because ld_s != ld_t)
   ! call obj%get("solver", solver, error)
   ! special square grid codepath for ELPA1
-  ! if (solver==ELPA_SOLVER_1STAGE .and. (.not. isSkewsymmetric) .and. & 
+  ! if (solver==ELPA_SOLVER_1STAGE .and. (.not. isSkewsymmetric) .and. &
   !     nps==npt .and. nvs==1  .and. .not. (nvc>1 .and. ld_s /= ld_t)) then
   if (isSquareGridGPU) then
     call obj%get("mpi_comm_parent", mpi_comm_all, error)
     call mpi_comm_rank(int(mpi_comm_all,kind=MPI_KIND), my_mpi_rank, mpierr)
     ld_st = min(ld_s,ld_t)
-    
+
     if (myps==mypt) then
       ! vmat_t(1:ld_st,1:nvc) = vmat_s(1:ld_st,1:nvc)
 #ifdef WITH_NVTX
@@ -205,19 +205,19 @@ subroutine elpa_gpu_ccl_transpose_vectors_&
       else
         print *, "Error in elpa_gpu_ccl_transpose_vectors: matrix_order is set incorrectly"
       endif
-      
+
       message_size = ld_st*nvc
 
       if (wantDebug) call obj%timer%start("ccl_send_recv")
 
-      ccl_comm_all = obj%gpu_setup%ccl_comm_all 
+      ccl_comm_all = obj%gpu_setup%ccl_comm_all
       successGPU = ccl_group_start()
-      if (.not. successGPU) then 
+      if (.not. successGPU) then
         print *,"Error in setting up ccl_group_start!"
         success = .false.
         stop 1
       endif
-      
+
       if (myps > mypt .and. message_size > 0) then
 
         successGPU = successGPU .and. ccl_Send(vmat_s_dev, int(k_datatype*message_size,kind=c_size_t), &
@@ -236,7 +236,7 @@ subroutine elpa_gpu_ccl_transpose_vectors_&
         success = .false.
         stop 1
       endif
-      
+
       successGPU = ccl_group_end()
       if (.not. successGPU) then
         print *,"Error in setting up ccl_group_end!"
@@ -311,7 +311,7 @@ subroutine elpa_gpu_ccl_transpose_vectors_&
         if (myps == ips) then
           !sm_count = 32
           sm_count = obj%gpu_setup%gpuSMcount
-          call gpu_transpose_reduceadd_vectors_copy_block_PRECISION (aux_transpose_dev, vmat_s_dev, & 
+          call gpu_transpose_reduceadd_vectors_copy_block_PRECISION (aux_transpose_dev, vmat_s_dev, &
                                                 nvc, nvr, n, nblks_skip, nblks_tot, lcm_s_t, nblk, aux_stride, nps, ld_s, &
                                                 1, isSkewsymmetric, .false., wantDebug, sm_count, my_stream)
         endif ! (myps == ips)
@@ -339,7 +339,7 @@ subroutine elpa_gpu_ccl_transpose_vectors_&
         !sm_count = 32
         sm_count = obj%gpu_setup%gpuSMcount
         call gpu_transpose_reduceadd_vectors_copy_block_PRECISION (aux_transpose_dev, vmat_t_dev, &
-                                              nvc, nvr, n, nblks_skip, nblks_tot, lcm_s_t, nblk, aux_stride, npt, ld_t, & 
+                                              nvc, nvr, n, nblks_skip, nblks_tot, lcm_s_t, nblk, aux_stride, npt, ld_t, &
                                               2, isSkewsymmetric, .false., wantDebug, sm_count, my_stream)
       endif ! (nblks_comm .ne. 0)
     endif ! (mypt == ipt)

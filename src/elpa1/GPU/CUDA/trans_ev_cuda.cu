@@ -61,7 +61,7 @@
 #define errormessage(x, ...) do { fprintf(stderr, "%s:%d " x, __FILE__, __LINE__, __VA_ARGS__ ); } while (0)
 
 __global__ void cuda_scale_qmat_double_complex_kernel(cuDoubleComplex *q, cuDoubleComplex *tau, const int ldq, const int l_cols) {
-    
+
     double one = 1.0;
     double zero = 0.0;
     cuDoubleComplex c_one = make_cuDoubleComplex(one, zero);
@@ -79,12 +79,12 @@ __global__ void cuda_scale_qmat_double_complex_kernel(cuDoubleComplex *q, cuDoub
 	    // c = one-tau.x
 	    // d = zero - tau.y
 	    // (q.x + i * q.y) * ((one-tau.x) + i * (zero-tau.y)) = (q.x*(one-tau.x) - q.y * (zero-tau.y)) + i * (q.x * (zero-tau.y) + q.y * (one-tau.x)
-        //// real part 
+        //// real part
         //q[index].x = q[index].x * (one-tau[1].x) - q[index].y * (zero - tau[1].y);
 	//// imag part
 	//q[index].y = q[index].x * (zero - tau[1].y) + q[index].y * (one - tau[1].x);
 
-        //// real part 
+        //// real part
         //q[index].x = q[index].x * (one-tau[1].x) + q[index].y * tau[1].y;
 	//// imag part
 	//q[index].y = -q[index].x * tau[1].y + q[index].y * (one - tau[1].x);
@@ -104,7 +104,7 @@ extern "C" void cuda_scale_qmat_double_complex_FromC(int *ldq_in, int *l_cols_in
   cuDoubleComplex* q_casted = (cuDoubleComplex*) q_dev;
   cuDoubleComplex* tau_casted = (cuDoubleComplex*) tau_dev;
 
-  dim3 threadsPerBlock(1024); 
+  dim3 threadsPerBlock(1024);
   dim3 blocks((l_cols + threadsPerBlock.x - 1) / threadsPerBlock.x);
 
 #ifdef WITH_GPU_STREAMS
@@ -119,7 +119,7 @@ extern "C" void cuda_scale_qmat_double_complex_FromC(int *ldq_in, int *l_cols_in
 }
 
 __global__ void cuda_scale_qmat_float_complex_kernel(cuFloatComplex *q, cuFloatComplex *tau, const int ldq, const int l_cols) {
-    
+
     float one = 1.0f;
     float zero = 0.0f;
     cuFloatComplex c_one = make_cuFloatComplex(one, zero);
@@ -143,7 +143,7 @@ extern "C" void cuda_scale_qmat_float_complex_FromC(int *ldq_in, int *l_cols_in,
   cuFloatComplex* q_casted = (cuFloatComplex*) q_dev;
   cuFloatComplex* tau_casted = (cuFloatComplex*) tau_dev;
 
-  dim3 threadsPerBlock(1024); 
+  dim3 threadsPerBlock(1024);
   dim3 blocks((l_cols + threadsPerBlock.x - 1) / threadsPerBlock.x);
 
 #ifdef WITH_GPU_STREAMS

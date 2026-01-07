@@ -53,7 +53,7 @@
 #endif
 
 #ifdef __cplusplus
-extern "C" {    
+extern "C" {
 #endif
 
 int cudaDeviceGetAttributeFromC(int *value, int attribute) {
@@ -87,7 +87,7 @@ int cudaDeviceGetAttributeFromC(int *value, int attribute) {
       attr = cudaDevAttrMultiProcessorCount;
       break;
   }
-  
+
   cudaError_t status = cudaDeviceGetAttribute(value, attr, 0);
   if (status == cudaSuccess) {
     return 1;
@@ -145,10 +145,10 @@ int cublasGetVersionFromC(cublasHandle_t cudaHandle, int *version) {
     return 0;
   }
 }
-    
+
 int cudaGetLastErrorFromC() {
   cudaError_t status = cudaGetLastError();
-  
+
   if (status == cudaSuccess) {
     return 1;
   }
@@ -158,7 +158,7 @@ int cudaGetLastErrorFromC() {
     return 0;
   }
 
-}   
+}
 
 int cudaStreamCreateFromC(cudaStream_t *cudaStream) {
   //*stream = (intptr_t) malloc(sizeof(cudaStream_t));
@@ -930,11 +930,11 @@ void cublasCtrmv_elpa_wrapper(cublasHandle_t cublasHandle, char uplo,  char tran
 
 //_________________________________________________________________________________________________
 
-void cublasDsyrk_elpa_wrapper(cublasHandle_t cublasHandle, char uplo, char trans, 
-                              int n, int k, 
+void cublasDsyrk_elpa_wrapper(cublasHandle_t cublasHandle, char uplo, char trans,
+                              int n, int k,
                               double alpha, const double *A, int lda,
                               double beta, double *C, int ldc){
-  
+
   cublasStatus_t status = cublasDsyrk(cublasHandle, fill_mode_new_api(uplo), operation_new_api(trans),
                                         n, k, &alpha, A, lda, &beta, C, ldc);
   if (status != CUBLAS_STATUS_SUCCESS) {
@@ -942,8 +942,8 @@ void cublasDsyrk_elpa_wrapper(cublasHandle_t cublasHandle, char uplo, char trans
   }
 }
 
-void cublasSsyrk_elpa_wrapper(cublasHandle_t cublasHandle, char uplo, char trans, 
-                              int n, int k, 
+void cublasSsyrk_elpa_wrapper(cublasHandle_t cublasHandle, char uplo, char trans,
+                              int n, int k,
                               float alpha, const float *A, int lda,
                               float beta, float *C, int ldc){
 
@@ -954,14 +954,14 @@ void cublasSsyrk_elpa_wrapper(cublasHandle_t cublasHandle, char uplo, char trans
   }
 }
 
-void cublasZherk_elpa_wrapper(cublasHandle_t cudaHandle, char uplo, char trans, 
-                              int n, int k, 
+void cublasZherk_elpa_wrapper(cublasHandle_t cudaHandle, char uplo, char trans,
+                              int n, int k,
                               double _Complex alpha, const double _Complex *A, int lda,
                               double _Complex beta, double _Complex *C, int ldc){
 
   double alpha_real = creal(alpha);
   double beta_real  = creal(beta);
-  
+
   const cuDoubleComplex* A_casted = (const cuDoubleComplex*) A;
   cuDoubleComplex* C_casted = (cuDoubleComplex*) C;
 
@@ -972,8 +972,8 @@ void cublasZherk_elpa_wrapper(cublasHandle_t cudaHandle, char uplo, char trans,
   }
 }
 
-void cublasCherk_elpa_wrapper(cublasHandle_t cudaHandle, char uplo, char trans, 
-                              int n, int k, 
+void cublasCherk_elpa_wrapper(cublasHandle_t cudaHandle, char uplo, char trans,
+                              int n, int k,
                               float _Complex alpha, const float _Complex *A, int lda,
                               float _Complex beta, float _Complex *C, int ldc){
 
@@ -1150,5 +1150,5 @@ void cublasCaxpy_elpa_wrapper (cublasHandle_t cudaHandle, int n, float _Complex 
 }
 
 #ifdef __cplusplus
-}    
+}
 #endif

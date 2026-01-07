@@ -62,7 +62,7 @@
 #define errormessage(x, ...) do { fprintf(stderr, "%s:%d " x, __FILE__, __LINE__, __VA_ARGS__ ); } while (0)
 
 __global__ void hip_scale_qmat_double_complex_kernel(hipDoubleComplex *q, hipDoubleComplex *tau, const int ldq, const int l_cols) {
-    
+
     double one = 1.0;
     double zero = 0.0;
     hipDoubleComplex c_one = make_hipDoubleComplex(one, zero);
@@ -80,12 +80,12 @@ __global__ void hip_scale_qmat_double_complex_kernel(hipDoubleComplex *q, hipDou
 	    // c = one-tau.x
 	    // d = zero - tau.y
 	    // (q.x + i * q.y) * ((one-tau.x) + i * (zero-tau.y)) = (q.x*(one-tau.x) - q.y * (zero-tau.y)) + i * (q.x * (zero-tau.y) + q.y * (one-tau.x)
-        //// real part 
+        //// real part
         //q[index].x = q[index].x * (one-tau[1].x) - q[index].y * (zero - tau[1].y);
 	//// imag part
 	//q[index].y = q[index].x * (zero - tau[1].y) + q[index].y * (one - tau[1].x);
 
-        //// real part 
+        //// real part
         //q[index].x = q[index].x * (one-tau[1].x) + q[index].y * tau[1].y;
 	//// imag part
 	//q[index].y = -q[index].x * tau[1].y + q[index].y * (one - tau[1].x);
@@ -105,7 +105,7 @@ extern "C" void hip_scale_qmat_double_complex_FromC(int *ldq_in, int *l_cols_in,
   hipDoubleComplex* q_casted = (hipDoubleComplex*) q_dev;
   hipDoubleComplex* tau_casted = (hipDoubleComplex*) tau_dev;
 
-  dim3 threadsPerBlock(1024); 
+  dim3 threadsPerBlock(1024);
   dim3 blocks((l_cols + threadsPerBlock.x - 1) / threadsPerBlock.x);
 
 #ifdef WITH_GPU_STREAMS
@@ -120,7 +120,7 @@ extern "C" void hip_scale_qmat_double_complex_FromC(int *ldq_in, int *l_cols_in,
 }
 
 __global__ void hip_scale_qmat_float_complex_kernel(hipFloatComplex *q, hipFloatComplex *tau, const int ldq, const int l_cols) {
-    
+
     float one = 1.0f;
     float zero = 0.0f;
     hipFloatComplex c_one = make_hipFloatComplex(one, zero);
@@ -144,7 +144,7 @@ extern "C" void hip_scale_qmat_float_complex_FromC(int *ldq_in, int *l_cols_in, 
   hipFloatComplex* q_casted = (hipFloatComplex*) q_dev;
   hipFloatComplex* tau_casted = (hipFloatComplex*) tau_dev;
 
-  dim3 threadsPerBlock(1024); 
+  dim3 threadsPerBlock(1024);
   dim3 blocks((l_cols + threadsPerBlock.x - 1) / threadsPerBlock.x);
 
 #ifdef WITH_GPU_STREAMS

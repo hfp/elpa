@@ -124,7 +124,7 @@ void elpa_eigenvectors_double_complex(elpa_t handle, double complex *a, double *
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
-   
+
 	if (IsDevicePtr){
 		elpa_eigenvectors_d_ptr_dc(handle, a, ev, q, error);
 	}
@@ -153,7 +153,7 @@ void elpa_eigenvectors_float_complex(elpa_t handle, float complex *a, float *ev,
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
-   
+
 	if (IsDevicePtr){
 		elpa_eigenvectors_d_ptr_fc(handle, a, ev, q, error);
 	}
@@ -438,7 +438,7 @@ void elpa_eigenvalues_double_complex(elpa_t handle, double complex *a, double *e
  *  \param  error   on return the error code, which can be queried with elpa_strerr()
  *  \result void
  */
- 
+
 void elpa_eigenvalues_float_complex(elpa_t handle, float complex *a, float *ev, int *error)
 {
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
@@ -758,7 +758,7 @@ void elpa_cholesky_float_complex(elpa_t handle, float complex *a, int *error)
  *  \param  error   on return the error code, which can be queried with elpa_strerr()
  *  \result void
  */
- 
+
 void elpa_hermitian_multiply_double(elpa_t handle, char uplo_a, char uplo_c, int ncb, double *a, double *b, int nrows_b, int ncols_b, double *c, int nrows_c, int ncols_c, int *error)
 {
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
@@ -775,7 +775,7 @@ void elpa_hermitian_multiply_double(elpa_t handle, char uplo_a, char uplo_c, int
   elpa_hermitian_multiply_a_h_a_d(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
 #endif		
 }
-   
+
 /*! \brief generic C method for elpa_hermitian_multiply_float
  *
  *  \details
@@ -793,7 +793,7 @@ void elpa_hermitian_multiply_double(elpa_t handle, char uplo_a, char uplo_c, int
  *  \param  error   on return the error code, which can be queried with elpa_strerr()
  *  \result void
  */
- 
+
 void elpa_hermitian_multiply_float(elpa_t handle, char uplo_a, char uplo_c, int ncb, float *a, float *b, int nrows_b, int ncols_b, float *c, int nrows_c, int ncols_c, int *error)
 {
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
@@ -828,7 +828,7 @@ void elpa_hermitian_multiply_float(elpa_t handle, char uplo_a, char uplo_c, int 
  *  \param  error   on return the error code, which can be queried with elpa_strerr()
  *  \result void
  */
- 
+
 void elpa_hermitian_multiply_double_complex(elpa_t handle, char uplo_a, char uplo_c, int ncb, double complex *a, double complex *b, int nrows_b, int ncols_b, double complex *c, int nrows_c, int ncols_c, int *error)
 {
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
@@ -845,7 +845,7 @@ void elpa_hermitian_multiply_double_complex(elpa_t handle, char uplo_a, char upl
   elpa_hermitian_multiply_a_h_a_dc(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
 #endif		
 }
-   
+
 /*! \brief generic C method for elpa_hermitian_multiply_float_complex
  *
  *  \details
@@ -863,7 +863,7 @@ void elpa_hermitian_multiply_double_complex(elpa_t handle, char uplo_a, char upl
  *  \param  error   on return the error code, which can be queried with elpa_strerr()
  *  \result void
  */
- 
+
 void elpa_hermitian_multiply_float_complex(elpa_t handle, char uplo_a, char uplo_c, int ncb, float complex *a, float complex *b, int nrows_b, int ncols_b, float complex *c, int nrows_c, int ncols_c, int *error)
 {
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
@@ -900,7 +900,7 @@ void elpa_hermitian_multiply_float_complex(elpa_t handle, char uplo_a, char uplo
  *  \param  error   on return the error code, which can be queried with elpa_strerr()
  *  \result void
  */
- 
+
 void elpa_pxgemm_multiply_double(elpa_t handle, char trans_a, char trans_c, int ncb, double *a, double *b, int nrows_b, int ncols_b, double *c, int nrows_c, int ncols_c, int *error)
 {
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
@@ -917,7 +917,7 @@ void elpa_pxgemm_multiply_double(elpa_t handle, char trans_a, char trans_c, int 
   elpa_pxgemm_multiply_a_h_a_d(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
 #endif		
 }
-   
+
 /*! \brief generic C method for elpa_pxgemm_multiply_float
  *
  *  \details
@@ -935,7 +935,7 @@ void elpa_pxgemm_multiply_double(elpa_t handle, char trans_a, char trans_c, int 
  *  \param  error   on return the error code, which can be queried with elpa_strerr()
  *  \result void
  */
- 
+
 void elpa_pxgemm_multiply_float(elpa_t handle, char trans_a, char trans_c, int ncb, float *a, float *b, int nrows_b, int ncols_b, float *c, int nrows_c, int ncols_c, int *error)
 {
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
@@ -970,7 +970,7 @@ void elpa_pxgemm_multiply_float(elpa_t handle, char trans_a, char trans_c, int n
  *  \param  error   on return the error code, which can be queried with elpa_strerr()
  *  \result void
  */
- 
+
 void elpa_pxgemm_multiply_double_complex(elpa_t handle, char trans_a, char trans_c, int ncb, double complex *a, double complex *b, int nrows_b, int ncols_b, double complex *c, int nrows_c, int ncols_c, int *error)
 {
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
@@ -987,7 +987,7 @@ void elpa_pxgemm_multiply_double_complex(elpa_t handle, char trans_a, char trans
   elpa_pxgemm_multiply_a_h_a_dc(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
 #endif		
 }
-   
+
 /*! \brief generic C method for elpa_pxgemm_multiply_float_complex
  *
  *  \details
@@ -1005,7 +1005,7 @@ void elpa_pxgemm_multiply_double_complex(elpa_t handle, char trans_a, char trans
  *  \param  error   on return the error code, which can be queried with elpa_strerr()
  *  \result void
  */
- 
+
 void elpa_pxgemm_multiply_float_complex(elpa_t handle, char trans_a, char trans_c, int ncb, float complex *a, float complex *b, int nrows_b, int ncols_b, float complex *c, int nrows_c, int ncols_c, int *error)
 {
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1

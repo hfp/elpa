@@ -180,9 +180,9 @@
      !else
      !  na_rowsInternal = int(na_rows,kind=BLAS_KIND)
      !  na_colsInternal = int(na_cols,kind=BLAS_KIND)
-     !  sc_desc_ 
+     !  sc_desc_
      !endif
-     
+
      ! now we can set up the the blacs descriptor
 
      !sc_desc_(:) = 0
@@ -251,7 +251,7 @@
        ! data is provided via host arrays {a|q|ev|}Extern
 #endif
      endif ! useGPU
-             
+
 
      ! allocate the memory for the redistributed matrices
      allocate(aIntern(na_rowsInternal,na_colsInternal))

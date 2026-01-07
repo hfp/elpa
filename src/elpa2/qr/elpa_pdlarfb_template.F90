@@ -286,7 +286,7 @@ subroutine qr_pdlarft_pdlarfb_1dcomm_&
                     1.0_rk4,a(offset,1), int(lda,kind=BLAS_KIND))
 
 #endif
-end subroutine 
+end subroutine
 
 subroutine qr_pdlarft_set_merge_1dcomm_&
 &PRECISION &

@@ -111,7 +111,7 @@
 #if REALCASE==1
     s_1_2 = hh(2,2)
     s_1_3 = hh(3,3)
-    s_2_3 = hh(2,3) 
+    s_2_3 = hh(2,3)
     s_1_4 = hh(4,4)
     s_2_4 = hh(3,4)
     s_3_4 = hh(2,4)
@@ -206,7 +206,7 @@
     h3 = hh(nb  ,3)
 
 #if REALCASE==1
-    x(1:nq) = x(1:nq) + q(1:nq,nb+1) * h1 
+    x(1:nq) = x(1:nq) + q(1:nq,nb+1) * h1
     y(1:nq) = y(1:nq) + q(1:nq,nb+1) * h2
     z(1:nq) = z(1:nq) + q(1:nq,nb+1) * h3
 #endif

@@ -99,11 +99,11 @@ subroutine pack_row_group_&
   complex(kind=C_DATATYPE_KIND), pointer       :: result_buffer_mpi_fortran_ptr(:,:,:)
 #endif
   integer(kind=c_intptr_t)                     :: my_stream
-  
+
 
   if (wantDebug) call obj%timer%start("pack_row_group")
 
-  if (allComputeOnGPU) then 
+  if (allComputeOnGPU) then
     ! associate with c_ptr
     result_buffer_mpi_dev = transfer(result_buffer_dev, result_buffer_mpi_dev)
     ! and associate a fortran pointer
@@ -186,7 +186,7 @@ subroutine pack_row_group_&
   else ! allComputeOnGPU
     if (doCopyResult) then
       ! need to copy row_group_dev -> result_buffer_dev
-#ifdef WITH_GPU_STREAMS  
+#ifdef WITH_GPU_STREAMS
       successGPU = gpu_stream_synchronize(my_stream)
       !check_stream_synchronize_gpu("pack_row_group 1", successGPU)
       if (.not.(successGPU)) then

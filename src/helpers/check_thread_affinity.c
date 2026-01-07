@@ -79,7 +79,7 @@ void get_process_id(int *process_id, int *pprocess_id) {
   id = getpid();
   *process_id = id ;
   id = getppid();
-  *pprocess_id = id ; 
+  *pprocess_id = id ;
   //printf("My pid %d \n",*process_id);
   //printf("My ppid %d \n",*pprocess_id);
 }

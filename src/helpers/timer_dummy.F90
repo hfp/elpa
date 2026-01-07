@@ -58,7 +58,7 @@
 
 module timings_dummy
   implicit none
-  
+
   type, public :: timer_dummy_t
       contains
       procedure, pass :: start => timer_start
@@ -68,7 +68,7 @@ module timings_dummy
       procedure, pass :: print => timer_print
       procedure, pass :: measure_flops => timer_measure_flops
       procedure, pass :: set_print_options => timer_set_print_options
-  end type 
+  end type
 
   type(timer_dummy_t) :: timer
   type(timer_dummy_t) :: autotune_timer
@@ -78,25 +78,25 @@ module timings_dummy
   subroutine timer_print(self, name)
     class(timer_dummy_t), intent(inout), target :: self
     character(len=*), intent(in)  :: name
-    
+
   end subroutine
 
   subroutine timer_start(self, name, replace)
     class(timer_dummy_t), intent(inout), target :: self
     character(len=*), intent(in)  :: name
     logical, intent(in), optional  :: replace
-    
+
   end subroutine
-  
+
   subroutine timer_stop(self, name)
     class(timer_dummy_t), intent(inout), target :: self
     character(len=*), intent(in), optional :: name
-    
+
   end subroutine
 
   subroutine timer_enable(self)
     class(timer_dummy_t), intent(inout), target :: self
-    
+
   end subroutine
 
   subroutine timer_measure_flops(self, enable)
@@ -129,6 +129,6 @@ module timings_dummy
 
   subroutine timer_free(self)
     class(timer_dummy_t), intent(inout), target :: self
-    
+
   end subroutine
 end module timings_dummy

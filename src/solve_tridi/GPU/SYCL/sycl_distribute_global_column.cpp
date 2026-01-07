@@ -64,9 +64,9 @@ using namespace sycl_be;
 extern "C" int syclDeviceSynchronizeFromC();
 
 template <typename T>
-void gpu_distribute_global_column_kernel (T *g_col, T *l_col, 
-                                          const int g_col_dim1, const int g_col_dim2, const int ldq, const int matrixCols, 
-                                          const int noff_in, const int noff, const int nlen, const int my_prow, const int np_rows, const int nblk, 
+void gpu_distribute_global_column_kernel (T *g_col, T *l_col,
+                                          const int g_col_dim1, const int g_col_dim2, const int ldq, const int matrixCols,
+                                          const int noff_in, const int noff, const int nlen, const int my_prow, const int np_rows, const int nblk,
                                           const sycl::nd_item<3> &it) {
     int i = it.get_group(2) * it.get_local_range(2) + it.get_local_id(2) + 1;
     int ind = it.get_group(1) * it.get_local_range(1) + it.get_local_id(1);
@@ -96,7 +96,7 @@ void gpu_distribute_global_column_kernel (T *g_col, T *l_col,
     if (i>= 1 && i < nlen+1) {
       int g_col_offset1 = 1;
       int g_col_offset2 = i;
-             
+
       int l_col_offset1 = 1;
       int l_col_offset2 = noff_in+i;
 
@@ -117,7 +117,7 @@ void gpu_distribute_global_column_kernel (T *g_col, T *l_col,
 
 
 	    if (index >= js2 && index <= je2) {
-		    
+		
               number_of_entries = (g_col_dim2-g_col_offset2)*g_col_dim1+g_col_dim1-g_col_offset1+1;
               entries_in_started_col=g_col_dim1-g_col_offset1+1;
               entries_in_sub_matrix=number_of_entries-entries_in_started_col;
@@ -171,7 +171,7 @@ void gpu_distribute_global_column_kernel (T *g_col, T *l_col,
 
 
 template <typename T>
-void gpu_distribute_global_column(T *g_col_dev, T *l_col_dev, int g_col_dim1, int g_col_dim2, int ldq, int matrixCols, 
+void gpu_distribute_global_column(T *g_col_dev, T *l_col_dev, int g_col_dim1, int g_col_dim2, int ldq, int matrixCols,
                                   int noff_in, int noff, int nlen, int my_prow, int np_rows, int nblk,
                                   int debug, QueueData *my_stream) {
 
@@ -181,28 +181,28 @@ void gpu_distribute_global_column(T *g_col_dev, T *l_col_dev, int g_col_dim1, in
   sycl::queue q = getQueueOrDefault(my_stream);
   sycl::range<3> threadsPerBlock(2,16,32);
   sycl::range<3> blocks( (matrixCols + threadsPerBlock.get(0) - 1) / threadsPerBlock.get(0),
-                        (nbe-nbs+1 + threadsPerBlock.get(1) - 1) / threadsPerBlock.get(1), 
+                        (nbe-nbs+1 + threadsPerBlock.get(1) - 1) / threadsPerBlock.get(1),
                         (nlen + threadsPerBlock.get(2) - 1) / threadsPerBlock.get(2));
 
   q.parallel_for(sycl::nd_range<3>(blocks * threadsPerBlock, threadsPerBlock), [=](sycl::nd_item<3> it) {
-        gpu_distribute_global_column_kernel(g_col_dev, l_col_dev, 
-                                            g_col_dim1, g_col_dim2, ldq, matrixCols, 
+        gpu_distribute_global_column_kernel(g_col_dev, l_col_dev,
+                                            g_col_dim1, g_col_dim2, ldq, matrixCols,
                                             noff_in, noff, nlen, my_prow, np_rows, nblk, it);
   });
   if (debug) syclDeviceSynchronizeFromC();
 }
 
 extern "C" void CONCATENATE(ELPA_GPU,  _distribute_global_column_FromC)(char dataType, intptr_t g_col_dev, intptr_t l_col_dev,
-                                                                        int g_col_dim1, int g_col_dim2, int ldq, int matrixCols, 
-                                                                        int noff_in, int noff, int nlen, 
+                                                                        int g_col_dim1, int g_col_dim2, int ldq, int matrixCols,
+                                                                        int noff_in, int noff, int nlen,
                                                                         int my_prow, int np_rows, int nblk,
                                                                         int debug, gpuStream_t my_stream) {
-  if      (dataType=='D') gpu_distribute_global_column<double>((double *) g_col_dev, (double *) l_col_dev, 
-                                                              g_col_dim1, g_col_dim2, ldq, matrixCols, 
+  if      (dataType=='D') gpu_distribute_global_column<double>((double *) g_col_dev, (double *) l_col_dev,
+                                                              g_col_dim1, g_col_dim2, ldq, matrixCols,
                                                               noff_in, noff, nlen, my_prow, np_rows, nblk,
                                                               debug, my_stream);
-  else if (dataType=='S') gpu_distribute_global_column<float> ((float  *) g_col_dev, (float  *) l_col_dev, 
-                                                              g_col_dim1, g_col_dim2, ldq, matrixCols, 
+  else if (dataType=='S') gpu_distribute_global_column<float> ((float  *) g_col_dev, (float  *) l_col_dev,
+                                                              g_col_dim1, g_col_dim2, ldq, matrixCols,
                                                               noff_in, noff, nlen, my_prow, np_rows, nblk,
                                                               debug, my_stream);
   else {

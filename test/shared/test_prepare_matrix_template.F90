@@ -97,7 +97,7 @@
           hermitian = .true.
         else
           hermitian = .false.
-        endif      
+        endif
       else
         hermitian = .true.
       endif
@@ -107,7 +107,7 @@
           skewsymmetric = .true.
         else
           skewsymmetric = .false.
-        endif      
+        endif
       else
         skewsymmetric = .false.
       endif
@@ -212,11 +212,11 @@
 
 #if REALCASE == 1
 #ifdef DOUBLE_PRECISION_REAL
-    !c> void prepare_matrix_random_real_double_f(TEST_C_INT_TYPE na, TEST_C_INT_TYPE myid, TEST_C_INT_TYPE na_rows, 
+    !c> void prepare_matrix_random_real_double_f(TEST_C_INT_TYPE na, TEST_C_INT_TYPE myid, TEST_C_INT_TYPE na_rows,
     !c>                                          TEST_C_INT_TYPE na_cols, TEST_C_INT_TYPE sc_desc[9],
     !c>                                          double *a, double *z, double *as, int is_hermitian, int is_skewsymmetric);
 #else
-    !c> void prepare_matrix_random_real_single_f(TEST_C_INT_TYPE na, TEST_C_INT_TYPE myid, TEST_C_INT_TYPE na_rows, 
+    !c> void prepare_matrix_random_real_single_f(TEST_C_INT_TYPE na, TEST_C_INT_TYPE myid, TEST_C_INT_TYPE na_rows,
     !c>                                          TEST_C_INT_TYPE na_cols, TEST_C_INT_TYPE sc_desc[9],
     !c>                                          float *a, float *z, float *as, int is_hermitian, int is_skewsymmetric);
 #endif
@@ -224,11 +224,11 @@
 
 #if COMPLEXCASE == 1
 #ifdef DOUBLE_PRECISION_COMPLEX
-    !c> void prepare_matrix_random_complex_double_f(TEST_C_INT_TYPE na, TEST_C_INT_TYPE myid, TEST_C_INT_TYPE na_rows, 
+    !c> void prepare_matrix_random_complex_double_f(TEST_C_INT_TYPE na, TEST_C_INT_TYPE myid, TEST_C_INT_TYPE na_rows,
     !c>                                             TEST_C_INT_TYPE na_cols, TEST_C_INT_TYPE sc_desc[9],
     !c>                                             double_complex *a, double_complex *z, double_complex *as, int is_hermitian, int is_skewsymmetric);
 #else
-    !c> void prepare_matrix_random_complex_single_f(TEST_C_INT_TYPE na, TEST_C_INT_TYPE myid, TEST_C_INT_TYPE na_rows, 
+    !c> void prepare_matrix_random_complex_single_f(TEST_C_INT_TYPE na, TEST_C_INT_TYPE myid, TEST_C_INT_TYPE na_rows,
     !c>                                             TEST_C_INT_TYPE na_cols, TEST_C_INT_TYPE sc_desc[9],
     !c>                                             float_complex *a, float_complex *z, float_complex *as, int is_hermitian, int is_skewsymmetric);
 #endif
@@ -305,13 +305,13 @@ subroutine prepare_matrix_random_&
 
 #if REALCASE == 1
 #ifdef DOUBLE_PRECISION_REAL
-    !c> void prepare_matrix_random_spd_real_double_f(TEST_C_INT_TYPE na, TEST_C_INT_TYPE myid, TEST_C_INT_TYPE na_rows, 
+    !c> void prepare_matrix_random_spd_real_double_f(TEST_C_INT_TYPE na, TEST_C_INT_TYPE myid, TEST_C_INT_TYPE na_rows,
     !c>                                              TEST_C_INT_TYPE na_cols, TEST_C_INT_TYPE sc_desc[9],
     !c>                                              double *a, double *z, double *as,
-    !c>                                              TEST_C_INT_TYPE nblk, TEST_C_INT_TYPE np_rows, TEST_C_INT_TYPE np_cols, 
+    !c>                                              TEST_C_INT_TYPE nblk, TEST_C_INT_TYPE np_rows, TEST_C_INT_TYPE np_cols,
     !c>                                              TEST_C_INT_TYPE my_prow, TEST_C_INT_TYPE my_pcol);
 #else
-    !c> void prepare_matrix_random_spd_real_single_f(TEST_C_INT_TYPE na, TEST_C_INT_TYPE myid, TEST_C_INT_TYPE na_rows, 
+    !c> void prepare_matrix_random_spd_real_single_f(TEST_C_INT_TYPE na, TEST_C_INT_TYPE myid, TEST_C_INT_TYPE na_rows,
     !c>                                              TEST_C_INT_TYPE na_cols, TEST_C_INT_TYPE sc_desc[9],
     !c>                                              float *a, float *z, float *as,
     !c>                                              TEST_C_INT_TYPE nblk, TEST_C_INT_TYPE np_rows, TEST_C_INT_TYPE np_cols,
@@ -321,16 +321,16 @@ subroutine prepare_matrix_random_&
 
 #if COMPLEXCASE == 1
 #ifdef DOUBLE_PRECISION_COMPLEX
-    !c> void prepare_matrix_random_spd_complex_double_f(TEST_C_INT_TYPE na, TEST_C_INT_TYPE myid, TEST_C_INT_TYPE na_rows, 
+    !c> void prepare_matrix_random_spd_complex_double_f(TEST_C_INT_TYPE na, TEST_C_INT_TYPE myid, TEST_C_INT_TYPE na_rows,
     !c>                                                 TEST_C_INT_TYPE na_cols, TEST_C_INT_TYPE sc_desc[9],
     !c>                                                 double_complex *a, double_complex *z, double_complex *as,
-    !c>                                                 TEST_C_INT_TYPE nblk, TEST_C_INT_TYPE np_rows, 
+    !c>                                                 TEST_C_INT_TYPE nblk, TEST_C_INT_TYPE np_rows,
     !c>                                                 TEST_C_INT_TYPE np_cols, TEST_C_INT_TYPE my_prow, TEST_C_INT_TYPE my_pcol);
 #else
     !c> void prepare_matrix_random_spd_complex_single_f(TEST_C_INT_TYPE na, TEST_C_INT_TYPE myid, TEST_C_INT_TYPE na_rows,
     !c>                                                 TEST_C_INT_TYPE na_cols, TEST_C_INT_TYPE sc_desc[9],
     !c>                                                 float_complex *a, float_complex *z, float_complex *as,
-    !c>                                                 TEST_C_INT_TYPE nblk, TEST_C_INT_TYPE np_rows, 
+    !c>                                                 TEST_C_INT_TYPE nblk, TEST_C_INT_TYPE np_rows,
     !c>                                                 TEST_C_INT_TYPE np_cols, TEST_C_INT_TYPE my_prow, TEST_C_INT_TYPE my_pcol);
 #endif
 #endif /* COMPLEXCASE */
@@ -378,7 +378,7 @@ subroutine prepare_matrix_random_spd_&
 #include "./test_precision_kinds.F90"
       TEST_INT_TYPE, intent(in)                 :: na, nblk, myid, na_rows, na_cols, np_rows, np_cols, my_prow, my_pcol
       MATH_DATATYPE(kind=rck), intent(inout)    :: a(:,:)
-    
+
       TEST_INT_TYPE                             :: l_1, l_2, x_1, x_2, I_glob, J_glob, i_loc, j_loc
 
 #if COMPLEXCASE == 1
@@ -387,8 +387,8 @@ subroutine prepare_matrix_random_spd_&
 
       integer(kind=c_int), allocatable          :: iseed(:)
       integer(kind=c_int)                       :: n
-      
-      
+
+
       ! we want different random numbers on every process
       ! (otherwise A might get rank deficient):
 #if COMPLEXCASE == 1
@@ -415,29 +415,29 @@ subroutine prepare_matrix_random_spd_&
       if (myid == 0) then
       print '(a)','| Random matrix block has been set up. (only processor 0 confirms this step)'
       endif
-        
+
       ! set lower triangular part of the matrix to zero
       do i_loc=1,na_rows
           ! nblk = "NB"; np_rows = "P_r"; my_prow="p_r"  (quoted-ScaLAPACK userguide notation, p.61-63)
       	  l_1 = (i_loc-1)/nblk ! local coord of the (NBxNB) block among other blocks
 	      x_1 = mod(i_loc-1, nblk) + 1 ! local coord within the block
 	      I_glob = (l_1*np_rows + my_prow)*nblk + x_1
-          
+
           do j_loc=1,na_cols
-              l_2 = (j_loc-1)/nblk 
-	          x_2 = mod(j_loc-1, nblk) + 1 
+              l_2 = (j_loc-1)/nblk
+	          x_2 = mod(j_loc-1, nblk) + 1
 	          J_glob = (l_2*np_cols + my_pcol)*nblk + x_2
-              
-              if (I_glob == J_glob) then 
-                  a(i_loc,j_loc) = I_glob 
+
+              if (I_glob == J_glob) then
+                  a(i_loc,j_loc) = I_glob
               endif
-              
-              if (I_glob > J_glob) then 
+
+              if (I_glob > J_glob) then
                   a(i_loc,j_loc) = ZERO
               endif
           end do
       end do
-      
+
       if (myid == 0) then
         print '(a)','| Global lower triangular part of the matrix block has been set to zero'
       endif
@@ -451,12 +451,12 @@ subroutine prepare_matrix_random_spd_&
 
 #if REALCASE == 1
 #ifdef DOUBLE_PRECISION_REAL
-    !c> void prepare_matrix_random_triangular_real_double_f(TEST_C_INT_TYPE na, double *a, TEST_C_INT_TYPE nblk, TEST_C_INT_TYPE myid, 
+    !c> void prepare_matrix_random_triangular_real_double_f(TEST_C_INT_TYPE na, double *a, TEST_C_INT_TYPE nblk, TEST_C_INT_TYPE myid,
     !c>                                       TEST_C_INT_TYPE na_rows, TEST_C_INT_TYPE na_cols,
     !c>                                       TEST_C_INT_TYPE np_rows, TEST_C_INT_TYPE np_cols,
     !c>                                       TEST_C_INT_TYPE my_prow, TEST_C_INT_TYPE my_pcol);
 #else
-    !c> void prepare_matrix_random_triangular_real_single_f(TEST_C_INT_TYPE na, float *a, TEST_C_INT_TYPE nblk, TEST_C_INT_TYPE myid, 
+    !c> void prepare_matrix_random_triangular_real_single_f(TEST_C_INT_TYPE na, float *a, TEST_C_INT_TYPE nblk, TEST_C_INT_TYPE myid,
     !c>                                       TEST_C_INT_TYPE na_rows, TEST_C_INT_TYPE na_cols,
     !c>                                       TEST_C_INT_TYPE np_rows, TEST_C_INT_TYPE np_cols,
     !c>                                       TEST_C_INT_TYPE my_prow, TEST_C_INT_TYPE my_pcol);
@@ -465,19 +465,19 @@ subroutine prepare_matrix_random_spd_&
 
 #if COMPLEXCASE == 1
 #ifdef DOUBLE_PRECISION_COMPLEX
-    !c> void prepare_matrix_random_triangular_complex_double_f(TEST_C_INT_TYPE na, double_complex *a, TEST_C_INT_TYPE nblk, TEST_C_INT_TYPE myid, 
+    !c> void prepare_matrix_random_triangular_complex_double_f(TEST_C_INT_TYPE na, double_complex *a, TEST_C_INT_TYPE nblk, TEST_C_INT_TYPE myid,
     !c>                                       TEST_C_INT_TYPE na_rows, TEST_C_INT_TYPE na_cols,
     !c>                                       TEST_C_INT_TYPE np_rows, TEST_C_INT_TYPE np_cols,
     !c>                                       TEST_C_INT_TYPE my_prow, TEST_C_INT_TYPE my_pcol);
 #else
-    !c> void prepare_matrix_random_triangular_complex_single_f(TEST_C_INT_TYPE na, float_complex *a, TEST_C_INT_TYPE nblk, TEST_C_INT_TYPE myid, 
+    !c> void prepare_matrix_random_triangular_complex_single_f(TEST_C_INT_TYPE na, float_complex *a, TEST_C_INT_TYPE nblk, TEST_C_INT_TYPE myid,
     !c>                                       TEST_C_INT_TYPE na_rows, TEST_C_INT_TYPE na_cols,
     !c>                                       TEST_C_INT_TYPE np_rows, TEST_C_INT_TYPE np_cols,
     !c>                                       TEST_C_INT_TYPE my_prow, TEST_C_INT_TYPE my_pcol);
 #endif
 #endif /* COMPLEXCASE */
 
-      
+
    subroutine prepare_matrix_random_triangular_&
    &MATH_DATATYPE&
    &_wrapper_&
@@ -494,14 +494,14 @@ subroutine prepare_matrix_random_spd_&
 #include "./test_precision_kinds.F90"
       TEST_INT_TYPE, value    :: na, nblk, myid, na_rows, na_cols, np_rows, np_cols, my_prow, my_pcol
       MATH_DATATYPE(kind=rck) :: a(1:na_rows,1:na_cols)
-      
+
       call prepare_matrix_random_triangular_&
       &MATH_DATATYPE&
       &_&
       &PRECISION&
       & (na, a, nblk, myid, na_rows, na_cols, np_rows, np_cols, my_prow, my_pcol)
     end subroutine
-    
+
 !__________________________________________________________________________________________________
 
    subroutine prepare_matrix_toeplitz_&
@@ -518,7 +518,7 @@ subroutine prepare_matrix_random_spd_&
      TEST_INT_TYPE, intent(in) :: na, nblk, np_rows, np_cols, my_prow, my_pcol
      MATH_DATATYPE(kind=rck)   :: diagonalElement, subdiagonalElement
      MATH_DATATYPE(kind=rck)   :: d(:), sd(:), ds(:), sds(:)
-     
+
      MATH_DATATYPE(kind=rck)   :: a(:,:), as(:,:)
 
      TEST_INT_TYPE             :: ii
@@ -628,41 +628,41 @@ subroutine prepare_matrix_random_spd_&
    end subroutine
 
 
-   
+
 #if REALCASE == 1
 #ifdef DOUBLE_PRECISION_REAL
-    !c> void prepare_matrix_toeplitz_real_double_f(TEST_C_INT_TYPE na, 
+    !c> void prepare_matrix_toeplitz_real_double_f(TEST_C_INT_TYPE na,
     !c>           double diagonalElement, double subdiagonalElement,
     !c>           double *d, double *sd, double *ds, double *sds,
-    !c>           double *a, double *as, TEST_C_INT_TYPE nblk, 
+    !c>           double *a, double *as, TEST_C_INT_TYPE nblk,
     !c>           TEST_C_INT_TYPE na_rows, TEST_C_INT_TYPE na_cols,
     !c>           TEST_C_INT_TYPE np_rows, TEST_C_INT_TYPE np_cols,
     !c>           TEST_C_INT_TYPE my_prow, TEST_C_INT_TYPE my_pcol);
 #else
-    !c> void prepare_matrix_toeplitz_real_single_f(TEST_C_INT_TYPE na, 
+    !c> void prepare_matrix_toeplitz_real_single_f(TEST_C_INT_TYPE na,
     !c>           float diagonalElement, float subdiagonalElement,
     !c>           float *d, float *sd, float *ds, float *sds,
-    !c>           float *a, float *as, TEST_C_INT_TYPE nblk, 
+    !c>           float *a, float *as, TEST_C_INT_TYPE nblk,
     !c>           TEST_C_INT_TYPE na_rows, TEST_C_INT_TYPE na_cols,
     !c>           TEST_C_INT_TYPE np_rows, TEST_C_INT_TYPE np_cols,
-    !c>           TEST_C_INT_TYPE my_prow, TEST_C_INT_TYPE my_pcol);    
+    !c>           TEST_C_INT_TYPE my_prow, TEST_C_INT_TYPE my_pcol);
 #endif
 #endif /* REALCASE */
 
 #if COMPLEXCASE == 1
 #ifdef DOUBLE_PRECISION_COMPLEX
-    !c> void prepare_matrix_toeplitz_complex_double_f(TEST_C_INT_TYPE na, 
+    !c> void prepare_matrix_toeplitz_complex_double_f(TEST_C_INT_TYPE na,
     !c>           double diagonalElement, double subdiagonalElement,
     !c>           double *d, double *sd, double *ds, double *sds,
-    !c>           double_complex *a, double_complex *as, TEST_C_INT_TYPE nblk, 
+    !c>           double_complex *a, double_complex *as, TEST_C_INT_TYPE nblk,
     !c>           TEST_C_INT_TYPE na_rows, TEST_C_INT_TYPE na_cols,
     !c>           TEST_C_INT_TYPE np_rows, TEST_C_INT_TYPE np_cols,
     !c>           TEST_C_INT_TYPE my_prow, TEST_C_INT_TYPE my_pcol);
 #else
-    !c> void prepare_matrix_toeplitz_complex_single_f(TEST_C_INT_TYPE na, 
+    !c> void prepare_matrix_toeplitz_complex_single_f(TEST_C_INT_TYPE na,
     !c>           float diagonalElement, float subdiagonalElement,
     !c>           float *d, float *sd, float *ds, float *sds,
-    !c>           float_complex *a, float_complex *as, TEST_C_INT_TYPE nblk, 
+    !c>           float_complex *a, float_complex *as, TEST_C_INT_TYPE nblk,
     !c>           TEST_C_INT_TYPE na_rows, TEST_C_INT_TYPE na_cols,
     !c>           TEST_C_INT_TYPE np_rows, TEST_C_INT_TYPE np_cols,
     !c>           TEST_C_INT_TYPE my_prow, TEST_C_INT_TYPE my_pcol);
@@ -702,7 +702,7 @@ subroutine prepare_matrix_random_spd_&
       & (na, diagonalElement, subdiagonalElement, d, sd, ds, sds, a, as, &
       nblk, np_rows, np_cols, my_prow, my_pcol)
     end subroutine
-    
+
 !__________________________________________________________________________________________________
 ! Same as prepare_matrix_toeplitz, but with a zero subdiagonal element in the middle,
 ! so the matrix is block-diagonal.
@@ -722,7 +722,7 @@ subroutine prepare_matrix_random_spd_&
      TEST_INT_TYPE, intent(in) :: na, nblk, np_rows, np_cols, my_prow, my_pcol
      MATH_DATATYPE(kind=rck)   :: diagonalElement, subdiagonalElement
      MATH_DATATYPE(kind=rck)   :: d(:), sd(:), ds(:), sds(:)
-     
+
      MATH_DATATYPE(kind=rck)   :: a(:,:), as(:,:)
 
      TEST_INT_TYPE             :: ii
@@ -732,7 +732,7 @@ subroutine prepare_matrix_random_spd_&
 
      sd(:) = subdiagonalElement
      sd (na/2) = ZERO
-     
+
      a(:,:) = ZERO
 
      ! set up the diagonal and subdiagonals
@@ -752,7 +752,7 @@ subroutine prepare_matrix_random_spd_&
                                                  int(my_pcol,kind=c_int) ) ) then
          a(int(rowLocal,kind=INT_TYPE),int(colLocal,kind=INT_TYPE)) = sd(ii)
        endif
-       
+
        if (map_global_array_index_to_local_index(int(ii+1,kind=c_int), int(ii,kind=c_int), rowLocal, &
                                                  colLocal, int(nblk,kind=c_int), int(np_rows,kind=c_int), &
                                                  int(np_cols,kind=c_int), int(my_prow,kind=c_int), &
@@ -822,30 +822,30 @@ subroutine prepare_matrix_random_spd_&
 #include "./test_precision_kinds.F90"
       TEST_INT_TYPE, intent(in)                 :: na, nblk, myid, na_rows, na_cols, np_rows, np_cols, my_prow, my_pcol
       MATH_DATATYPE(kind=rck), intent(inout)    :: a(:,:)
-    
+
       TEST_INT_TYPE                             :: l_1, l_2, x_1, x_2, I_glob, J_glob, i_loc, j_loc
 
-      
+
       a(:,:) = ZERO
-	  
+	
       ! set lower triangular part of the matrix to zero
       do i_loc=1,na_rows
           ! nblk = "NB"; np_rows = "P_r"; my_prow="p_r"  (quoted-ScaLAPACK userguide notation, p.61-63)
       	  l_1 = (i_loc-1)/nblk ! local coord of the (NBxNB) block among other blocks
 	      x_1 = mod(i_loc-1, nblk) + 1 ! local coord within the block
 	      I_glob = (l_1*np_rows + my_prow)*nblk + x_1
-          
+
           do j_loc=1,na_cols
-              l_2 = (j_loc-1)/nblk 
-	          x_2 = mod(j_loc-1, nblk) + 1 
+              l_2 = (j_loc-1)/nblk
+	          x_2 = mod(j_loc-1, nblk) + 1
 	          J_glob = (l_2*np_cols + my_pcol)*nblk + x_2
-              
-			  if (I_glob == J_glob) then 
+
+			  if (I_glob == J_glob) then
                   a(i_loc,j_loc) = ONE
               endif
           end do
       end do
-      
+
       if (myid == 0) then
         print '(a)','| Unit matrix was set'
       endif
@@ -854,12 +854,12 @@ subroutine prepare_matrix_random_spd_&
 
 #if REALCASE == 1
 #ifdef DOUBLE_PRECISION_REAL
-    !c> void prepare_matrix_unit_real_double_f(TEST_C_INT_TYPE na, double *a, TEST_C_INT_TYPE nblk, TEST_C_INT_TYPE myid, 
+    !c> void prepare_matrix_unit_real_double_f(TEST_C_INT_TYPE na, double *a, TEST_C_INT_TYPE nblk, TEST_C_INT_TYPE myid,
     !c>                                       TEST_C_INT_TYPE na_rows, TEST_C_INT_TYPE na_cols,
     !c>                                       TEST_C_INT_TYPE np_rows, TEST_C_INT_TYPE np_cols,
     !c>                                       TEST_C_INT_TYPE my_prow, TEST_C_INT_TYPE my_pcol);
 #else
-    !c> void prepare_matrix_unit_real_single_f(TEST_C_INT_TYPE na, float *a, TEST_C_INT_TYPE nblk, TEST_C_INT_TYPE myid, 
+    !c> void prepare_matrix_unit_real_single_f(TEST_C_INT_TYPE na, float *a, TEST_C_INT_TYPE nblk, TEST_C_INT_TYPE myid,
     !c>                                       TEST_C_INT_TYPE na_rows, TEST_C_INT_TYPE na_cols,
     !c>                                       TEST_C_INT_TYPE np_rows, TEST_C_INT_TYPE np_cols,
     !c>                                       TEST_C_INT_TYPE my_prow, TEST_C_INT_TYPE my_pcol);
@@ -868,19 +868,19 @@ subroutine prepare_matrix_random_spd_&
 
 #if COMPLEXCASE == 1
 #ifdef DOUBLE_PRECISION_COMPLEX
-    !c> void prepare_matrix_unit_complex_double_f(TEST_C_INT_TYPE na, double_complex *a, TEST_C_INT_TYPE nblk, TEST_C_INT_TYPE myid, 
+    !c> void prepare_matrix_unit_complex_double_f(TEST_C_INT_TYPE na, double_complex *a, TEST_C_INT_TYPE nblk, TEST_C_INT_TYPE myid,
     !c>                                       TEST_C_INT_TYPE na_rows, TEST_C_INT_TYPE na_cols,
     !c>                                       TEST_C_INT_TYPE np_rows, TEST_C_INT_TYPE np_cols,
     !c>                                       TEST_C_INT_TYPE my_prow, TEST_C_INT_TYPE my_pcol);
 #else
-    !c> void prepare_matrix_unit_complex_single_f(TEST_C_INT_TYPE na, float_complex *a, TEST_C_INT_TYPE nblk, TEST_C_INT_TYPE myid, 
+    !c> void prepare_matrix_unit_complex_single_f(TEST_C_INT_TYPE na, float_complex *a, TEST_C_INT_TYPE nblk, TEST_C_INT_TYPE myid,
     !c>                                       TEST_C_INT_TYPE na_rows, TEST_C_INT_TYPE na_cols,
     !c>                                       TEST_C_INT_TYPE np_rows, TEST_C_INT_TYPE np_cols,
     !c>                                       TEST_C_INT_TYPE my_prow, TEST_C_INT_TYPE my_pcol);
 #endif
 #endif /* COMPLEXCASE */
 
-      
+
    subroutine prepare_matrix_unit_&
    &MATH_DATATYPE&
    &_wrapper_&
@@ -897,12 +897,12 @@ subroutine prepare_matrix_random_spd_&
 #include "./test_precision_kinds.F90"
       TEST_INT_TYPE, value    :: na, nblk, myid, na_rows, na_cols, np_rows, np_cols, my_prow, my_pcol
       MATH_DATATYPE(kind=rck) :: a(1:na_rows,1:na_cols)
-      
+
       call prepare_matrix_unit_&
       &MATH_DATATYPE&
       &_&
       &PRECISION&
       & (na, a, nblk, myid, na_rows, na_cols, np_rows, np_cols, my_prow, my_pcol)
     end subroutine
-    
+
 ! vim: syntax=fortran

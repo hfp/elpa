@@ -595,7 +595,7 @@ subroutine trans_ev_band_to_full_&
           call mpi_ibcast(hvb(ns+1), int(nb-ns,kind=MPI_KIND), MPI_MATH_DATATYPE_PRECISION,&
                          int(pcol(ncol, nblk, np_cols),kind=MPI_KIND), int(mpi_comm_cols,kind=MPI_KIND), &
                          ibreq(bc_counter), mpierr)
-          bc_counter = bc_counter + 1  
+          bc_counter = bc_counter + 1
         else
           call obj%timer%start("mpi_communication")
           call mpi_bcast(hvb(ns+1), int(nb-ns,kind=MPI_KIND), MPI_MATH_DATATYPE_PRECISION,&
@@ -931,7 +931,7 @@ subroutine trans_ev_band_to_full_&
                             int(cwy_blocking,kind=BLAS_KIND), t_tmp2, int(cwy_blocking,kind=BLAS_KIND))
           call obj%timer%stop("blas")
           tmat_complete(1:t_rows,t_rows+1:t_rows+t_cols) = t_tmp2(1:t_rows,1:t_cols)
-            
+
 #endif /* MORE_GPUBLAS */
 
         else ! useGPU
@@ -1067,7 +1067,7 @@ subroutine trans_ev_band_to_full_&
 #ifdef WITH_MPI
 #ifndef CUDA_AWARE_MPI_BAND_TO_FULL
         ! copy data from device to host for a later MPI_ALLREDUCE
-#ifdef WITH_GPU_STREAMS  
+#ifdef WITH_GPU_STREAMS
         my_stream = obj%gpu_setup%my_stream
         successGPU = gpu_stream_synchronize(my_stream)
         check_stream_synchronize_gpu("trans_ev_band_to_full: tmp_dev -> tmp1", successGPU)
@@ -1181,7 +1181,7 @@ subroutine trans_ev_band_to_full_&
 #ifndef CUDA_AWARE_MPI_BAND_TO_FULL
 
 #ifdef MORE_GPUBLAS
-#ifdef WITH_GPU_STREAMS  
+#ifdef WITH_GPU_STREAMS
       my_stream = obj%gpu_setup%my_stream
       successGPU = gpu_stream_synchronize(my_stream)
       check_stream_synchronize_gpu("trans_ev_band_to_full: tmp_dev -> tmp1", successGPU)

@@ -41,7 +41,7 @@
 //    any derivatives of ELPA under the same license that we chose for
 //    the original distribution, the GNU Lesser General Public License.
 //
-// This file was written by A. Marek, MPCDF (2022) 
+// This file was written by A. Marek, MPCDF (2022)
 // and A. Poeppl, Intel Corporation (2024)
 */
 
@@ -200,34 +200,34 @@ static oneapi::mkl::side sideFromChar(char c) {
     auto sgSizes = dev.get_info<sid::sub_group_sizes>();
     auto maxSgSize = *std::max_element(sgSizes.begin(), sgSizes.end());
     switch(attribute) {
-      case 0: 
+      case 0:
         *value =  dev.get_info<sid::max_work_group_size>();
         break;
-      case 1: 
+      case 1:
         *value =  maxWgDim[2];
         break;
-      case 2: 
+      case 2:
         *value =  maxWgDim[1];
         break;
-      case 3: 
+      case 3:
         *value =  maxWgDim[0];
         break;
-      case 4: 
+      case 4:
         *value =  UINT32_MAX / maxWgDim[2];
         break;
-      case 5: 
+      case 5:
         *value =  UINT32_MAX / maxWgDim[1];
         break;
-      case 6: 
+      case 6:
         *value =  UINT32_MAX / maxWgDim[0];
         break;
-      case 7: 
+      case 7:
         *value =  maxSgSize;
         break;
-      case 8: 
+      case 8:
         *value =  dev.get_info<sid::max_compute_units>();
         break;
-      default: 
+      default:
         *value =  0;
         break;
     }
@@ -235,7 +235,7 @@ static oneapi::mkl::side sideFromChar(char c) {
   }
 
   int syclblasGetVersionFromC(QueueData *blasHandle, int *version) {
-    // This may not be 100% portable if a non-intel MKL is targeted. 
+    // This may not be 100% portable if a non-intel MKL is targeted.
     // If that should ever be the case, one should have a look at this.
     MKLVersion mklVersion;
     mkl_get_version(&mklVersion);
@@ -363,7 +363,7 @@ static oneapi::mkl::side sideFromChar(char c) {
       } else {
         return 0;
       }
-    
+
     }
   }
 
@@ -488,9 +488,9 @@ static oneapi::mkl::side sideFromChar(char c) {
     if (!isFailed) {
       syclDeviceSynchronizeFromC();
       // Note that this operation currently relies on an Intel SYCL extension. This may or may not become part of the next SYCL standard.
-      // For now, it is only supported by DPC++ and the Intel C++ Compiler. This should be okay, since there are implementations for the other vendors. 
+      // For now, it is only supported by DPC++ and the Intel C++ Compiler. This should be okay, since there are implementations for the other vendors.
       queue.ext_oneapi_memcpy2d(dst, dpitch, src, spitch, width, height).wait();
-      
+
       return 1;
     } else {
       return 0;
@@ -886,9 +886,9 @@ static oneapi::mkl::side sideFromChar(char c) {
     trmv(queue, up, ta, di, n, A, lda, x, incx);
   }
 
-  
-void syclblasDsyrk_elpa_wrapper(QueueData *handle, char uplo, char trans, 
-                              int n, int k, 
+
+void syclblasDsyrk_elpa_wrapper(QueueData *handle, char uplo, char trans,
+                              int n, int k,
                               double alpha, const double *A, int lda,
                               double beta, double *C, int ldc){
   using oneapi::mkl::blas::column_major::syrk;
@@ -899,8 +899,8 @@ void syclblasDsyrk_elpa_wrapper(QueueData *handle, char uplo, char trans,
   syrk(queue, up, ta, n, k, &alpha, A, lda, &beta, C, ldc);
 }
 
-void syclblasSsyrk_elpa_wrapper(QueueData *handle, char uplo, char trans, 
-                              int n, int k, 
+void syclblasSsyrk_elpa_wrapper(QueueData *handle, char uplo, char trans,
+                              int n, int k,
                               float alpha, const float *A, int lda,
                               float beta, float *C, int ldc){
   using oneapi::mkl::blas::column_major::syrk;
@@ -911,7 +911,7 @@ void syclblasSsyrk_elpa_wrapper(QueueData *handle, char uplo, char trans,
   syrk(queue, up, ta, n, k, &alpha, A, lda, &beta, C, ldc);
 }
 
-void syclblasZherk_elpa_wrapper(QueueData *handle, char uplo, char trans, int n, int k, 
+void syclblasZherk_elpa_wrapper(QueueData *handle, char uplo, char trans, int n, int k,
                               std::complex<double> alpha, std::complex<double> const *A, int lda,
                               std::complex<double> beta, std::complex<double> *C, int ldc) {
   using oneapi::mkl::blas::column_major::herk;
@@ -924,7 +924,7 @@ void syclblasZherk_elpa_wrapper(QueueData *handle, char uplo, char trans, int n,
   herk(queue, up, ta, n, k, &alpha_real, A, lda, &beta_real, C, ldc);
 }
 
-void syclblasCherk_elpa_wrapper(QueueData *handle, char uplo, char trans, int n, int k, 
+void syclblasCherk_elpa_wrapper(QueueData *handle, char uplo, char trans, int n, int k,
                               std::complex<float> alpha, std::complex<float> const *A, int lda,
                               std::complex<float> beta, std::complex<float> *C, int ldc){
   using oneapi::mkl::blas::column_major::herk;

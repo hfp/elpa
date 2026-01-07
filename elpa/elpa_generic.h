@@ -67,22 +67,22 @@ inline void elpa_get(elpa_t handle, const char *name, double *value, int *error)
  *  \result void
  */
 #ifdef __cplusplus
-inline void elpa_eigenvectors(const elpa_t handle, double *a, double *ev, double *q, int *error) 
+inline void elpa_eigenvectors(const elpa_t handle, double *a, double *ev, double *q, int *error)
 	{
 	elpa_eigenvectors_a_h_a_d(handle, a, ev, q, error);
 	}
 
-inline void elpa_eigenvectors(const elpa_t handle, float  *a, float  *ev, float  *q, int *error) 
+inline void elpa_eigenvectors(const elpa_t handle, float  *a, float  *ev, float  *q, int *error)
 	{
 	elpa_eigenvectors_a_h_a_f(handle, a, ev, q, error);
 	}
 
-inline void elpa_eigenvectors(const elpa_t handle, std::complex<double> *a, double *ev, std::complex<double> *q, int *error) 
+inline void elpa_eigenvectors(const elpa_t handle, std::complex<double> *a, double *ev, std::complex<double> *q, int *error)
 	{
 	elpa_eigenvectors_a_h_a_dc(handle, a, ev, q, error);
 	}
 
-inline void elpa_eigenvectors(const elpa_t handle, std::complex<float>  *a, float  *ev, std::complex<float>  *q, int *error) 
+inline void elpa_eigenvectors(const elpa_t handle, std::complex<float>  *a, float  *ev, std::complex<float>  *q, int *error)
 	{
 	elpa_eigenvectors_a_h_a_fc(handle, a, ev, q, error);
 	}
@@ -115,12 +115,12 @@ inline void elpa_eigenvectors(const elpa_t handle, std::complex<float>  *a, floa
  *  \result void
  */
 #ifdef __cplusplus
-inline void elpa_skew_eigenvectors(const elpa_t handle, double *a, double *ev, double *q, int *error) 
+inline void elpa_skew_eigenvectors(const elpa_t handle, double *a, double *ev, double *q, int *error)
 	{
 	elpa_skew_eigenvectors_a_h_a_d(handle, a, ev, q, error);
 	}
 
-inline void elpa_skew_eigenvectors(const elpa_t handle, float  *a, float  *ev, float  *q, int *error) 
+inline void elpa_skew_eigenvectors(const elpa_t handle, float  *a, float  *ev, float  *q, int *error)
 	{
 	elpa_skew_eigenvectors_a_h_a_f(handle, a, ev, q, error);
 	}

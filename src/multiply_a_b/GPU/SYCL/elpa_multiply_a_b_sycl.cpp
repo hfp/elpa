@@ -153,7 +153,7 @@ void gpu_copy_aux_bc_aux_mat_loop_kernel (const T* aux_bc_dev, T* aux_mat_dev, i
 
   int n = it.get_group(0);
   int nstor = nstor0 + n;
-  
+
   int lrs = lrs_save_dev[n];
   int lre = lre_save_dev[n];
   int n_aux_bc = n_aux_bc_save_dev[n];
@@ -166,7 +166,7 @@ void gpu_copy_aux_bc_aux_mat_loop_kernel (const T* aux_bc_dev, T* aux_mat_dev, i
 
 template <typename T>
 void gpu_copy_aux_bc_aux_mat_loop(T *aux_bc_dev, T *aux_mat_dev, int* lrs_save_dev, int *lre_save_dev, int *n_aux_bc_save_dev,
-                                  int nstor0, int l_rows, 
+                                  int nstor0, int l_rows,
                                   int n_size, int debug, gpuStream_t my_stream) {
   sycl::queue q = getQueueOrDefault(my_stream);
   sycl::range<1> blocks(n_size);

@@ -69,14 +69,14 @@
 #else
     useGPU = .false.
 #endif
-    
+
     useCCL = obj%gpu_setup%useCCL
 
     if (useGPU) then
 #ifdef WITH_GPU_STREAMS
       my_stream = obj%gpu_setup%my_stream
 #endif
-      
+
       if (useCCL) then
         my_stream = obj%gpu_setup%my_stream
         ccl_comm_rows = obj%gpu_setup%ccl_comm_rows
@@ -87,7 +87,7 @@
 
 #if defined(DOUBLE_PRECISION)
         cclDataType = cclDouble
-#endif      
+#endif
 #if defined(SINGLE_PRECISION)
         cclDataType = cclFloat
 #endif
@@ -143,7 +143,7 @@
             successGPU = gpu_memcpy(qtmp_dev+(nc-1)*l_rows*size_of_datatype, &
                                     q_dev+(l_rqs-1+(lc1-1)*ldq)*size_of_datatype, num, gpuMemcpyDeviceToDevice)
             check_memcpy_gpu("resort_ev: qtmp_dev <- q_dev", successGPU)
-#endif      
+#endif
           else
             qtmp(1:l_rows,nc) = q(l_rqs:l_rqe,lc1)
           endif
@@ -259,7 +259,7 @@
                                   qtmp_dev+(nc-1)*l_rows*size_of_datatype, num, gpuMemcpyDeviceToDevice)
           check_memcpy_gpu("resort_ev: q_dev <- qtmp_dev", successGPU)
 #endif
-        else  
+        else
           q(l_rqs:l_rqe,lc2) = qtmp(1:l_rows,nc)
         endif
       endif
@@ -269,7 +269,7 @@
       successGPU = gpu_free(qtmp_dev)
       check_dealloc_gpu("resort_ev: qtmp_dev", successGPU)
     endif
-    
+
     if (.not. useCCL) then
       deallocate(qtmp, stat=istat, errmsg=errorMessage)
       check_deallocate("resort_ev: qtmp",istat, errorMessage)

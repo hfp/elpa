@@ -80,7 +80,7 @@ subroutine elpa_transform_generalized_a_h_a_&
 #ifdef DEVICE_POINTER
   MATH_DATATYPE(kind=rck), allocatable :: a(:,:), b(:,:), tmp(:,:) ! dummy variables
   type(c_ptr)              :: aDev, bDev, tmpDev
-#else /* DEVICE_POINTER */  
+#else /* DEVICE_POINTER */
 #ifdef USE_ASSUMED_SIZE
   MATH_DATATYPE(kind=rck)  :: a(self%local_nrows, *), b(self%local_nrows, *), tmp(self%local_nrows, *)
 #else
@@ -91,7 +91,7 @@ subroutine elpa_transform_generalized_a_h_a_&
 
   logical                  :: is_already_decomposed
   integer(kind=ik)         :: error
-  
+
   integer(kind=ik)         :: istat
   character(200)           :: errorMessage
   integer                  :: sc_desc(SC_DESC_LEN)
@@ -128,7 +128,7 @@ subroutine elpa_transform_generalized_a_h_a_&
   np_rows = int(np_rowsMPI, kind=c_int)
   my_pcol = int(my_pcolMPI, kind=c_int)
   np_cols = int(np_colsMPI, kind=c_int)
-  
+
   useGPU = .false.
 #if defined(WITH_NVIDIA_GPU_VERSION) || defined(WITH_AMD_GPU_VERSION) || defined(WITH_OPENMP_OFFLOAD_GPU_VERSION) || defined(WITH_SYCL_GPU_VERSION)
   if (.not.(query_gpu_usage(self, "Generalized_transform", useGPU))) then
@@ -136,7 +136,7 @@ subroutine elpa_transform_generalized_a_h_a_&
     error = ELPA_ERROR
     return
   endif
-  
+
   ! numberofGPUDevices is already checked in elpa_impl_math_generalized_template.F90
 #endif
 
@@ -155,7 +155,7 @@ subroutine elpa_transform_generalized_a_h_a_&
     cannon_for_generalized = 1
     pxtrmm_for_generalized = 1
   endif
-  
+
   ! If user enforces a variable, use the provided value
   if (self%is_set("pxgemm_for_generalized")==1) call self%get("pxgemm_for_generalized", pxgemm_for_generalized, error)
   if (self%is_set("cannon_for_generalized")==1) call self%get("cannon_for_generalized", cannon_for_generalized, error)
@@ -315,7 +315,7 @@ endif
 
 #ifdef WITH_MPI
     NVTX_RANGE_PUSH("cannons_reduction")
-    
+
     error = self%construct_scalapack_descriptor(sc_desc, .false.)
     if(error .NE. ELPA_OK) return
 
@@ -363,7 +363,7 @@ endif
 
       NVTX_RANGE_POP("scalapack multiply A * inv(U)")
       call self%timer_stop("scalapack multiply A * inv(U)")
-    
+
     else ! (pxtrmm_for_generalized == 1)
 
       ! A <- tmp^T
@@ -386,7 +386,7 @@ endif
 #endif
 #endif /* WITH_MPI */
       call self%timer_stop("PxTRAN")
-      
+
       ! tmp <- A^T * inv(U) = (tmp^T)^T * inv(U)
       call self%elpa_hermitian_multiply_a_h_a_&
             &ELPA_IMPL_SUFFIX&
@@ -444,7 +444,7 @@ subroutine elpa_transform_back_generalized_a_h_a_&
 #endif /* DEVICE_POINTER */
 
   integer                  :: error
-  
+
   integer(kind=ik)         :: istat
   character(200)           :: errorMessage
   integer(kind=ik)         :: myid, my_prow, my_pcol, np_rows, np_cols, mpi_comm_rows, mpi_comm_cols, mpi_comm_all
@@ -453,7 +453,7 @@ subroutine elpa_transform_back_generalized_a_h_a_&
   integer                  :: sc_desc(SC_DESC_LEN)
   integer                  :: sc_desc_ev(SC_DESC_LEN)
   integer(kind=c_int)      :: cannon_for_generalized, pxgemm_for_generalized, pxtrmm_for_generalized, debug, gpu_cannon
-  
+
   logical                  :: useGPU, do_useGPU_cannon, successGPU
   integer(kind=c_intptr_t) :: gpublasHandle
   integer(kind=c_intptr_t), parameter ::  size_of_datatype = size_of_&
@@ -467,7 +467,7 @@ subroutine elpa_transform_back_generalized_a_h_a_&
   call self%get("mpi_comm_cols",mpi_comm_cols,error)
   call self%get("mpi_comm_parent", mpi_comm_all,error)
   call self%get("debug", debug, error)
-  
+
   call mpi_comm_rank(int(mpi_comm_all,kind=MPI_KIND), my_pMPI,mpierr)
   call mpi_comm_rank(int(mpi_comm_rows,kind=MPI_KIND),my_prowMPI,mpierr)
   call mpi_comm_size(int(mpi_comm_rows,kind=MPI_KIND),np_rowsMPI,mpierr)
@@ -549,7 +549,7 @@ subroutine elpa_transform_back_generalized_a_h_a_&
     if(error .NE. ELPA_OK) return
 
     ! q <- tmp
-    
+
 #ifdef DEVICE_POINTER
     call self%timer_start("gpu_copy_dev_dev")
     successGPU = gpu_memcpy(qDev, tmpDev, self%local_nrows*self%local_ncols*size_of_datatype, gpuMemcpyDeviceToDevice)
@@ -560,7 +560,7 @@ subroutine elpa_transform_back_generalized_a_h_a_&
     q(1:self%local_nrows, 1:self%local_ncols) = tmp(1:self%local_nrows, 1:self%local_ncols)
     call self%timer_stop("copy")
 #endif
-    
+
 
   else if (cannon_for_generalized == 1) then
     call self%timer_start("cannons_triang_rectangular")
@@ -611,7 +611,7 @@ subroutine elpa_transform_back_generalized_a_h_a_&
 
       NVTX_RANGE_POP("scalapack multiply: Q <- inv(U) * Q")
       call self%timer_stop("scalapack multiply inv(U) * Q")
-    
+
     else ! (pxtrmm_for_generalized == 1)
       ! additional temp array bt is needed, since we can't modify b: it might be used later if(is_already_decomposed)
       allocate(bt(self%local_nrows, self%local_ncols), stat=istat, errmsg=errorMessage)
@@ -637,7 +637,7 @@ subroutine elpa_transform_back_generalized_a_h_a_&
 #endif
 #endif /* WITH_MPI */
       call self%timer_stop("PxTRAN")
-      
+
       ! tmp <- bt^T Q = inv(U) Q
       call self%elpa_hermitian_multiply_a_h_a_&
             &ELPA_IMPL_SUFFIX&

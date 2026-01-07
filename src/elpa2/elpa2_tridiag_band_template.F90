@@ -653,7 +653,7 @@ endif
               call PRECISION_HER2('L', int(nc,kind=BLAS_KIND), -ONE, hd, 1_BLAS_KIND, &
                                 hv, 1_BLAS_KIND, ab(1,ns), int(2*nb-1,kind=BLAS_KIND))
 #endif
-              
+
               if (wantDebug) call obj%timer%stop("blas")
 
               hv_t(:,my_thread) = 0.0_rck
@@ -1071,7 +1071,7 @@ endif
           ! ... and calculate remaining columns with rank-2 update
           if (wantDebug) call obj%timer%start("blas")
 #if REALCASE == 1
-          if (isSkewsymmetric) then 
+          if (isSkewsymmetric) then
             if (nc>1) call ELPA_PRECISION_SSR2(int(nc-1,kind=BLAS_KIND), hd(2), hv(2), ab(1,ns+1), int(2*nb-1,kind=BLAS_KIND) )
           else
             if (nc>1) call PRECISION_SYR2('L', int(nc-1,kind=BLAS_KIND), -ONE, hd(2), 1_BLAS_KIND, &
@@ -1088,7 +1088,7 @@ endif
           ! No need to  send, just a rank-2 update
           if (wantDebug) call obj%timer%start("blas")
 #if REALCASE == 1
-          if (isSkewsymmetric) then 
+          if (isSkewsymmetric) then
             call ELPA_PRECISION_SSR2(int(nc,kind=BLAS_KIND), hd, hv, ab(1,ns), int(2*nb-1,kind=BLAS_KIND))
           else
             call PRECISION_SYR2('L', int(nc,kind=BLAS_KIND), -ONE, hd, 1_BLAS_KIND,  &
@@ -1222,7 +1222,7 @@ endif
   if (wantDebug) call obj%timer%start("mpi_communication")
   call mpi_wait(ireq_ab,MPI_STATUS_IGNORE,mpierr)
   call mpi_wait(ireq_hv,MPI_STATUS_IGNORE,mpierr)
-  
+
   if(np_rows*np_cols>1) then
     call mpi_waitall(nblocks, ireq_hhs, MPI_STATUSES_IGNORE, mpierr)
     call mpi_waitall(num_chunks, ireq_hhr, MPI_STATUSES_IGNORE, mpierr)

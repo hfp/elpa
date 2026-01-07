@@ -79,7 +79,7 @@
 #  ifdef TEST_REAL
 #    define MATRIX_TYPE float
 #  else
-#    define MATRIX_TYPE float_complex 
+#    define MATRIX_TYPE float_complex
 #  endif
 #else
 #  define EV_TYPE double
@@ -155,7 +155,7 @@ int main(int argc, char** argv) {
 
   C_INT_TYPE status;
   int error_elpa;
-  int gpu, timings, debug; 
+  int gpu, timings, debug;
   char str[400];
 
   elpa_t elpa_handle_1, elpa_handle_2, *elpa_handle_ptr;
@@ -211,7 +211,7 @@ int main(int argc, char** argv) {
     na = 500;
     nev = 250;
     nblk = 16;
-#endif 
+#endif
   }
 
   for (np_cols = (C_INT_TYPE) sqrt((double) nprocs); np_cols > 1; np_cols--) {

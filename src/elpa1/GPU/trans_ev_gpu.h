@@ -79,11 +79,11 @@ __global__ void gpu_copy_hvb_a_kernel(T *hvb_dev, T *a_dev, int ld_hvb, int lda,
     for (int i=i0; i < l_rows; i+=blockDim.x) {
       hvb_dev[i + ld_hvb*(ic-ics)] = a_dev[i + (l_colh-1)*lda]; // nb -> ld_hvb*(ic-ics), no compression
     }
-    
+
     if (my_prow == prow(ic-1, nblk, np_rows) && threadIdx.x == (l_rows-1)%blockDim.x) {
       hvb_dev[(l_rows-1) + ld_hvb*(ic-ics)] = One;
     }
-    
+
   }
 }
 
@@ -123,7 +123,7 @@ void gpu_copy_hvb_a(T *hvb_dev, T *a_dev, int *ld_hvb_in, int *lda_in, int *my_p
 
 extern "C" void CONCATENATE(ELPA_GPU,  _copy_hvb_a_FromC) (char dataType, intptr_t hvb_dev, intptr_t a_dev,
                                       int *ld_hvb_in, int *lda_in, int *my_prow_in, int *np_rows_in,
-                                      int *my_pcol_in, int *np_cols_in, int *nblk_in, int *ics_in, int *ice_in, 
+                                      int *my_pcol_in, int *np_cols_in, int *nblk_in, int *ics_in, int *ice_in,
                                       int *SM_count_in, int *debug_in, gpuStream_t my_stream){
   if      (dataType=='D') gpu_copy_hvb_a<double>((double *) hvb_dev, (double *) a_dev, ld_hvb_in, lda_in, my_prow_in, np_rows_in, my_pcol_in, np_cols_in, nblk_in, ics_in, ice_in, SM_count_in, debug_in, my_stream);
   else if (dataType=='S') gpu_copy_hvb_a<float> ((float  *) hvb_dev, (float  *) a_dev, ld_hvb_in, lda_in, my_prow_in, np_rows_in, my_pcol_in, np_cols_in, nblk_in, ics_in, ice_in, SM_count_in, debug_in, my_stream);
@@ -155,11 +155,11 @@ __global__ void gpu_copy_hvm_hvb_kernel(T *hvm_dev, T *hvb_dev, int ld_hvm, int 
 
   for (int ic = ic_0 + ics; ic <= ice; ic+=gridDim.x) {
     int l_rows = local_index(ic-1, my_prow, np_rows, nblk, -1);
-    
+
     for (int i=i0; i < l_rows; i+=blockDim.x) {
       hvm_dev[i + ld_hvm*(ic-ics+nstor)] = hvb_dev[i + ld_hvb*(ic-ics)]; // nb -> ld_hvb*(ic-ics), no compression
     }
-    
+
     for (int i=l_rows+i0; i < ld_hvm; i+=blockDim.x) {
       hvm_dev[i + ld_hvm*(ic-ics+nstor)] = Zero; // since we're not compressing, we need to take extra care to clear from previous iterations
     }
@@ -189,7 +189,7 @@ void gpu_copy_hvm_hvb(T *hvm_dev, T *hvb_dev, int *ld_hvm_in, int *ld_hvb_in, in
 #else
   gpu_copy_hvm_hvb_kernel<<<blocks,threadsPerBlock>>>            (hvm_dev, hvb_dev, ld_hvm, ld_hvb, my_prow, np_rows, nstor, nblk, ics, ice);
 #endif
-  
+
   if (debug)
     {
     gpuDeviceSynchronize();
@@ -202,7 +202,7 @@ void gpu_copy_hvm_hvb(T *hvm_dev, T *hvb_dev, int *ld_hvm_in, int *ld_hvb_in, in
 
 extern "C" void CONCATENATE(ELPA_GPU,  _copy_hvm_hvb_FromC) (char dataType, intptr_t hvm_dev, intptr_t hvb_dev,
                                       int *ld_hvm_in, int *ld_hvb_in, int *my_prow_in, int *np_rows_in,
-                                      int *nstor_in, int *nblk_in, int *ics_in, int *ice_in, 
+                                      int *nstor_in, int *nblk_in, int *ics_in, int *ice_in,
                                       int *SM_count_in, int *debug_in, gpuStream_t my_stream){
   if      (dataType=='D') gpu_copy_hvm_hvb<double>((double *) hvm_dev, (double *) hvb_dev, ld_hvm_in, ld_hvb_in, my_prow_in, np_rows_in, nstor_in, nblk_in, ics_in, ice_in, SM_count_in, debug_in, my_stream);
   else if (dataType=='S') gpu_copy_hvm_hvb<float> ((float  *) hvm_dev, (float  *) hvb_dev, ld_hvm_in, ld_hvb_in, my_prow_in, np_rows_in, nstor_in, nblk_in, ics_in, ice_in, SM_count_in, debug_in, my_stream);
@@ -222,7 +222,7 @@ __global__ void gpu_update_tmat_kernel(T *tmat_dev, T *h_dev, T *tau_curr_dev, i
 //    tmat(n+1,1:n) = -h(nc+1:nc+n) *tau(ice-nstor+n+1)
 // #elif COMPLEXCASE == 1
 //    tmat(n+1,1:n) = -conjg(h(nc+1:nc+n)) *tau(ice-nstor+n+1)
-// #endif    
+// #endif
 //    tmat(n+1,n+1) = tau(ice-nstor+n+1)
 
   int j0  = blockIdx.x;
@@ -238,7 +238,7 @@ __global__ void gpu_update_tmat_kernel(T *tmat_dev, T *h_dev, T *tau_curr_dev, i
     tmat_dev[n + n*max_stored_rows] = *tau_curr_dev;
     //printf("gpu_update_tmat: tau_curr_dev=%f\n", *tau_curr_dev); // PETERDEBUG
   }
-  
+
 
   // PETERDEBUG: work directly with the non-transposed matrix --> better data access by threads
   // int i0   = threadIdx.x + blockIdx.x*blockDim.x;
@@ -261,7 +261,7 @@ void gpu_update_tmat(T *tmat_dev, T *h_dev, T *tau_curr_dev, int *max_stored_row
   // SM_count*MIN_THREADS_PER_BLOCK is the minimal GPU configuration that keeps the GPU busy
   dim3 blocks = dim3(SM_count, 1, 1);
   dim3 threadsPerBlock = dim3(1, 1, 1);
- 
+
 #ifdef WITH_GPU_STREAMS
   gpu_update_tmat_kernel<<<blocks,threadsPerBlock,0,my_stream>>>(tmat_dev, h_dev, tau_curr_dev, max_stored_rows, nc, n);
 #else
@@ -298,14 +298,14 @@ __global__ void gpu_trmv_kernel(T *tmat_dev, T *h_dev, T *result_buffer_dev, T *
   // uncoalesced memory access in gpu_update_tmat_kernel, coalesced access here.
   // tmat_dev is lower triangular
 
-  int i0 = threadIdx.x; 
+  int i0 = threadIdx.x;
   int j0 = blockIdx.x;
 
   T Zero = elpaDeviceNumber<T>(0.0);
 
   // for (int n=0; n<nstor-1; n++)
   //   {
-  
+
     for (int j=j0; j<n; j+=gridDim.x) {
       //if (threadIdx.x==0) result_buffer_dev[j] = Zero;
       if (threadIdx.x==0) tmat_dev[n + j*max_stored_rows] = Zero; // PETERDEBUG: delete, unneeded
@@ -362,7 +362,7 @@ void gpu_trmv(T *tmat_dev, T *h_dev, T *result_buffer_dev, T *tau_curr_dev, int 
 #else
   gpu_trmv_kernel<<<blocks,threadsPerBlock>>>            (tmat_dev, h_dev, result_buffer_dev, tau_curr_dev, max_stored_rows, n);
 #endif
-  
+
   if (debug)
     {
     gpuDeviceSynchronize();

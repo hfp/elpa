@@ -208,7 +208,7 @@ module mod_query_gpu_usage
        else
          gpu = 0
        endif
-       
+
        if (error .ne. ELPA_OK) then
          write(error_unit,*) trim(functionname),": Problem getting option for gpu. Aborting..."
          success = .false.

@@ -218,7 +218,7 @@
       integer(kind=C_INT) :: n
     end function
   end interface
- 
+
   interface
     function sycl_devicesynchronize_c() result(istat) &
              bind(C,name="syclDeviceSynchronizeFromC")

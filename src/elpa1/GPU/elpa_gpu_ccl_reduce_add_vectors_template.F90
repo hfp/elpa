@@ -119,13 +119,13 @@ subroutine elpa_gpu_ccl_reduce_add_vectors_&
   integer(kind=c_int)                                :: cclDataType
   integer(kind=ik)                                   :: k_datatype
   integer(kind=c_intptr_t)                           :: ccl_comm_s, ccl_comm_t
-  integer(kind=c_intptr_t)                           :: vmat_s_dev, vmat_t_dev 
+  integer(kind=c_intptr_t)                           :: vmat_s_dev, vmat_t_dev
   integer(kind=c_intptr_t)                           :: aux1_reduceadd_dev, aux2_reduceadd_dev
   integer(kind=c_intptr_t)                           :: my_stream
   integer(kind=ik)                                   :: sm_count
 
   call obj%timer%start("elpa_gpu_ccl_reduce_add_vectors")
-  
+
   success = .true.
 
 #if   REALCASE == 1 && DOUBLE_PRECISION == 1
@@ -159,7 +159,7 @@ subroutine elpa_gpu_ccl_reduce_add_vectors_&
   ! if (solver==ELPA_SOLVER_1STAGE .and. nps==npt .and. nvs==1  .and. .not. (nvc>1 .and. ld_s /= ld_t)) then
   !   ...
   ! endif
-  
+
   call obj%get("mpi_comm_parent", mpi_comm_all, mpierr)
   call mpi_comm_rank(int(mpi_comm_all,kind=MPI_KIND), my_mpi_rank, mpierr)
 
@@ -173,11 +173,11 @@ subroutine elpa_gpu_ccl_reduce_add_vectors_&
   lcm_s_t   = least_common_multiple(nps,npt) ! least common multiple of nps, npt
 
   nblks_tot = (nvr+nblk-1)/nblk ! number of blocks corresponding to nvr
-  
+
   if (((nblks_tot+lcm_s_t-1)/lcm_s_t) * nblk * nvc > 0) then
 
     ! TODO_23_11: delete after testing
-    successGPU = gpu_stream_synchronize(my_stream) 
+    successGPU = gpu_stream_synchronize(my_stream)
     check_stream_synchronize_gpu("check_stream_synchronize_gpu before gpu_memset", successGPU)
 
     ! TODO_23_11: delete after testing
@@ -199,7 +199,7 @@ subroutine elpa_gpu_ccl_reduce_add_vectors_&
 
     aux_stride = nblk * ((nblks_tot - n + lcm_s_t - 1)/lcm_s_t)
     ! print *,"reduce: my_mpi_rank=", my_mpi_rank, ", aux_stride=",aux_stride ! TODO_23_11: delete after testing
-    
+
     if (myps == ips) then
 
 !       do lc=1,nvc
@@ -213,7 +213,7 @@ subroutine elpa_gpu_ccl_reduce_add_vectors_&
 !       enddo
       !sm_count = 32
       sm_count = obj%gpu_setup%gpuSMcount
-      call gpu_transpose_reduceadd_vectors_copy_block_PRECISION (aux1_reduceadd_dev, vmat_s_dev, & 
+      call gpu_transpose_reduceadd_vectors_copy_block_PRECISION (aux1_reduceadd_dev, vmat_s_dev, &
                                                 nvc, nvr, n, 0, nblks_tot, lcm_s_t, nblk, aux_stride, nps, ld_s, &
                                                 1, isSkewsymmetric, .true., wantDebug, sm_count, my_stream)
 
@@ -223,19 +223,19 @@ subroutine elpa_gpu_ccl_reduce_add_vectors_&
       ! TODO_23_11: change to a sinlge aux_  here (and to to MPI_IN_PLACE in the correspoding non-gpu routine)
       if (aux_size>0) then
         if (wantDebug) call obj%timer%start("nccl_communication")
-        
+
         successGPU = gpu_stream_synchronize(my_stream)
         check_stream_synchronize_gpu("nccl_Reduce aux1_reduceadd_dev, aux2_reduceadd_dev", successGPU)
 
         successGPU = ccl_group_start()
-        if (.not. successGPU) then 
-          print *,"Error in setting up nccl_group_start!" 
+        if (.not. successGPU) then
+          print *,"Error in setting up nccl_group_start!"
           stop 1
         endif
 
         successGPU = ccl_Reduce(aux1_reduceadd_dev, aux2_reduceadd_dev, int(k_datatype*aux_size, kind=c_size_t), &
                                  cclDataType, cclSum, int(ipt,kind=c_int), ccl_comm_t, my_stream)
-        
+
         if (.not. successGPU) then
           print *, "Error in nccl_Reduce"
           stop 1
@@ -253,12 +253,12 @@ subroutine elpa_gpu_ccl_reduce_add_vectors_&
         if (wantDebug) call obj%timer%stop("nccl_communication")
       endif ! if (aux_size>0)
 
-      
+
       if (mypt == ipt) then
               !sm_count = 32
 #if REALCASE == 1
           sm_count = obj%gpu_setup%gpuSMcount
-          call gpu_transpose_reduceadd_vectors_copy_block_PRECISION (aux2_reduceadd_dev, vmat_t_dev, & 
+          call gpu_transpose_reduceadd_vectors_copy_block_PRECISION (aux2_reduceadd_dev, vmat_t_dev, &
                                                 nvc, nvr, n, 0, nblks_tot, lcm_s_t, nblk, aux_stride, nps, ld_t, &
                                                 2, isSkewsymmetric, .true., wantDebug, sm_count, my_stream)
 #endif

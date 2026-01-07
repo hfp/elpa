@@ -88,7 +88,7 @@ subroutine elpa_transpose_row_or_col&
   integer(kind=c_intptr_t)                     :: a_dev, at_dev, buf_send_dev, buf_recv_dev, buf_self_dev
 #else /* USE_CCL_PXGEMM */
   MATH_DATATYPE(kind=rck)                      :: a(l_rows,l_cols), at(l_rows,l_cols), &
-                                                  buf_send(nblk_mult_rows_max, nblk_mult_cols_max), & 
+                                                  buf_send(nblk_mult_rows_max, nblk_mult_cols_max), &
                                                   buf_recv(nblk_mult_rows_max, nblk_mult_cols_max), &
                                                   buf_self(nblk_mult_rows_max, nblk_mult_cols_max)
   integer(kind=c_intptr_t)                     :: a_dev, at_dev, buf_send_dev, buf_recv_dev, buf_self_dev
@@ -107,8 +107,8 @@ subroutine elpa_transpose_row_or_col&
   integer(kind=ik)                             :: my_mpi_rank, mpi_rank_target, mpi_rank_source, &
                                                   my_pdir_target, my_pdir_t_target, &
                                                   my_pdir_source, my_pdir_t_source, &
-                                                  my_prow_target, my_pcol_target, & 
-                                                  my_prow_source, my_pcol_source, & 
+                                                  my_prow_target, my_pcol_target, &
+                                                  my_prow_source, my_pcol_source, &
                                                   my_pdir_target_deadlock
 
   integer(kind=ik)                             :: np_rows_fine, np_cols_fine, np_dirs_fine, np_dirs_t_fine, np_t_fine, np_bc_fine, &
@@ -122,8 +122,8 @@ subroutine elpa_transpose_row_or_col&
                                                   i_block_loc, j_block_loc, it_block_loc
   integer(kind=ik)                             :: nblk_cut_row, nblk_cut_col
   integer(kind=ik)                             :: nblk_cut_dir, nblk_cut_dir_t
-  integer(kind=ik)                             :: lld_buf 
-  integer(kind=ik)                             :: i_block_loc_fine_max, j_block_loc_fine_max 
+  integer(kind=ik)                             :: lld_buf
+  integer(kind=ik)                             :: i_block_loc_fine_max, j_block_loc_fine_max
   integer(kind=ik)                             :: np, np_t
   integer(kind=ik)                             :: error
   integer(kind=c_intptr_t), parameter          :: size_of_datatype = size_of_&
@@ -155,7 +155,7 @@ subroutine elpa_transpose_row_or_col&
 
   !   success = .true.
   useCCL = .false.
-  
+
   call obj%get("matrix_order", matrix_order, error)
   if (error .ne. ELPA_OK) then
     print *, "elpa_pxgemm_multiply_transpose: Problem getting option matrix_order. Aborting..."
@@ -184,7 +184,7 @@ subroutine elpa_transpose_row_or_col&
   my_stream = obj%gpu_setup%my_stream
   ccl_comm_all  = obj%gpu_setup%ccl_comm_all
   SM_count = obj%gpu_setup%gpuSMcount
-  
+
 #if   REALCASE == 1 && defined(DOUBLE_PRECISION)
   cclDataType = cclDouble
   k_datatype = 1
@@ -214,7 +214,7 @@ subroutine elpa_transpose_row_or_col&
     l_dirs_t  = l_cols
     nblk_mult_dirs   = nblk_mult_rows
     nblk_mult_dirs_t = nblk_mult_cols
-  else 
+  else
     ! dir=col
     my_pdir   = my_pcol
     my_pdir_t = my_prow
@@ -241,11 +241,11 @@ subroutine elpa_transpose_row_or_col&
   if (mod(np_fine,np_dirs) == my_pdir) then
 
     my_pdir_t_target = mod(np_t_fine,np_dirs_t)
-    
+
     ! we send to the process (mod(np_fine,np_rows), mod(np_bc_fine,np_cols)) in last turn
     ! to avoid the deadlock
     my_pdir_target_deadlock = mod(np_fine,np_dirs)
-    
+
     np_t_fine_1 = my_pdir_t
     np_t_fine_1_start = mod(np_t_fine_1, np_dirs_t_fine)
     ! dry run: to find, whether there is a potential deadlock
@@ -257,7 +257,7 @@ subroutine elpa_transpose_row_or_col&
         exit
       endif
     enddo
-    
+
     np_t_fine_1 = np_t_fine_1_start
     do ! np_t_fine_1 periodic loop
       np_fine_1 = np_t_fine_1
@@ -316,7 +316,7 @@ subroutine elpa_transpose_row_or_col&
                       1+ j_block_loc     *nblk: nblk_cut_col + j_block_loc     *nblk)
           enddo ! i_block_loc_fine
         enddo ! j_block_loc_fine
-      
+
       endif ! useCCL
 
       ! PETERDEBUG: we send extra data to resolve the problem of continuity of the data.
@@ -325,7 +325,7 @@ subroutine elpa_transpose_row_or_col&
         if (mpi_rank_target/=myid) then
           successGPU = gpu_stream_synchronize(my_stream)
           check_stream_synchronize_gpu("elpa_pxgemm: ccl_send", successGPU)
-          
+
           successGPU = ccl_Send(buf_send_dev, int(k_datatype*nblk_mult_rows_max*nblk_mult_cols_max,kind=c_size_t), &
                                 cclDataType, mpi_rank_target, ccl_comm_all, my_stream)
 
@@ -385,7 +385,7 @@ subroutine elpa_transpose_row_or_col&
 
       m_blocks_loc_fine_1  = (nblk_mult_dirs_1+nblk-1)/nblk
       mt_blocks_loc_fine   = (nblk_mult_dirs_t+nblk-1)/nblk
-      
+
       if (row_transposed) then
         j_block_loc_fine_max = mt_blocks_loc_fine - 1
         i_block_loc_fine_max = m_blocks_loc_fine_1 - 1
@@ -441,7 +441,7 @@ subroutine elpa_transpose_row_or_col&
           do j_block_loc_fine = 0, j_block_loc_fine_max
             j_block_loc = (np_t + j_block_loc_fine*np_cols_fine)/np_cols
             nblk_cut_col = min(nblk, l_cols-j_block_loc*nblk)
-            
+
             at(1+ i_block_loc     *nblk: nblk_cut_row + i_block_loc     *nblk,   &
                1+ j_block_loc     *nblk: nblk_cut_col + j_block_loc     *nblk) = &
 #if defined (REALCASE)
@@ -453,7 +453,7 @@ subroutine elpa_transpose_row_or_col&
 #endif
           enddo ! j_block_loc_fine
         enddo ! i_block_loc_fine
-      
+
       endif ! useCCL
 
     enddo ! np_fine_1

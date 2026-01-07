@@ -234,7 +234,7 @@ max_threads, isSkewsymmetric)
                                                  allreduce_request3, allreduce_request4, allreduce_request5, &
                                                  allreduce_request6
   integer(kind=MPI_KIND), allocatable         :: breq(:)
-  
+
   logical                                     :: useNonBlockingCollectivesCols
   logical                                     :: useNonBlockingCollectivesRows
   integer(kind=c_int)                         :: non_blocking_collectives_rows, non_blocking_collectives_cols
@@ -278,13 +278,13 @@ max_threads, isSkewsymmetric)
     success = .false.
     return
   endif
- 
+
   if (non_blocking_collectives_rows .eq. 1) then
     useNonBlockingCollectivesRows = .true.
   else
     useNonBlockingCollectivesRows = .false.
   endif
- 
+
   if (non_blocking_collectives_cols .eq. 1) then
     useNonBlockingCollectivesCols = .true.
   else
@@ -292,7 +292,7 @@ max_threads, isSkewsymmetric)
   endif
 
   useGPU_reduction_lower_block_to_tridiagonal = .false.
- 
+
   if (useGPU) then
     useGPU_reduction_lower_block_to_tridiagonal = .true.
 #if REALCASE == 1
@@ -434,7 +434,7 @@ max_threads, isSkewsymmetric)
 
   blk_end = (na-1)/nbw
   if (useGPU) then
- 
+
 #if defined(WITH_OPENMP_OFFLOAD_GPU_VERSION)
     if (gpu_vendor() /= OPENMP_OFFLOAD_GPU) then
 #endif
@@ -532,7 +532,7 @@ max_threads, isSkewsymmetric)
       successGPU = gpu_malloc_host(umc_host,umc_size*size_of_datatype)
       check_host_alloc_gpu("bandred: umc_host", successGPU)
       call c_f_pointer(umc_host, umcGPU, (/umc_size/))
-      
+
 #if defined(WITH_OPENMP_OFFLOAD_GPU_VERSION)
     else
       allocate(umcGPU(umc_size))
@@ -573,7 +573,7 @@ max_threads, isSkewsymmetric)
       if (gpu_vendor() /= OPENMP_OFFLOAD_GPU) then
 #endif
         successGPU = gpu_malloc_host(vmr_host, max_l_rows*2*n_cols*size_of_datatype)
-        
+
         check_host_alloc_gpu("bandred: vmr_host", successGPU)
         call c_f_pointer(vmr_host, vmrGPU, [max_l_rows*2*n_cols])
         call c_f_pointer(vmr_host, vmrGPU_2d, [max_l_rows,2*n_cols])
@@ -593,7 +593,7 @@ max_threads, isSkewsymmetric)
 #endif
         successGPU = gpu_malloc_host(umc_host,max_l_cols*2*n_cols*size_of_datatype)
         check_host_alloc_gpu("bandred: umc_host", successGPU)
-        
+
         call c_f_pointer(umc_host, umcGPU, [max_l_cols*2*n_cols])
         call c_f_pointer(umc_host, umcGPU_2d, [max_l_cols,2*n_cols])
 #if defined(WITH_OPENMP_OFFLOAD_GPU_VERSION)
@@ -734,7 +734,7 @@ max_threads, isSkewsymmetric)
 #endif /* REALCASE == 1 */
 
        call obj%timer%start("hh_block")
-       
+
        allocate(blockinfo(4,n_cols/nblk+1))
        iblock=0
        do lc = n_cols, 1, -1
@@ -751,7 +751,7 @@ max_threads, isSkewsymmetric)
           end if
        end do
        nblocks=iblock
-          
+
        allocate(ex_buff(l_rows*n_cols))
        lrex  = l_rows
        ex_buff2d(1:lrex,1:n_cols) => ex_buff
@@ -761,7 +761,7 @@ max_threads, isSkewsymmetric)
           blc_len=blockinfo(3,iblock)
           blc_start=blc_end-blc_len+1
           cur_pcol = blockinfo(1,iblock)
-          
+
           if(my_pcol.eq.cur_pcol) then
 #ifdef WITH_OPENMP_TRADITIONAL
              !$omp parallel do private(off)
@@ -788,7 +788,7 @@ max_threads, isSkewsymmetric)
              cur_pcol = blockinfo(1,iblock)
              call mpi_ibcast(ex_buff2d(1,blc_start), int(lrex*blc_len,kind=MPI_KIND), &
                   MPI_MATH_DATATYPE_PRECISION, int(cur_pcol,kind=MPI_KIND), int(mpi_comm_cols,kind=MPI_KIND), &
-                  breq(j),mpierr)     
+                  breq(j),mpierr)
           end do
           call mpi_waitall(nblocks, breq, MPI_STATUSES_IGNORE, mpierr)
           deallocate(breq)
@@ -799,16 +799,16 @@ max_threads, isSkewsymmetric)
        off=0
        do lc = n_cols, 1, -1
           ncol = istep*nbw + lc ! absolute column number of householder Vector
-          nrow = ncol - nbw ! Absolute number of pivot row  
+          nrow = ncol - nbw ! Absolute number of pivot row
           if (nrow == 1) then !done
-             taublock(1)=0. 
+             taublock(1)=0.
              exit
           end if
-          
+
           lr  = local_index(nrow, my_prow, np_rows, nblk, -1) ! current row length
           off=off+1
           call get_hh_vec(ex_buff2d(1:lr,n_cols-off+1),vr,tau,vrl)
-          
+
           call apply_ht(tau,vr,ex_buff2d(:,1:n_cols-off))
           if (useGPU_reduction_lower_block_to_tridiagonal) then
              vmrGPU(max_l_rows * (lc - 1) + 1 : max_l_rows * (lc - 1) + lr) = vr(1:lr)
@@ -823,14 +823,14 @@ max_threads, isSkewsymmetric)
           vrlblock(lc)=vrl
        end do
        call obj%timer%stop("hh_trans")
-          
+
        do iblock=1,nblocks
           c_start = blockinfo(2,iblock)
           blc_end = blockinfo(4,iblock)
           blc_len=blockinfo(3,iblock)
           blc_start=blc_end-blc_len+1
           cur_pcol = blockinfo(1,iblock)
-          
+
           if(my_pcol.eq.cur_pcol) then
 #ifdef WITH_OPENMP_TRADITIONAL
              !$omp  parallel do private(off,lc,lch,ncol,nrow,lr)
@@ -839,14 +839,14 @@ max_threads, isSkewsymmetric)
                 lc=blc_start+off-1
                 lch=c_start+off-1
                 ncol = istep*nbw + lc ! absolute column number of householder Vector
-                nrow = ncol - nbw ! Absolute number of pivot row   
+                nrow = ncol - nbw ! Absolute number of pivot row
                 lr  = local_index(nrow, my_prow, np_rows, nblk, -1) ! current row length
 
                 if (nrow.gt.1) then
                    if (useGPU_reduction_lower_block_to_tridiagonal) then
-                      a_mat(1:lr,lch)=vmrGPU(max_l_rows * (lc - 1) + 1 : max_l_rows * (lc - 1) + lr) 
+                      a_mat(1:lr,lch)=vmrGPU(max_l_rows * (lc - 1) + 1 : max_l_rows * (lc - 1) + lr)
                    else
-                      a_mat(1:lr,lch)=vmrCPU(1:lr,lc)  
+                      a_mat(1:lr,lch)=vmrCPU(1:lr,lc)
                    endif
                    if (my_prow==prow(nrow, nblk, np_rows)) a_mat(lr,lch) = vrlblock(lc)
                    a_mat(lr+1:lrex,c_start+off-1)=ex_buff2d(lr+1:lrex,blc_start+off-1)
@@ -856,11 +856,11 @@ max_threads, isSkewsymmetric)
              end do
 #ifdef WITH_OPENMP_TRADITIONAL
              !$omp end parallel do
-#endif             
+#endif
           end if
        end do
 
-          
+
        deallocate(blockinfo)
        deallocate(ex_buff)
 
@@ -967,7 +967,7 @@ max_threads, isSkewsymmetric)
             call PRECISION_TRMV('U', BLAS_TRANS_OR_CONJ, 'N',&
                  int(n_cols-lc,kind=BLAS_KIND), tmat(lc+1,lc+1,istep), &
                  int(nbw,kind=BLAS_KIND), vav(lc+1,lc), 1_BLAS_KIND)
-            
+
 #if REALCASE == 1
             tmat(lc,lc+1:n_cols,istep) = -tau * vav(lc+1:n_cols,lc)
 #endif
@@ -1082,7 +1082,7 @@ max_threads, isSkewsymmetric)
         do i=1,min(l_cols_tile, l_cols)
           umcGPU_2d(i,1:n_cols) = 0.0_rck
         enddo
-      
+
         !$omp parallel do num_threads(max_threads_used) &
         !$omp default(none) &
         !$omp private(i) &
@@ -2095,7 +2095,7 @@ max_threads, isSkewsymmetric)
           check_dealloc_gpu("bandred: vmr_dev ", successGPU)
         endif
 #if defined(WITH_OPENMP_OFFLOAD_GPU_VERSION)
-      else 
+      else
         if (associated(umcGPU)) then
           deallocate(umcGPU)
 
@@ -2216,7 +2216,7 @@ max_threads, isSkewsymmetric)
 
 #endif /* WITH_OPENMP_TRADITIONAL */
   endif ! useGPU
-  
+
 #ifndef WITH_OPENMP_TRADITIONAL
   if (allocated(vr)) then
     deallocate(vr, stat=istat, errmsg=errorMessage)
@@ -2245,7 +2245,7 @@ max_threads, isSkewsymmetric)
     endif
   endif
 #endif
-  
+
   call obj%timer%stop("bandred_&
   &MATH_DATATYPE&
   &" // &
@@ -2259,7 +2259,7 @@ contains
     real(kind=rk):: vnorm2
     ! Get Vector to be transformed; distribute last element and norm of
     ! remaining elements to all procs in current column
-    
+
     if (my_prow==prow(nrow, nblk, np_rows)) then
        aux1(1) = dot_product(vec_in(1:lr-1),vec_in(1:lr-1))
        aux1(2) = vec_in(lr)
@@ -2274,19 +2274,19 @@ contains
        call mpi_iallreduce(MPI_IN_PLACE, aux1, 2_MPI_KIND, MPI_MATH_DATATYPE_PRECISION, &
             MPI_SUM, int(mpi_comm_rows,kind=MPI_KIND), &
             allreduce_request1, mpierr)
-       
+
        call mpi_wait(allreduce_request1, MPI_STATUS_IGNORE, mpierr)
-       
+
        if (wantDebug) call obj%timer%stop("mpi_nbc_communication")
     else
        !             if (wantDebug)             call obj%timer%start("mpi_comm")
        call mpi_allreduce(MPI_IN_PLACE, aux1, 2_MPI_KIND, MPI_MATH_DATATYPE_PRECISION, &
             MPI_SUM, int(mpi_comm_rows,kind=MPI_KIND), &
             mpierr)
-       
+
        !            if (wantDebug)            call obj%timer%stop("mpi_comm")
     endif
-    
+
 #endif
 
 #if REALCASE == 1
@@ -2309,7 +2309,7 @@ contains
     if (my_prow==prow(nrow, nblk, np_rows)) vr(lr) = 1.0_rck
 
   end subroutine get_hh_vec
-  
+
 
   subroutine apply_ht(tau,vr,ex_buff2d)
     MATH_DATATYPE(kind=rck):: tau, vr(:), ex_buff2d(:,:)
@@ -2319,7 +2319,7 @@ contains
     logical:: use_blas
 
     imax=ubound(ex_buff2d,2)
-    
+
     if((imax.lt.3).or.(max_threads.gt.1)) then
        !don't use BLAS for very small imax because overhead is too high
        !don't use BLAS with OpenMP because measurements showed that threading is not effective for these routines
@@ -2327,7 +2327,7 @@ contains
     else
        use_blas=.true.
     end if
-    
+
     !we need to transform the remaining ex_buff
     if (lr>0) then
        if(use_blas) then !note that aux1 is conjg between > and < thresh_blas!!
@@ -2343,7 +2343,7 @@ contains
           end do
 #ifdef WITH_OPENMP_TRADITIONAL
           !$omp end parallel do
-#endif         
+#endif
        end if
     else
        aux1(1:imax) = 0.
@@ -2378,24 +2378,24 @@ contains
     tauc=-tau
 #else
     tauc=-conjg(tau)
-#endif 
+#endif
     if(use_blas) then
        call PRECISION_GERC(int(lr,kind=BLAS_KIND),int(imax,kind=BLAS_KIND),tauc,vr,1_BLAS_KIND,&
             aux1,1_BLAS_KIND,ex_buff2d,ubound(ex_buff2d,1,kind=BLAS_KIND))
     else
-#ifdef WITH_OPENMP_TRADITIONAL 
+#ifdef WITH_OPENMP_TRADITIONAL
        !$omp  parallel do private(nlc)
 #endif
-       do nlc=1,imax         
+       do nlc=1,imax
           ex_buff2d(1:lr,nlc) = ex_buff2d(1:lr,nlc) + tauc*aux1(nlc)*vr(1:lr)
        end do
-#ifdef WITH_OPENMP_TRADITIONAL 
+#ifdef WITH_OPENMP_TRADITIONAL
        !$omp end parallel do
-#endif       
+#endif
     end if
 
   end subroutine apply_ht
-  
+
 end subroutine bandred_&
 &MATH_DATATYPE&
 &_&

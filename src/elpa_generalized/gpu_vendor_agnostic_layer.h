@@ -69,7 +69,7 @@ void cublasDgemm_elpa_wrapper_intptr_handle(intptr_t* gpuHandle, char transa, ch
 void cublasSgemm_elpa_wrapper_intptr_handle(intptr_t* gpuHandle, char transa, char transb, int m, int n, int k,
                               float alpha, const float *A, int lda,
                               const float *B, int ldb, float beta,
-                              float *C, int ldc);                        
+                              float *C, int ldc);
 void cublasZgemm_elpa_wrapper_intptr_handle(intptr_t* gpuHandle, char transa, char transb, int m, int n, int k,
                               double _Complex alpha, const double _Complex *A, int lda,
                               const double _Complex *B, int ldb, double _Complex beta,
@@ -141,12 +141,12 @@ void syclblasCgemm_elpa_wrapper(intptr_t* gpuHandle, char transa, char transb, i
 void set_gpu_parameters(int* gpuMemcpyHostToDevice, int* gpuMemcpyDeviceToHost);
 
 int gpuGetDeviceCount(int *count);
-int gpuSetDevice(int n); 
-   
+int gpuSetDevice(int n);
+
 int gpuMalloc(intptr_t *a, size_t width_height);
 
 int gpuFree(intptr_t *a);
-   
+
 int gpuMemcpy(intptr_t *dest, intptr_t *src, size_t count, int dir);
 
 int syclGetCpuCount(int numberOfDevices);
@@ -176,5 +176,5 @@ void gpublasCgemm (intptr_t* gpuHandle, char transa, char transb, int m, int n, 
                                float _Complex *C, int ldc);
 
 #ifdef __cplusplus
-}    
+}
 #endif

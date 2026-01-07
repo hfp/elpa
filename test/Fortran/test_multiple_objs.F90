@@ -257,7 +257,7 @@ program test
    assert_elpa_ok(error_elpa)
 #endif
 
-#if TEST_INTEL_GPU == 1  || (TEST_INTEL_GPU_OPENMP == 1) || (TEST_INTEL_GPU_SYCL == 1)  
+#if TEST_INTEL_GPU == 1  || (TEST_INTEL_GPU_OPENMP == 1) || (TEST_INTEL_GPU_SYCL == 1)
    call e1%set("intel-gpu", TEST_GPU, error_elpa)
    assert_elpa_ok(error_elpa)
 #endif
@@ -294,7 +294,7 @@ program test
 
    call e2%get("debug", debug, error_elpa)
    assert_elpa_ok(error_elpa)
-#if TEST_NVIDIA_GPU == 1 || (TEST_NVIDIA_GPU == 0) && (TEST_AMD_GPU == 0) && (TEST_INTEL_GPU == 0) && (TEST_INTEL_GPU_OPENMP == 0) && (TEST_INTEL_GPU_SYCL == 0) 
+#if TEST_NVIDIA_GPU == 1 || (TEST_NVIDIA_GPU == 0) && (TEST_AMD_GPU == 0) && (TEST_INTEL_GPU == 0) && (TEST_INTEL_GPU_OPENMP == 0) && (TEST_INTEL_GPU_SYCL == 0)
    call e2%get("nvidia-gpu", gpu, error_elpa)
    assert_elpa_ok(error_elpa)
 #endif
@@ -302,7 +302,7 @@ program test
    call e2%get("amd-gpu", gpu, error_elpa)
    assert_elpa_ok(error_elpa)
 #endif
-#if TEST_INTEL_GPU == 1 || (TEST_INTEL_GPU_OPENMP == 1) || (TEST_INTEL_GPU_SYCL == 1) 
+#if TEST_INTEL_GPU == 1 || (TEST_INTEL_GPU_OPENMP == 1) || (TEST_INTEL_GPU_SYCL == 1)
    call e2%get("intel-gpu", gpu, error_elpa)
    assert_elpa_ok(error_elpa)
 #endif
@@ -331,7 +331,7 @@ program test
    iter=0
    do while (e_ptr%autotune_step(tune_state, error_elpa))
      assert_elpa_ok(error_elpa)
- 
+
      iter=iter+1
      write(iter_string,'(I5.5)') iter
      call e_ptr%print_settings(error_elpa)
