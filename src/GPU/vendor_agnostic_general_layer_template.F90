@@ -542,8 +542,10 @@ end function
 
     function gpu_malloc_host_intptr(array, elements) result(success)
       use, intrinsic :: iso_c_binding
-      use cuda_functions
 
+#ifdef WITH_NVIDIA_GPU_VERSION
+      use cuda_functions
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       use hip_functions
 #endif
@@ -561,22 +563,22 @@ end function
 
       success = .false.
 
+#ifdef WITH_NVIDIA_GPU_VERSION
       if (use_gpu_vendor == nvidia_gpu) then
         success = cuda_malloc_host_intptr(array, elements)
       endif
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       if (use_gpu_vendor == amd_gpu) then
         success = hip_malloc_host_intptr(array, elements)
       endif
 #endif
-
 #ifdef WITH_OPENMP_OFFLOAD_GPU_VERSION
       if (use_gpu_vendor == openmp_offload_gpu) then
         print *,"not yet implemented: malloc_host"
         stop 1
       endif
 #endif
-
 #ifdef WITH_SYCL_GPU_VERSION
       if (use_gpu_vendor == sycl_gpu) then
         success = sycl_malloc_host_intptr(array, elements)
@@ -587,8 +589,10 @@ end function
 
     function gpu_malloc_host_cptr(array, elements) result(success)
       use, intrinsic :: iso_c_binding
-      use cuda_functions
 
+#ifdef WITH_NVIDIA_GPU_VERSION
+      use cuda_functions
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       use hip_functions
 #endif
@@ -606,22 +610,22 @@ end function
 
       success = .false.
 
+#ifdef WITH_NVIDIA_GPU_VERSION
       if (use_gpu_vendor == nvidia_gpu) then
         success = cuda_malloc_host_cptr(array, elements)
       endif
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       if (use_gpu_vendor == amd_gpu) then
         success = hip_malloc_host_cptr(array, elements)
       endif
 #endif
-
 #ifdef WITH_OPENMP_OFFLOAD_GPU_VERSION
       if (use_gpu_vendor == openmp_offload_gpu) then
         print *,"not yet implemented: malloc_host"
         stop 1
       endif
 #endif
-
 #ifdef WITH_SYCL_GPU_VERSION
       if (use_gpu_vendor == sycl_gpu) then
         success = sycl_malloc_host_cptr(array, elements)
@@ -632,7 +636,10 @@ end function
 
     function gpu_malloc_intptr(array, elements) result(success)
       use, intrinsic :: iso_c_binding
+
+#ifdef WITH_NVIDIA_GPU_VERSION
       use cuda_functions
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       use hip_functions
 #endif
@@ -649,22 +656,21 @@ end function
 
       success = .false.
 
+#ifdef WITH_NVIDIA_GPU_VERSION
       if (use_gpu_vendor == nvidia_gpu) then
         success = cuda_malloc_intptr(array, elements)
       endif
-
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       if (use_gpu_vendor == amd_gpu) then
         success = hip_malloc_intptr(array, elements)
       endif
 #endif
-
 #ifdef WITH_OPENMP_OFFLOAD_GPU_VERSION
       if (use_gpu_vendor == openmp_offload_gpu) then
         success = openmp_offload_malloc_intptr(array, elements)
       endif
 #endif
-
 #ifdef WITH_SYCL_GPU_VERSION
       if (use_gpu_vendor == sycl_gpu) then
         success = sycl_malloc_intptr(array, elements)
@@ -675,7 +681,10 @@ end function
 
     function gpu_malloc_cptr(array, elements) result(success)
       use, intrinsic :: iso_c_binding
+
+#ifdef WITH_NVIDIA_GPU_VERSION
       use cuda_functions
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       use hip_functions
 #endif
@@ -692,22 +701,21 @@ end function
 
       success = .false.
 
+#ifdef WITH_NVIDIA_GPU_VERSION
       if (use_gpu_vendor == nvidia_gpu) then
         success = cuda_malloc_cptr(array, elements)
       endif
-
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       if (use_gpu_vendor == amd_gpu) then
         success = hip_malloc_cptr(array, elements)
       endif
 #endif
-
 #ifdef WITH_OPENMP_OFFLOAD_GPU_VERSION
       if (use_gpu_vendor == openmp_offload_gpu) then
         success = openmp_offload_malloc_cptr(array, elements)
       endif
 #endif
-
 #ifdef WITH_SYCL_GPU_VERSION
       if (use_gpu_vendor == sycl_gpu) then
         success = sycl_malloc_cptr(array, elements)
@@ -718,7 +726,10 @@ end function
 
     function gpu_host_register(array, elements, flag) result(success)
       use, intrinsic :: iso_c_binding
+
+#ifdef WITH_NVIDIA_GPU_VERSION
       use cuda_functions
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       use hip_functions
 #endif
@@ -736,23 +747,22 @@ end function
 
       success = .false.
 
+#ifdef WITH_NVIDIA_GPU_VERSION
       if (use_gpu_vendor == nvidia_gpu) then
         success = cuda_host_register(array, elements, flag)
       endif
-
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       if (use_gpu_vendor == amd_gpu) then
         success = hip_host_register(array, elements, flag)
       endif
 #endif
-
 #ifdef WITH_OPENMP_OFFLOAD_GPU_VERSION
       if (use_gpu_vendor == openmp_offload_gpu) then
         print *,"not yet implemented: host_register"
         stop 1
       endif
 #endif
-
 #ifdef WITH_SYCL_GPU_VERSION
       if (use_gpu_vendor == sycl_gpu) then
         success = sycl_host_register(array, elements, flag)
@@ -763,7 +773,10 @@ end function
 
     function gpu_memcpy_intptr(dst, src, size, dir) result(success)
       use, intrinsic :: iso_c_binding
+
+#ifdef WITH_NVIDIA_GPU_VERSION
       use cuda_functions
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       use hip_functions
 #endif
@@ -783,22 +796,21 @@ end function
 
       success = .false.
 
+#ifdef WITH_NVIDIA_GPU_VERSION
       if (use_gpu_vendor == nvidia_gpu) then
         success = cuda_memcpy_intptr(dst, src, size, dir)
       endif
-
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       if (use_gpu_vendor == amd_gpu) then
         success = hip_memcpy_intptr(dst, src, size, dir)
       endif
 #endif
-
 #ifdef WITH_OPENMP_OFFLOAD_GPU_VERSION
       if (use_gpu_vendor == openmp_offload_gpu) then
         success = openmp_offload_memcpy_intptr(dst, src, size, dir)
       endif
 #endif
-
 #ifdef WITH_SYCL_GPU_VERSION
       if (use_gpu_vendor == sycl_gpu) then
         success = sycl_memcpy_intptr(dst, src, size, dir)
@@ -810,7 +822,10 @@ end function
 
     function gpu_memcpy_cptr(dst, src, size, dir) result(success)
       use, intrinsic :: iso_c_binding
+
+#ifdef WITH_NVIDIA_GPU_VERSION
       use cuda_functions
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       use hip_functions
 #endif
@@ -829,22 +844,21 @@ end function
 
       success = .false.
 
+#ifdef WITH_NVIDIA_GPU_VERSION
       if (use_gpu_vendor == nvidia_gpu) then
         success = cuda_memcpy_cptr(dst, src, size, dir)
       endif
-
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       if (use_gpu_vendor == amd_gpu) then
         success = hip_memcpy_cptr(dst, src, size, dir)
       endif
 #endif
-
 #ifdef WITH_OPENMP_OFFLOAD_GPU_VERSION
       if (use_gpu_vendor == openmp_offload_gpu) then
         success = openmp_offload_memcpy_cptr(dst, src, size, dir)
       endif
 #endif
-
 #ifdef WITH_SYCL_GPU_VERSION
       if (use_gpu_vendor == sycl_gpu) then
         success = sycl_memcpy_cptr(dst, src, size, dir)
@@ -856,7 +870,10 @@ end function
 
     function gpu_memcpy_mixed_to_device(dst, src, size, dir) result(success)
       use, intrinsic :: iso_c_binding
+
+#ifdef WITH_NVIDIA_GPU_VERSION
       use cuda_functions
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       use hip_functions
 #endif
@@ -876,22 +893,21 @@ end function
 
       success = .false.
 
+#ifdef WITH_NVIDIA_GPU_VERSION
       if (use_gpu_vendor == nvidia_gpu) then
         success = cuda_memcpy_mixed_to_device(dst, src, size, dir)
       endif
-
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       if (use_gpu_vendor == amd_gpu) then
         success = hip_memcpy_mixed_to_device(dst, src, size, dir)
       endif
 #endif
-
 #ifdef WITH_OPENMP_OFFLOAD_GPU_VERSION
       if (use_gpu_vendor == openmp_offload_gpu) then
         success = openmp_offload_memcpy_mixed_to_device(dst, src, size, dir)
       endif
 #endif
-
 #ifdef WITH_SYCL_GPU_VERSION
       if (use_gpu_vendor == sycl_gpu) then
         success = sycl_memcpy_mixed_to_device(dst, src, size, dir)
@@ -902,7 +918,10 @@ end function
 
     function gpu_memcpy_mixed_to_host(dst, src, size, dir) result(success)
       use, intrinsic :: iso_c_binding
+
+#ifdef WITH_NVIDIA_GPU_VERSION
       use cuda_functions
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       use hip_functions
 #endif
@@ -922,22 +941,21 @@ end function
 
       success = .false.
 
+#ifdef WITH_NVIDIA_GPU_VERSION
       if (use_gpu_vendor == nvidia_gpu) then
         success = cuda_memcpy_mixed_to_host(dst, src, size, dir)
       endif
-
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       if (use_gpu_vendor == amd_gpu) then
         success = hip_memcpy_mixed_to_host(dst, src, size, dir)
       endif
 #endif
-
 #ifdef WITH_OPENMP_OFFLOAD_GPU_VERSION
       if (use_gpu_vendor == openmp_offload_gpu) then
         success = openmp_offload_memcpy_mixed_to_host(dst, src, size, dir)
       endif
 #endif
-
 #ifdef WITH_SYCL_GPU_VERSION
       if (use_gpu_vendor == sycl_gpu) then
         success = sycl_memcpy_mixed_to_host(dst, src, size, dir)
@@ -948,7 +966,10 @@ end function
 
     function gpu_memcpy_async_intptr(dst, src, size, dir, stream) result(success)
       use, intrinsic :: iso_c_binding
+
+#ifdef WITH_NVIDIA_GPU_VERSION
       use cuda_functions
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       use hip_functions
 #endif
@@ -969,16 +990,16 @@ end function
 
       success = .false.
 
+#ifdef WITH_NVIDIA_GPU_VERSION
       if (use_gpu_vendor == nvidia_gpu) then
         success = cuda_memcpy_async_intptr(dst, src, size, dir, stream)
       endif
-
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       if (use_gpu_vendor == amd_gpu) then
         success = hip_memcpy_async_intptr(dst, src, size, dir, stream)
       endif
 #endif
-
 #ifdef WITH_OPENMP_OFFLOAD_GPU_VERSION
       if (use_gpu_vendor == openmp_offload_gpu) then
         print *,"MemcpyAsync not implemented for openmp offload"
@@ -986,7 +1007,6 @@ end function
         !success = openmp_offload_memcpy_intptr(dst, src, size, dir)
       endif
 #endif
-
 #ifdef WITH_SYCL_GPU_VERSION
       if (use_gpu_vendor == sycl_gpu) then
         success = sycl_memcpy_async_intptr(dst, src, size, dir, stream)
@@ -998,7 +1018,10 @@ end function
 
     function gpu_memcpy_async_cptr(dst, src, size, dir, stream) result(success)
       use, intrinsic :: iso_c_binding
+
+#ifdef WITH_NVIDIA_GPU_VERSION
       use cuda_functions
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       use hip_functions
 #endif
@@ -1018,16 +1041,16 @@ end function
 
       success = .false.
 
+#ifdef WITH_NVIDIA_GPU_VERSION
       if (use_gpu_vendor == nvidia_gpu) then
         success = cuda_memcpy_async_cptr(dst, src, size, dir, stream)
       endif
-
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       if (use_gpu_vendor == amd_gpu) then
         success = hip_memcpy_async_cptr(dst, src, size, dir, stream)
       endif
 #endif
-
 #ifdef WITH_OPENMP_OFFLOAD_GPU_VERSION
       if (use_gpu_vendor == openmp_offload_gpu) then
         print *,"MemcpyAsync not implemented for openmp offload"
@@ -1035,7 +1058,6 @@ end function
         !success = openmp_offload_memcpy_cptr(dst, src, size, dir)
       endif
 #endif
-
 #ifdef WITH_SYCL_GPU_VERSION
       if (use_gpu_vendor == sycl_gpu) then
         success = sycl_memcpy_async_cptr(dst, src, size, dir, stream)
@@ -1047,7 +1069,10 @@ end function
 
     function gpu_memcpy_async_mixed_to_device(dst, src, size, dir, stream) result(success)
       use, intrinsic :: iso_c_binding
+
+#ifdef WITH_NVIDIA_GPU_VERSION
       use cuda_functions
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       use hip_functions
 #endif
@@ -1068,16 +1093,16 @@ end function
 
       success = .false.
 
+#ifdef WITH_NVIDIA_GPU_VERSION
       if (use_gpu_vendor == nvidia_gpu) then
         success = cuda_memcpy_async_mixed_to_device(dst, src, size, dir, stream)
       endif
-
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       if (use_gpu_vendor == amd_gpu) then
         success = hip_memcpy_async_mixed_to_device(dst, src, size, dir, stream)
       endif
 #endif
-
 #ifdef WITH_OPENMP_OFFLOAD_GPU_VERSION
       if (use_gpu_vendor == openmp_offload_gpu) then
         print *,"MemcpyAsync not implemented for openmp offload"
@@ -1085,7 +1110,6 @@ end function
         !success = openmp_offload_memcpy_mixed_to_device(dst, src, size, dir)
       endif
 #endif
-
 #ifdef WITH_SYCL_GPU_VERSION
       if (use_gpu_vendor == sycl_gpu) then
         success = sycl_memcpy_async_mixed_to_device(dst, src, size, dir, stream)
@@ -1096,7 +1120,10 @@ end function
 
     function gpu_memcpy_async_mixed_to_host(dst, src, size, dir, stream) result(success)
       use, intrinsic :: iso_c_binding
+
+#ifdef WITH_NVIDIA_GPU_VERSION
       use cuda_functions
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       use hip_functions
 #endif
@@ -1117,16 +1144,16 @@ end function
 
       success = .false.
 
+#ifdef WITH_NVIDIA_GPU_VERSION
       if (use_gpu_vendor == nvidia_gpu) then
         success = cuda_memcpy_async_mixed_to_host(dst, src, size, dir, stream)
       endif
-
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       if (use_gpu_vendor == amd_gpu) then
         success = hip_memcpy_async_mixed_to_host(dst, src, size, dir, stream)
       endif
 #endif
-
 #ifdef WITH_OPENMP_OFFLOAD_GPU_VERSION
       if (use_gpu_vendor == openmp_offload_gpu) then
         print *,"MemcpyAsync not implemented for openmp offload"
@@ -1134,7 +1161,6 @@ end function
         !success = openmp_offload_memcpy_mixed_to_host(dst, src, size, dir)
       endif
 #endif
-
 #ifdef WITH_SYCL_GPU_VERSION
       if (use_gpu_vendor == sycl_gpu) then
         success = sycl_memcpy_async_mixed_to_host(dst, src, size, dir, stream)
@@ -1145,7 +1171,10 @@ end function
 
     function gpu_memset(a, val, size) result(success)
       use, intrinsic :: iso_c_binding
+
+#ifdef WITH_NVIDIA_GPU_VERSION
       use cuda_functions
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       use hip_functions
 #endif
@@ -1166,22 +1195,21 @@ end function
 
       success = .false.
 
+#ifdef WITH_NVIDIA_GPU_VERSION
       if (use_gpu_vendor == nvidia_gpu) then
         success = cuda_memset(a, val, size)
       endif
-
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       if (use_gpu_vendor == amd_gpu) then
         success = hip_memset(a, val, size)
       endif
 #endif
-
 #ifdef WITH_OPENMP_OFFLOAD_GPU_VERSION
       if (use_gpu_vendor == openmp_offload_gpu) then
         success = openmp_offload_memset(a, val, size)
       endif
 #endif
-
 #ifdef WITH_SYCL_GPU_VERSION
       if (use_gpu_vendor == sycl_gpu) then
         success = sycl_memset(a, int(val,kind=c_int32_t), size)
@@ -1192,7 +1220,10 @@ end function
 
     function gpu_memset_async(a, val, size, stream) result(success)
       use, intrinsic :: iso_c_binding
+
+#ifdef WITH_NVIDIA_GPU_VERSION
       use cuda_functions
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       use hip_functions
 #endif
@@ -1214,16 +1245,16 @@ end function
 
       success = .false.
 
+#ifdef WITH_NVIDIA_GPU_VERSION
       if (use_gpu_vendor == nvidia_gpu) then
         success = cuda_memset_async(a, val, size, stream)
       endif
-
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       if (use_gpu_vendor == amd_gpu) then
         success = hip_memset_async(a, val, size, stream)
       endif
 #endif
-
 #ifdef WITH_OPENMP_OFFLOAD_GPU_VERSION
       if (use_gpu_vendor == openmp_offload_gpu) then
         !success = openmp_offload_memset(a, val, size)
@@ -1231,7 +1262,6 @@ end function
         stop 1
       endif
 #endif
-
 #ifdef WITH_SYCL_GPU_VERSION
       if (use_gpu_vendor == sycl_gpu) then
         success = sycl_memset_async(a, val, size, stream)
@@ -1242,7 +1272,10 @@ end function
 
     function gpu_free_intptr(a) result(success)
       use, intrinsic :: iso_c_binding
+
+#ifdef WITH_NVIDIA_GPU_VERSION
       use cuda_functions
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       use hip_functions
 #endif
@@ -1260,22 +1293,21 @@ end function
 
       success = .false.
 
+#ifdef WITH_NVIDIA_GPU_VERSION
       if (use_gpu_vendor == nvidia_gpu) then
         success = cuda_free_intptr(a)
       endif
-
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       if (use_gpu_vendor == amd_gpu) then
         success = hip_free_intptr(a)
       endif
 #endif
-
 #ifdef WITH_OPENMP_OFFLOAD_GPU_VERSION
       if (use_gpu_vendor == openmp_offload_gpu) then
         success = openmp_offload_free_intptr(a)
       endif
 #endif
-
 #ifdef WITH_SYCL_GPU_VERSION
       if (use_gpu_vendor == sycl_gpu) then
         success = sycl_free_intptr(a)
@@ -1286,7 +1318,10 @@ end function
 
     function gpu_free_cptr(a) result(success)
       use, intrinsic :: iso_c_binding
+
+#ifdef WITH_NVIDIA_GPU_VERSION
       use cuda_functions
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       use hip_functions
 #endif
@@ -1304,22 +1339,21 @@ end function
 
       success = .false.
 
+#ifdef WITH_NVIDIA_GPU_VERSION
       if (use_gpu_vendor == nvidia_gpu) then
         success = cuda_free_cptr(a)
       endif
-
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       if (use_gpu_vendor == amd_gpu) then
         success = hip_free_cptr(a)
       endif
 #endif
-
 #ifdef WITH_OPENMP_OFFLOAD_GPU_VERSION
       if (use_gpu_vendor == openmp_offload_gpu) then
         success = openmp_offload_free_cptr(a)
       endif
 #endif
-
 #ifdef WITH_SYCL_GPU_VERSION
       if (use_gpu_vendor == sycl_gpu) then
         success = sycl_free_cptr(a)
@@ -1330,7 +1364,10 @@ end function
 
     function gpu_free_host_intptr(a) result(success)
       use, intrinsic :: iso_c_binding
+
+#ifdef WITH_NVIDIA_GPU_VERSION
       use cuda_functions
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       use hip_functions
 #endif
@@ -1348,22 +1385,21 @@ end function
 
       success = .false.
 
+#ifdef WITH_NVIDIA_GPU_VERSION
       if (use_gpu_vendor == nvidia_gpu) then
         success = cuda_free_host_intptr(a)
       endif
-
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       if (use_gpu_vendor == amd_gpu) then
         success = hip_free_host_intptr(a)
       endif
 #endif
-
 #ifdef WITH_OPENMP_OFFLOAD_GPU_VERSION
       if (use_gpu_vendor == openmp_offload_gpu) then
         success = openmp_offload_free_intptr(a)
       endif
 #endif
-
 #ifdef WITH_SYCL_GPU_VERSION
       if (use_gpu_vendor == sycl_gpu) then
         success = sycl_free_host_intptr(a)
@@ -1374,7 +1410,10 @@ end function
 
     function gpu_free_host_cptr(a) result(success)
       use, intrinsic :: iso_c_binding
+
+#ifdef WITH_NVIDIA_GPU_VERSION
       use cuda_functions
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       use hip_functions
 #endif
@@ -1392,23 +1431,22 @@ end function
 
       success = .false.
 
+#ifdef WITH_NVIDIA_GPU_VERSION
       if (use_gpu_vendor == nvidia_gpu) then
         success = cuda_free_host_cptr(a)
       endif
-
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       if (use_gpu_vendor == amd_gpu) then
         success = hip_free_host_cptr(a)
       endif
 #endif
-
 #ifdef WITH_OPENMP_OFFLOAD_GPU_VERSION
       if (use_gpu_vendor == openmp_offload_gpu) then
         print *,"not yet implemented: host_free"
         stop 1
       endif
 #endif
-
 #ifdef WITH_SYCL_GPU_VERSION
       if (use_gpu_vendor == sycl_gpu) then
         success = sycl_free_host_cptr(a)
@@ -1418,7 +1456,10 @@ end function
 
     function gpu_host_unregister(a) result(success)
       use, intrinsic :: iso_c_binding
+
+#ifdef WITH_NVIDIA_GPU_VERSION
       use cuda_functions
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       use hip_functions
 #endif
@@ -1436,23 +1477,22 @@ end function
 
       success = .false.
 
+#ifdef WITH_NVIDIA_GPU_VERSION
       if (use_gpu_vendor == nvidia_gpu) then
         success = cuda_host_unregister(a)
       endif
-
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       if (use_gpu_vendor == amd_gpu) then
         success = hip_host_unregister(a)
       endif
 #endif
-
 #ifdef WITH_OPENMP_OFFLOAD_GPU_VERSION
       if (use_gpu_vendor == openmp_offload_gpu) then
         print *,"not yet implemented: host_unregister"
         stop 1
       endif
 #endif
-
 #ifdef WITH_SYCL_GPU_VERSION
       if (use_gpu_vendor == sycl_gpu) then
         success = sycl_host_unregister(a)
@@ -1464,7 +1504,10 @@ end function
     function gpu_memcpy2d_intptr(dst, dpitch, src, spitch, width, height , dir) result(success)
 
       use, intrinsic :: iso_c_binding
+
+#ifdef WITH_NVIDIA_GPU_VERSION
       use cuda_functions
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       use hip_functions
 #endif
@@ -1488,23 +1531,22 @@ end function
 
       success = .false.
 
+#ifdef WITH_NVIDIA_GPU_VERSION
       if (use_gpu_vendor == nvidia_gpu) then
         success = cuda_memcpy2d_intptr(dst, dpitch, src, spitch, width, height , dir)
       endif
-
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       if (use_gpu_vendor == amd_gpu) then
         success = hip_memcpy2d_intptr(dst, dpitch, src, spitch, width, height , dir)
       endif
 #endif
-
 #ifdef WITH_OPENMP_OFFLOAD_GPU_VERSION
       if (use_gpu_vendor == openmp_offload_gpu) then
         print *,"not yet implemented: memcpy2d_intptr"
         stop 1
       endif
 #endif
-
 #ifdef WITH_SYCL_GPU_VERSION
       if (use_gpu_vendor == sycl_gpu) then
         success = sycl_memcpy2d_intptr(dst, dpitch, src, spitch, width, height , dir)
@@ -1515,7 +1557,10 @@ end function
     function gpu_memcpy2d_cptr(dst, dpitch, src, spitch, width, height , dir) result(success)
 
       use, intrinsic :: iso_c_binding
+
+#ifdef WITH_NVIDIA_GPU_VERSION
       use cuda_functions
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       use hip_functions
 #endif
@@ -1539,23 +1584,22 @@ end function
 
       success = .false.
 
+#ifdef WITH_NVIDIA_GPU_VERSION
       if (use_gpu_vendor == nvidia_gpu) then
         success = cuda_memcpy2d_cptr(dst, dpitch, src, spitch, width, height , dir)
       endif
-
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       if (use_gpu_vendor == amd_gpu) then
         success = hip_memcpy2d_cptr(dst, dpitch, src, spitch, width, height , dir)
       endif
 #endif
-
 #ifdef WITH_OPENMP_OFFLOAD_GPU_VERSION
       if (use_gpu_vendor == openmp_offload_gpu) then
         print *,"not yet implemented: memcpy2d_cptr"
         stop 1
       endif
 #endif
-
 #ifdef WITH_SYCL_GPU_VERSION
       if (use_gpu_vendor == sycl_gpu) then
         success = sycl_memcpy2d_cptr(dst, dpitch, src, spitch, width, height , dir)
@@ -1566,7 +1610,10 @@ end function
     function gpu_memcpy2d_async_intptr(dst, dpitch, src, spitch, width, height, dir, stream) result(success)
 
       use, intrinsic :: iso_c_binding
+
+#ifdef WITH_NVIDIA_GPU_VERSION
       use cuda_functions
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       use hip_functions
 #endif
@@ -1591,23 +1638,22 @@ end function
 
       success = .false.
 
+#ifdef WITH_NVIDIA_GPU_VERSION
       if (use_gpu_vendor == nvidia_gpu) then
         success = cuda_memcpy2d_async_intptr(dst, dpitch, src, spitch, width, height, dir, stream)
       endif
-
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       if (use_gpu_vendor == amd_gpu) then
         success = hip_memcpy2d_async_intptr(dst, dpitch, src, spitch, width, height, dir, stream)
       endif
 #endif
-
 #ifdef WITH_OPENMP_OFFLOAD_GPU_VERSION
       if (use_gpu_vendor == openmp_offload_gpu) then
         print *,"not yet implemented: memcpy2d_async_intptr"
         stop 1
       endif
 #endif
-
 #ifdef WITH_SYCL_GPU_VERSION
       if (use_gpu_vendor == sycl_gpu) then
         success = sycl_memcpy2d_async_intptr(dst, dpitch, src, spitch, width, height, dir, stream)
@@ -1618,7 +1664,10 @@ end function
     function gpu_memcpy2d_async_cptr(dst, dpitch, src, spitch, width, height, dir, stream) result(success)
 
       use, intrinsic :: iso_c_binding
+
+#ifdef WITH_NVIDIA_GPU_VERSION
       use cuda_functions
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       use hip_functions
 #endif
@@ -1643,23 +1692,22 @@ end function
 
       success = .false.
 
+#ifdef WITH_NVIDIA_GPU_VERSION
       if (use_gpu_vendor == nvidia_gpu) then
         success = cuda_memcpy2d_async_cptr(dst, dpitch, src, spitch, width, height, dir, stream)
       endif
-
+#endif
 #ifdef WITH_AMD_GPU_VERSION
       if (use_gpu_vendor == amd_gpu) then
         success = hip_memcpy2d_async_cptr(dst, dpitch, src, spitch, width, height , dir, stream)
       endif
 #endif
-
 #ifdef WITH_OPENMP_OFFLOAD_GPU_VERSION
       if (use_gpu_vendor == openmp_offload_gpu) then
         print *,"not yet implemented: memcpy2d_async_cptr"
         stop 1
       endif
 #endif
-
 #ifdef WITH_SYCL_GPU_VERSION
       if (use_gpu_vendor == sycl_gpu) then
         success = sycl_memcpy2d_async_cptr(dst, dpitch, src, spitch, width, height, dir, stream)
