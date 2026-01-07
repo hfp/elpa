@@ -143,7 +143,7 @@ void sycl_copy_skewsymmetric_second_half_q_kernel(T *q_dev, const int i, const i
             q_dev[index] = -q_dev[indexLow];
         }
         q_dev[indexLow] = 0.0;
-    }	
+    }
 }
 
 template<typename T> void sycl_copy_skewsymmetric_second_half_q(T *q_dev, int *i_in, int *matrixRows_in, int *matrixCols_in, int *negative_or_positive_in, QueueData *my_stream) {

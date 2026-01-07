@@ -102,7 +102,7 @@ void gpu_distribute_global_column_kernel (T *g_col, T *l_col,
 
       int jb = ind + nbs;
 
-      if (jb >= nbs && jb<=nbe){	
+      if (jb >= nbs && jb<=nbe){
         int g_off2 = jb*nblk*np_rows + nblk*my_prow;
         int l_off2 = jb*nblk;
 
@@ -117,7 +117,7 @@ void gpu_distribute_global_column_kernel (T *g_col, T *l_col,
 
 
 	    if (index >= js2 && index <= je2) {
-		
+
               number_of_entries = (g_col_dim2-g_col_offset2)*g_col_dim1+g_col_dim1-g_col_offset1+1;
               entries_in_started_col=g_col_dim1-g_col_offset1+1;
               entries_in_sub_matrix=number_of_entries-entries_in_started_col;

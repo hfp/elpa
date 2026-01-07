@@ -118,7 +118,7 @@ void gpu_copy_a_aux_bc_loop_kernel (T *a_dev, T *aux_bc_dev, int* lrs_save_dev, 
 template <typename T>
 void gpu_copy_a_aux_bc_loop(T *a_dev, T *aux_bc_dev, int *lrs_save_dev, int *lre_save_dev, int *n_aux_bc_save_dev,
                             int noff, int nblk, int lda, int n_size, int debug, gpuStream_t my_stream) {
-		
+
   sycl::queue q = getQueueOrDefault(my_stream);
   sycl::range<1> blocks(n_size);
   sycl::range<1> threadsPerBlock(MIN_THREADS_PER_BLOCK);

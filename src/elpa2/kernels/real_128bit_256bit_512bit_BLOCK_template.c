@@ -3122,7 +3122,7 @@ __forceinline void CONCAT_8ARGS(hh_trafo_kernel_,ROW_LENGTH,_,SIMD_SET,_,BLOCK,h
         w5 = _SIMD_ADD( ADDITIONAL_ARGUMENT w5, _SIMD_MUL( ADDITIONAL_ARGUMENT q5,h4));
         w6 = _SIMD_ADD( ADDITIONAL_ARGUMENT w6, _SIMD_MUL( ADDITIONAL_ARGUMENT q6,h4));
 #endif /* __ELPA_USE_FMA__ */
-				
+
 #endif /* BLOCK4 || BLOCK6 */
 
 #ifdef BLOCK6
@@ -6352,7 +6352,7 @@ __forceinline void CONCAT_8ARGS(hh_trafo_kernel_,ROW_LENGTH,_,SIMD_SET,_,BLOCK,h
         w4 = _SIMD_ADD( ADDITIONAL_ARGUMENT w4, _SIMD_MUL( ADDITIONAL_ARGUMENT q4,h4));
         w5 = _SIMD_ADD( ADDITIONAL_ARGUMENT w5, _SIMD_MUL( ADDITIONAL_ARGUMENT q5,h4));
 #endif /* __ELPA_USE_FMA__ */
-			
+
 #endif /* BLOCK4 || BLOCK6 */
 
 #ifdef BLOCK6
@@ -6406,7 +6406,7 @@ __forceinline void CONCAT_8ARGS(hh_trafo_kernel_,ROW_LENGTH,_,SIMD_SET,_,BLOCK,h
         t3 = _SIMD_ADD( ADDITIONAL_ARGUMENT t3, _SIMD_MUL( ADDITIONAL_ARGUMENT q3,h6));
         t4 = _SIMD_ADD( ADDITIONAL_ARGUMENT t4, _SIMD_MUL( ADDITIONAL_ARGUMENT q4,h6));
         t5 = _SIMD_ADD( ADDITIONAL_ARGUMENT t5, _SIMD_MUL( ADDITIONAL_ARGUMENT q5,h6));
-#endif /* __ELPA_USE_FMA__ */	
+#endif /* __ELPA_USE_FMA__ */
 
 #endif /* BLOCK6 */
       }
@@ -9304,7 +9304,7 @@ __forceinline void CONCAT_8ARGS(hh_trafo_kernel_,ROW_LENGTH,_,SIMD_SET,_,BLOCK,h
         w3 = _SIMD_ADD( ADDITIONAL_ARGUMENT w3, _SIMD_MUL( ADDITIONAL_ARGUMENT q3,h4));
         w4 = _SIMD_ADD( ADDITIONAL_ARGUMENT w4, _SIMD_MUL( ADDITIONAL_ARGUMENT q4,h4));
 #endif /* __ELPA_USE_FMA__ */
-		
+
 #endif /* BLOCK4 || BLOCK6 */
 #ifdef BLOCK6
 
@@ -11935,7 +11935,7 @@ __forceinline void CONCAT_8ARGS(hh_trafo_kernel_,ROW_LENGTH,_,SIMD_SET,_,BLOCK,h
         z1 = _SIMD_FMA(q1, h3, z1);
         z2 = _SIMD_FMA(q2, h3, z2);
         z3 = _SIMD_FMA(q3, h3, z3);
-#else	
+#else
         z1 = _SIMD_ADD( ADDITIONAL_ARGUMENT z1, _SIMD_MUL( ADDITIONAL_ARGUMENT q1,h3));
         z2 = _SIMD_ADD( ADDITIONAL_ARGUMENT z2, _SIMD_MUL( ADDITIONAL_ARGUMENT q2,h3));
         z3 = _SIMD_ADD( ADDITIONAL_ARGUMENT z3, _SIMD_MUL( ADDITIONAL_ARGUMENT q3,h3));
@@ -11962,7 +11962,7 @@ __forceinline void CONCAT_8ARGS(hh_trafo_kernel_,ROW_LENGTH,_,SIMD_SET,_,BLOCK,h
         w2 = _SIMD_ADD( ADDITIONAL_ARGUMENT w2, _SIMD_MUL( ADDITIONAL_ARGUMENT q2,h4));
         w3 = _SIMD_ADD( ADDITIONAL_ARGUMENT w3, _SIMD_MUL( ADDITIONAL_ARGUMENT q3,h4));
 #endif /* __ELPA_USE_FMA__ */
-	
+
 #endif /* BLOCK4 || BLOCK6 */
 
 #ifdef BLOCK6
@@ -14333,7 +14333,7 @@ __forceinline void CONCAT_8ARGS(hh_trafo_kernel_,ROW_LENGTH,_,SIMD_SET,_,BLOCK,h
 #ifdef __ELPA_USE_FMA__
         z1 = _SIMD_FMA(q1, h3, z1);
         z2 = _SIMD_FMA(q2, h3, z2);
-#else	
+#else
         z1 = _SIMD_ADD( ADDITIONAL_ARGUMENT z1, _SIMD_MUL( ADDITIONAL_ARGUMENT q1,h3));
         z2 = _SIMD_ADD( ADDITIONAL_ARGUMENT z2, _SIMD_MUL( ADDITIONAL_ARGUMENT q2,h3));
 #endif /* __ELPA_USE_FMA__ */
@@ -16445,7 +16445,7 @@ __forceinline void CONCAT_8ARGS(hh_trafo_kernel_,ROW_LENGTH,_,SIMD_SET,_,BLOCK,h
 
 #ifdef __ELPA_USE_FMA__
         z1 = _SIMD_FMA(q1, h3, z1);
-#else	
+#else
         z1 = _SIMD_ADD( ADDITIONAL_ARGUMENT z1, _SIMD_MUL( ADDITIONAL_ARGUMENT q1,h3));
 #endif /* __ELPA_USE_FMA__ */
 
@@ -16502,7 +16502,7 @@ __forceinline void CONCAT_8ARGS(hh_trafo_kernel_,ROW_LENGTH,_,SIMD_SET,_,BLOCK,h
         t1 = _SIMD_FMA(q1, h6, t1);
 #else
         t1 = _SIMD_ADD( ADDITIONAL_ARGUMENT t1, _SIMD_MUL( ADDITIONAL_ARGUMENT q1,h6));
-#endif /* __ELPA_USE_FMA__ */	
+#endif /* __ELPA_USE_FMA__ */
 
 #endif /* BLOCK6 */
       }

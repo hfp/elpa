@@ -475,11 +475,11 @@ int main(int argc, char** argv) {
    free(a);
    free(as);
    free(c);
-	
-	
+
+
 #ifdef WITH_MPI
    MPI_Finalize();
 #endif
-	
+
 	return status;
 }

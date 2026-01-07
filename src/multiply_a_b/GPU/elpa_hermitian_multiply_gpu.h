@@ -125,7 +125,7 @@ __global__ void gpu_copy_a_aux_bc_loop_kernel(const T* a_dev, T* aux_bc_dev, int
 template <typename T>
 void gpu_copy_a_aux_bc_loop(T *a_dev, T *aux_bc_dev, int *lrs_save_dev, int *lre_save_dev, int *n_aux_bc_save_dev,
                             int noff, int nblk, int lda, int n_size, int debug, gpuStream_t my_stream) {
-		
+
   dim3 blocks = dim3(n_size,1,1);
   dim3 threadsPerBlock = dim3(MAX_THREADS_PER_BLOCK,1,1);
 
@@ -164,7 +164,7 @@ extern "C" void CONCATENATE(ELPA_GPU, _copy_a_aux_bc_loop_FromC) (char dataType,
 template <typename T>
 __global__ void gpu_copy_aux_bc_aux_mat_loop_kernel(const T* aux_bc_dev, T* aux_mat_dev, int* lrs_save_dev, int* lre_save_dev, int* n_aux_bc_save_dev,
                                                     const int nstor0, const int l_rows) {
-	
+
   // n_aux_bc = 0
   // do n = 1, min(nblk, l_rows_np-nb*nblk)
   //   nstor = nstor+1

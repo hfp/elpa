@@ -2400,7 +2400,7 @@ static __forceinline void CONCAT_8ARGS(hh_trafo_complex_kernel_,ROW_LENGTH,_,SIM
           y6 = _SIMD_ADD( ADDITIONAL_ARGUMENT y6, _ADDSUB( _SIMD_MUL( ADDITIONAL_ARGUMENT h2_real, q6), _SIMD_SHUFFLE(tmp6, tmp6, _SHUFFLE_VAL)));
 #endif
 #endif /* VEC_SET == SVE_512 || VEC_SET == SVE_256 || VEC_SET == SVE_128 || VEC_SET == NEON_ARCH64_128 */
-	
+
 #endif /* BLOCK2 */
 
     }
@@ -4153,7 +4153,7 @@ static __forceinline void CONCAT_8ARGS(hh_trafo_complex_kernel_,ROW_LENGTH,_,SIM
           y5 = _SIMD_ADD( ADDITIONAL_ARGUMENT y5, _ADDSUB( _SIMD_MUL( ADDITIONAL_ARGUMENT h2_real, q5), _SIMD_SHUFFLE(tmp5, tmp5, _SHUFFLE_VAL)));
 #endif
 #endif /* VEC_SET == SVE_512 || VEC_SET == SVE_256 || VEC_SET == SVE_128 || VEC_SET == NEON_ARCH64_128 */
-	
+
 #endif /* BLOCK2 */
 
     }

@@ -321,7 +321,7 @@ void testOnecclDirectly() {
     for (auto [reduction, reductionName] : reductions) {
 	auto attr = ccl::create_operation_attr<ccl::allreduce_attr>();
 	ccl::allreduce(sendBuffer.get(), recvBuffer.get(), 1, reduction, *cclComm, stream, attr).wait();
-	
+
 	if (myrank == 0) {
 	    std::cout << "Rank " << myrank << " got result for " << reductionName << ": " << recvBuffer[0] << std::endl;
 	}

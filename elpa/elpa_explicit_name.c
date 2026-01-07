@@ -68,16 +68,16 @@ void elpa_eigenvectors_double(elpa_t handle, double *a, double *ev, double *q, i
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1 || ELPA_WITH_SYCL_GPU_VERSION==1
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_eigenvectors_d_ptr_d(handle, a, ev, q, error);
 	}
 	else {
 		elpa_eigenvectors_a_h_a_d(handle, a, ev, q, error);
-	}	
+	}
 #else
 	elpa_eigenvectors_a_h_a_d(handle, a, ev, q, error);
-#endif		
+#endif
 }
 
 /*! \brief generic C method for elpa_eigenvectors_float
@@ -96,16 +96,16 @@ void elpa_eigenvectors_float(elpa_t handle, float *a, float *ev, float *q, int *
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_eigenvectors_d_ptr_f(handle, a, ev, q, error);
 	}
 	else {
 		elpa_eigenvectors_a_h_a_f(handle, a, ev, q, error);
-	}	
+	}
 #else
   elpa_eigenvectors_a_h_a_f(handle, a, ev, q, error);
-#endif		
+#endif
 }
 
 /*! \brief generic C method for elpa_eigenvectors_double_complex
@@ -130,11 +130,11 @@ void elpa_eigenvectors_double_complex(elpa_t handle, double complex *a, double *
 	}
 	else {
 		elpa_eigenvectors_a_h_a_dc(handle, a, ev, q, error);
-	}	
-		
+	}
+
 #else
 	elpa_eigenvectors_a_h_a_dc(handle, a, ev, q, error);
-#endif		
+#endif
 }
 
 /*! \brief generic C method for elpa_eigenvectors_float_complex
@@ -159,11 +159,11 @@ void elpa_eigenvectors_float_complex(elpa_t handle, float complex *a, float *ev,
 	}
 	else {
 		elpa_eigenvectors_a_h_a_fc(handle, a, ev, q, error);
-	}	
-		
+	}
+
 #else
 	elpa_eigenvectors_a_h_a_fc(handle, a, ev, q, error);
-#endif		
+#endif
 }
 
 //_________________________________________________________________________________________________
@@ -185,16 +185,16 @@ void elpa_skew_eigenvectors_double(elpa_t handle, double *a, double *ev, double 
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_skew_eigenvectors_d_ptr_d(handle, a, ev, q, error);
 	}
 	else {
 		elpa_skew_eigenvectors_a_h_a_d(handle, a, ev, q, error);
-	}	
+	}
 #else
   elpa_skew_eigenvectors_a_h_a_d(handle, a, ev, q, error);
-#endif		
+#endif
 }
 
 /*! \brief generic C method for elpa_skew_eigenvectors_float
@@ -212,16 +212,16 @@ void elpa_skew_eigenvectors_float(elpa_t handle, float *a, float *ev, float *q, 
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
    void *a_void_ptr = (void*) a;
    int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_skew_eigenvectors_d_ptr_f(handle, a, ev, q, error);
 		}
 	else {
 		elpa_skew_eigenvectors_a_h_a_f(handle, a, ev, q, error);
-		}	
+		}
 #else
    elpa_skew_eigenvectors_a_h_a_f(handle, a, ev, q, error);
-#endif		
+#endif
 	}
 #endif /* HAVE_SKEWSYMMETRIC */
 
@@ -245,16 +245,16 @@ void elpa_generalized_eigenvectors_double(elpa_t handle, double *a, double *b, d
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1 || ELPA_WITH_SYCL_GPU_VERSION==1
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_generalized_eigenvectors_d_ptr_d(handle, a, b, ev, q, is_already_decomposed, error);
 	}
 	else {
 		elpa_generalized_eigenvectors_a_h_a_d(handle, a, b, ev, q, is_already_decomposed, error);
-	}	
+	}
 #else
 	elpa_generalized_eigenvectors_a_h_a_d(handle, a, b, ev, q, is_already_decomposed, error);
-#endif		
+#endif
 }
 
 /*! \brief generic C method for elpa_generalized_eigenvectors_float
@@ -275,16 +275,16 @@ void elpa_generalized_eigenvectors_float(elpa_t handle, float *a, float *b, floa
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1 || ELPA_WITH_SYCL_GPU_VERSION==1
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_generalized_eigenvectors_d_ptr_f(handle, a, b, ev, q, is_already_decomposed, error);
 	}
 	else {
 		elpa_generalized_eigenvectors_a_h_a_f(handle, a, b, ev, q, is_already_decomposed, error);
-	}	
+	}
 #else
 	elpa_generalized_eigenvectors_a_h_a_f(handle, a, b, ev, q, is_already_decomposed, error);
-#endif		
+#endif
 }
 
 /*! \brief generic C method for elpa_generalized_eigenvectors_double_complex
@@ -305,16 +305,16 @@ void elpa_generalized_eigenvectors_double_complex(elpa_t handle, double complex 
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1 || ELPA_WITH_SYCL_GPU_VERSION==1
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_generalized_eigenvectors_d_ptr_dc(handle, a, b, ev, q, is_already_decomposed, error);
 	}
 	else {
 		elpa_generalized_eigenvectors_a_h_a_dc(handle, a, b, ev, q, is_already_decomposed, error);
-	}	
+	}
 #else
 	elpa_generalized_eigenvectors_a_h_a_dc(handle, a, b, ev, q, is_already_decomposed, error);
-#endif		
+#endif
 }
 
 /*! \brief generic C method for elpa_generalized_eigenvectors_float_complex
@@ -335,16 +335,16 @@ void elpa_generalized_eigenvectors_float_complex(elpa_t handle, float complex *a
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1 || ELPA_WITH_SYCL_GPU_VERSION==1
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_generalized_eigenvectors_d_ptr_fc(handle, a, b, ev, q, is_already_decomposed, error);
 	}
 	else {
 		elpa_generalized_eigenvectors_a_h_a_fc(handle, a, b, ev, q, is_already_decomposed, error);
-	}	
+	}
 #else
 	elpa_generalized_eigenvectors_a_h_a_fc(handle, a, b, ev, q, is_already_decomposed, error);
-#endif		
+#endif
 }
 //_________________________________________________________________________________________________
 
@@ -363,16 +363,16 @@ void elpa_eigenvalues_double(elpa_t handle, double *a, double *ev, int *error)
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_eigenvalues_d_ptr_d(handle, a, ev, error);
 	}
 	else {
 		elpa_eigenvalues_a_h_a_d(handle, a, ev, error);
-	}	
+	}
 #else
    elpa_eigenvalues_a_h_a_d(handle, a, ev, error);
-#endif		
+#endif
 }
 
 /*! \brief generic C method for elpa_eigenvalues_float
@@ -390,16 +390,16 @@ void elpa_eigenvalues_float(elpa_t handle, float *a, float *ev, int *error)
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_eigenvalues_d_ptr_f(handle, a, ev, error);
 	}
 	else {
 		elpa_eigenvalues_a_h_a_f(handle, a, ev, error);
-	}	
+	}
 #else
   elpa_eigenvalues_a_h_a_f(handle, a, ev, error);
-#endif		
+#endif
 }
 
 /*! \brief generic C method for elpa_eigenvalues_double_complex
@@ -417,16 +417,16 @@ void elpa_eigenvalues_double_complex(elpa_t handle, double complex *a, double *e
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_eigenvalues_d_ptr_dc(handle, a, ev, error);
 	}
 	else {
 		elpa_eigenvalues_a_h_a_dc(handle, a, ev, error);
-	}	
+	}
 #else
   elpa_eigenvalues_a_h_a_dc(handle, a, ev, error);
-#endif		
+#endif
 }
 
 /*! \brief generic C method for elpa_eigenvalues_float_complex
@@ -444,16 +444,16 @@ void elpa_eigenvalues_float_complex(elpa_t handle, float complex *a, float *ev, 
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
    void *a_void_ptr = (void*) a;
    int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_eigenvalues_d_ptr_fc(handle, a, ev, error);
 		}
 	else {
 		elpa_eigenvalues_a_h_a_fc(handle, a, ev, error);
-		}	
+		}
 #else
    elpa_eigenvalues_a_h_a_fc(handle, a, ev, error);
-#endif		
+#endif
 }
 
 //_________________________________________________________________________________________________
@@ -475,16 +475,16 @@ void elpa_skew_eigenvalues_double(elpa_t handle, double *a, double *ev, int *err
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
    void *a_void_ptr = (void*) a;
    int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_skew_eigenvalues_d_ptr_d(handle, a, ev, error);
 		}
 	else {
 		elpa_skew_eigenvalues_a_h_a_d(handle, a, ev, error);
-		}	
+		}
 #else
    elpa_skew_eigenvalues_a_h_a_d(handle, a, ev, error);
-#endif		
+#endif
 }
 
 /*! \brief generic C method for elpa_skew_eigenvalues_float
@@ -502,7 +502,7 @@ void elpa_skew_eigenvalues_float(elpa_t handle, float *a, float *ev, int *error)
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_skew_eigenvalues_d_ptr_f(handle, a, ev, error);
 	}
@@ -511,7 +511,7 @@ void elpa_skew_eigenvalues_float(elpa_t handle, float *a, float *ev, int *error)
 	}
 #else
   elpa_skew_eigenvalues_a_h_a_f(handle, a, ev, error);
-#endif		
+#endif
 }
 #endif /* HAVE_SKEWSYMMETRIC */
 
@@ -534,16 +534,16 @@ void elpa_generalized_eigenvalues_double(elpa_t handle, double *a, double *b, do
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1 || ELPA_WITH_SYCL_GPU_VERSION==1
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_generalized_eigenvalues_d_ptr_d(handle, a, b, ev, is_already_decomposed, error);
 	}
 	else {
 		elpa_generalized_eigenvalues_a_h_a_d(handle, a, b, ev, is_already_decomposed, error);
-	}	
+	}
 #else
 	elpa_generalized_eigenvalues_a_h_a_d(handle, a, b, ev, is_already_decomposed, error);
-#endif		
+#endif
 }
 
 /*! \brief generic C method for elpa_generalized_eigenvalues_float
@@ -563,16 +563,16 @@ void elpa_generalized_eigenvalues_float(elpa_t handle, float *a, float *b, float
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1 || ELPA_WITH_SYCL_GPU_VERSION==1
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_generalized_eigenvalues_d_ptr_f(handle, a, b, ev, is_already_decomposed, error);
 	}
 	else {
 		elpa_generalized_eigenvalues_a_h_a_f(handle, a, b, ev, is_already_decomposed, error);
-	}	
+	}
 #else
 	elpa_generalized_eigenvalues_a_h_a_f(handle, a, b, ev, is_already_decomposed, error);
-#endif		
+#endif
 }
 
 /*! \brief generic C method for elpa_generalized_eigenvalues_double_complex
@@ -592,16 +592,16 @@ void elpa_generalized_eigenvalues_double_complex(elpa_t handle, double complex *
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1 || ELPA_WITH_SYCL_GPU_VERSION==1
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_generalized_eigenvalues_d_ptr_dc(handle, a, b, ev, is_already_decomposed, error);
 	}
 	else {
 		elpa_generalized_eigenvalues_a_h_a_dc(handle, a, b, ev, is_already_decomposed, error);
-	}	
+	}
 #else
 	elpa_generalized_eigenvalues_a_h_a_dc(handle, a, b, ev, is_already_decomposed, error);
-#endif		
+#endif
 }
 
 /*! \brief generic C method for elpa_generalized_eigenvalues_float_complex
@@ -621,16 +621,16 @@ void elpa_generalized_eigenvalues_float_complex(elpa_t handle, float complex *a,
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1 || ELPA_WITH_SYCL_GPU_VERSION==1
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_generalized_eigenvalues_d_ptr_fc(handle, a, b, ev, is_already_decomposed, error);
 	}
 	else {
 		elpa_generalized_eigenvalues_a_h_a_fc(handle, a, b, ev, is_already_decomposed, error);
-	}	
+	}
 #else
 	elpa_generalized_eigenvalues_a_h_a_fc(handle, a, b, ev, is_already_decomposed, error);
-#endif		
+#endif
 }
 
 //_________________________________________________________________________________________________
@@ -649,16 +649,16 @@ void elpa_cholesky_double(elpa_t handle, double *a, int *error)
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_cholesky_d_ptr_d(handle, a, error);
 	}
 	else {
 		elpa_cholesky_a_h_a_d(handle, a, error);
-	}	
+	}
 #else
   elpa_cholesky_a_h_a_d(handle, a, error);
-#endif		
+#endif
 }
 
 /*! \brief generic C method for elpa_cholesky_float
@@ -675,16 +675,16 @@ void elpa_cholesky_float(elpa_t handle, float *a, int *error)
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_cholesky_d_ptr_f(handle, a, error);
 	}
 	else {
 		elpa_cholesky_a_h_a_f(handle, a, error);
-	}	
+	}
 #else
   elpa_cholesky_a_h_a_f(handle, a, error);
-#endif		
+#endif
 }
 
 /*! \brief generic C method for elpa_cholesky_double_complex
@@ -701,16 +701,16 @@ void elpa_cholesky_double_complex(elpa_t handle, double complex *a, int *error)
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_cholesky_d_ptr_dc(handle, a, error);
 	}
 	else {
 		elpa_cholesky_a_h_a_dc(handle, a, error);
-	}	
+	}
 #else
   elpa_cholesky_a_h_a_dc(handle, a, error);
-#endif		
+#endif
 }
 
 /*! \brief generic C method for elpa_cholesky_float_complex
@@ -727,16 +727,16 @@ void elpa_cholesky_float_complex(elpa_t handle, float complex *a, int *error)
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_cholesky_d_ptr_fc(handle, a, error);
 	}
 	else {
 		elpa_cholesky_a_h_a_fc(handle, a, error);
-	}	
+	}
 #else
   elpa_cholesky_a_h_a_fc(handle, a, error);
-#endif		
+#endif
 }
 
 //_________________________________________________________________________________________________
@@ -764,16 +764,16 @@ void elpa_hermitian_multiply_double(elpa_t handle, char uplo_a, char uplo_c, int
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_hermitian_multiply_d_ptr_d(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
 	}
 	else {
 		elpa_hermitian_multiply_a_h_a_d(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
-	}	
+	}
 #else
   elpa_hermitian_multiply_a_h_a_d(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
-#endif		
+#endif
 }
 
 /*! \brief generic C method for elpa_hermitian_multiply_float
@@ -799,16 +799,16 @@ void elpa_hermitian_multiply_float(elpa_t handle, char uplo_a, char uplo_c, int 
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_hermitian_multiply_d_ptr_f(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
   }
 	else {
 		elpa_hermitian_multiply_a_h_a_f(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
-	}	
+	}
 #else
   elpa_hermitian_multiply_a_h_a_f(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
-#endif		
+#endif
 }
 
 /*! \brief generic C method for elpa_hermitian_multiply_double_complex
@@ -834,16 +834,16 @@ void elpa_hermitian_multiply_double_complex(elpa_t handle, char uplo_a, char upl
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_hermitian_multiply_d_ptr_dc(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
 	}
 	else {
 		elpa_hermitian_multiply_a_h_a_dc(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
-	}	
+	}
 #else
   elpa_hermitian_multiply_a_h_a_dc(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
-#endif		
+#endif
 }
 
 /*! \brief generic C method for elpa_hermitian_multiply_float_complex
@@ -869,16 +869,16 @@ void elpa_hermitian_multiply_float_complex(elpa_t handle, char uplo_a, char uplo
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_hermitian_multiply_d_ptr_fc(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
 	}
 	else {
 		elpa_hermitian_multiply_a_h_a_fc(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
-	}	
+	}
 #else
   elpa_hermitian_multiply_a_h_a_fc(handle, uplo_a, uplo_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
-#endif		
+#endif
 }
 
 //_________________________________________________________________________________________________
@@ -906,16 +906,16 @@ void elpa_pxgemm_multiply_double(elpa_t handle, char trans_a, char trans_c, int 
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_pxgemm_multiply_d_ptr_d(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
 	}
 	else {
 		elpa_pxgemm_multiply_a_h_a_d(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
-	}	
+	}
 #else
   elpa_pxgemm_multiply_a_h_a_d(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
-#endif		
+#endif
 }
 
 /*! \brief generic C method for elpa_pxgemm_multiply_float
@@ -941,16 +941,16 @@ void elpa_pxgemm_multiply_float(elpa_t handle, char trans_a, char trans_c, int n
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_pxgemm_multiply_d_ptr_f(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
   }
 	else {
 		elpa_pxgemm_multiply_a_h_a_f(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
-	}	
+	}
 #else
   elpa_pxgemm_multiply_a_h_a_f(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
-#endif		
+#endif
 }
 
 /*! \brief generic C method for elpa_pxgemm_multiply_double_complex
@@ -976,16 +976,16 @@ void elpa_pxgemm_multiply_double_complex(elpa_t handle, char trans_a, char trans
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_pxgemm_multiply_d_ptr_dc(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
 	}
 	else {
 		elpa_pxgemm_multiply_a_h_a_dc(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
-	}	
+	}
 #else
   elpa_pxgemm_multiply_a_h_a_dc(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
-#endif		
+#endif
 }
 
 /*! \brief generic C method for elpa_pxgemm_multiply_float_complex
@@ -1011,16 +1011,16 @@ void elpa_pxgemm_multiply_float_complex(elpa_t handle, char trans_a, char trans_
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
   void *a_void_ptr = (void*) a;
   int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_pxgemm_multiply_d_ptr_fc(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
 	}
 	else {
 		elpa_pxgemm_multiply_a_h_a_fc(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
-	}	
+	}
 #else
   elpa_pxgemm_multiply_a_h_a_fc(handle, trans_a, trans_c, ncb, a, b, nrows_b, ncols_b, c, nrows_c, ncols_c, error);
-#endif		
+#endif
 }
 
 //_________________________________________________________________________________________________
@@ -1039,16 +1039,16 @@ void elpa_invert_triangular_double(elpa_t handle, double *a, int *error)
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
    void *a_void_ptr = (void*) a;
    int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_invert_trm_d_ptr_d(handle, a, error);
 		}
 	else {
 		elpa_invert_trm_a_h_a_d(handle, a, error);
-		}	
+		}
 #else
    elpa_invert_trm_a_h_a_d(handle, a, error);
-#endif		
+#endif
 	}
 
 /*! \brief generic C method for elpa_invert_triangular_float
@@ -1065,16 +1065,16 @@ void elpa_invert_triangular_float(elpa_t handle, float *a, int *error)
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
    void *a_void_ptr = (void*) a;
    int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_invert_trm_d_ptr_f(handle, a, error);
 		}
 	else {
 		elpa_invert_trm_a_h_a_f(handle, a, error);
-		}	
+		}
 #else
    elpa_invert_trm_a_h_a_f(handle, a, error);
-#endif		
+#endif
 	}
 
 /*! \brief generic C method for elpa_invert_triangular_double_complex
@@ -1091,16 +1091,16 @@ void elpa_invert_triangular_double_complex(elpa_t handle, double complex *a, int
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
    void *a_void_ptr = (void*) a;
    int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_invert_trm_d_ptr_dc(handle, a, error);
 		}
 	else {
 		elpa_invert_trm_a_h_a_dc(handle, a, error);
-		}	
+		}
 #else
    elpa_invert_trm_a_h_a_dc(handle, a, error);
-#endif		
+#endif
 	}
 
 /*! \brief generic C method for elpa_invert_triangular_float_complex
@@ -1117,14 +1117,14 @@ void elpa_invert_triangular_float_complex(elpa_t handle, float complex *a, int *
 #if ELPA_WITH_NVIDIA_GPU_VERSION==1 || ELPA_WITH_AMD_GPU_VERSION==1
    void *a_void_ptr = (void*) a;
    int IsDevicePtr = is_device_ptr(a_void_ptr);
-	
+
 	if (IsDevicePtr){
 		elpa_invert_trm_d_ptr_fc(handle, a, error);
 		}
 	else {
 		elpa_invert_trm_a_h_a_fc(handle, a, error);
-		}	
+		}
 #else
    elpa_invert_trm_a_h_a_fc(handle, a, error);
-#endif		
+#endif
 	}

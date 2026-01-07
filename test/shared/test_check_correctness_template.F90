@@ -1128,7 +1128,7 @@ end function
 ! where op(A) = A, A**T, or A**H (for normal/transposed/hermitian cases)
 ! trans_a = 'N', 'T', or 'C'
 ! trans_b = 'N', 'T', or 'C'
-	
+
 function check_correctness_multiply_&
         &MATH_DATATYPE&
         &_&

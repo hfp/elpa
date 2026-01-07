@@ -338,7 +338,7 @@ break;
     if (myid == 0) {
       printf("ELPA autotuning did not finished during %d scf cycles\n",i);
 
-    }	
+    }
 
   }
   elpa_autotune_set_best(handle, autotune_handle, &error_elpa);

@@ -945,7 +945,7 @@ void cannons_reduction_impl(math_type* A, math_type* U,
          else {
 	         MPI_Isend(U_to_calc, (C_INT_MPI_TYPE) Size_send_U, MPI_MATH_DATATYPE_PRECISION_C, (C_INT_MPI_TYPE) where_to_send_U, (C_INT_MPI_TYPE) zero, col_comm, &request_U_Send);
 	      }
-         MPI_Irecv(Buf_to_receive_U, (C_INT_MPI_TYPE) Size_U_stored, MPI_MATH_DATATYPE_PRECISION_C, (C_INT_MPI_TYPE) from_where_to_receive_U, (C_INT_MPI_TYPE) zero, col_comm, &request_U_Recv);	
+         MPI_Irecv(Buf_to_receive_U, (C_INT_MPI_TYPE) Size_U_stored, MPI_MATH_DATATYPE_PRECISION_C, (C_INT_MPI_TYPE) from_where_to_receive_U, (C_INT_MPI_TYPE) zero, col_comm, &request_U_Recv);
       }
 
       ///// multiplication ////////////////////////////////////////////////////////////////////////////////////////////

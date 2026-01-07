@@ -827,7 +827,7 @@ subroutine prepare_matrix_random_spd_&
 
 
       a(:,:) = ZERO
-	
+
       ! set lower triangular part of the matrix to zero
       do i_loc=1,na_rows
           ! nblk = "NB"; np_rows = "P_r"; my_prow="p_r"  (quoted-ScaLAPACK userguide notation, p.61-63)

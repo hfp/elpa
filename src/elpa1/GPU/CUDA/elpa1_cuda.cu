@@ -223,7 +223,7 @@ __global__ void cuda_copy_skewsymmetric_second_half_q_double_minus_kernel(double
         int indexLow = (i-1) + matrixRows * (col-matrixCols);
         q[index] = -q[indexLow];
         q[indexLow] = 0.0;
-    }	
+    }
 
 }
 
@@ -233,17 +233,17 @@ __global__ void cuda_copy_skewsymmetric_second_half_q_double_plus_kernel(double 
     //    int index = (i-1) * (2 * matrixCols) + col;
     //    q[index] = q[index - matrixCols];
     //    q[index - matrixCols] = 0.0;
-    //}	
+    //}
     //if (col >= matrixCols  && col < 2 * matrixCols) {
     //    int index = (i-1) + matrixRows * (col);
     //    q[index] = q[index - matrixCols];
     //    //q[index - matrixCols] = 0.0;
-    //}	
+    //}
     //if (col < matrixCols) {
     //    int index = (i-1) + matrixRows * (col);    //geht
     //    //q[index] = q[index - matrixCols];
     //    q[index] = 0.0;
-    //}	
+    //}
 
 
     //for (col=0; col<matrixCols;col++) {  // geht
@@ -259,7 +259,7 @@ __global__ void cuda_copy_skewsymmetric_second_half_q_double_plus_kernel(double 
     //    int index = (i-1) + matrixRows * (col);
     //    //q[index] = q[index - matrixCols];
     //    q[index - matrixCols] = 0.0;
-    //}	
+    //}
     //for (int col2=matrixCols; col2<2*matrixCols;col2++) {  // geht
     //    int index = (i-1) + matrixRows * (col2-matrixCols);
     //    q[index] = 0.0;
@@ -269,7 +269,7 @@ __global__ void cuda_copy_skewsymmetric_second_half_q_double_plus_kernel(double 
         int indexLow = (i-1) + matrixRows * (col-matrixCols);
         q[index] = q[indexLow];
         q[indexLow] = 0.0;
-    }	
+    }
 }
 
 extern "C" void cuda_copy_skewsymmetric_second_half_q_double_FromC(double *q_dev, int *i_in, int *matrixRows_in, int *matrixCols_in, int *negative_or_positive_in, cudaStream_t  my_stream){
@@ -311,7 +311,7 @@ __global__ void cuda_copy_skewsymmetric_second_half_q_float_minus_kernel(float *
         int indexLow = (i-1) + matrixRows * (col-matrixCols);
         q[index] = -q[indexLow];
         q[indexLow] = 0.0f;
-    }	
+    }
 }
 
 __global__ void cuda_copy_skewsymmetric_second_half_q_float_plus_kernel(float *q, const int i, const int matrixRows, const int matrixCols) {
@@ -322,7 +322,7 @@ __global__ void cuda_copy_skewsymmetric_second_half_q_float_plus_kernel(float *q
         int indexLow = (i-1) + matrixRows * (col-matrixCols);
         q[index] = q[indexLow];
         q[indexLow] = 0.0f;
-    }	
+    }
 }
 
 extern "C" void cuda_copy_skewsymmetric_second_half_q_float_FromC(float *q_dev, int *i_in, int *matrixRows_in, int *matrixCols_in, int *negative_or_positive_in, cudaStream_t  my_stream){

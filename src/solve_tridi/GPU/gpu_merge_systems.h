@@ -581,7 +581,7 @@ __global__ void gpu_zero_q_kernel(T *q, int *p_col_out, int *l_col_out,
         if (p_col_out[i] == my_pcol) {
       	  int index = l_col_out[i] - 1;
           q[j+l_rqs - 1 + matrixRows*index] = 0;
-      }	
+      }
     }
   }
 }
