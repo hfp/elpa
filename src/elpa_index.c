@@ -134,7 +134,7 @@ int nvidia_gpu_count();
 int amd_gpu_count();
 #endif
 #ifdef WITH_SYCL_GPU_VERSION
-int sycl_gpu_count(int);
+int sycl_gpu_count();
 #endif
 #ifdef WITH_OPENMP_OFFLOAD_GPU_VERSION
 int openmp_offload_gpu_count();
@@ -163,7 +163,7 @@ static int output_build_config_is_valid(elpa_index_t index, int n, int new_value
 static int nvidia_gpu_is_valid(elpa_index_t index, int n, int new_value);
 static int amd_gpu_is_valid(elpa_index_t index, int n, int new_value);
 static int intel_gpu_is_valid(elpa_index_t index, int n, int new_value);
-static int expose_all_sycl_devices_is_valid(elpa_index_t index, int n, int new_value);
+static int gpu_sycl_backend_is_valid(elpa_index_t index, int n, int new_value);
 static int nbc_is_valid(elpa_index_t index, int n, int new_value);
 static int nbc_elpa1_is_valid(elpa_index_t index, int n, int new_value);
 static int nbc_elpa2_is_valid(elpa_index_t index, int n, int new_value);
@@ -202,7 +202,7 @@ static int elpa_double_value_to_string(char *name, double value, const char **st
                 .autotune_level_old = tune_level_old, \
                 .autotune_level = tune_level, \
                 .autotune_domain = tune_domain, \
-    .autotune_part = tune_part, \
+		.autotune_part = tune_part, \
                 .cardinality = cardinality_bool, \
                 .enumerate = enumerate_identity, \
                 .valid = valid_bool, \
@@ -215,7 +215,7 @@ static int elpa_double_value_to_string(char *name, double value, const char **st
                 .autotune_level_old = tune_level_old, \
                 .autotune_level = tune_level, \
                 .autotune_domain = tune_domain, \
-    .autotune_part   = tune_part, \
+		.autotune_part   = tune_part, \
                 .cardinality = card_func, \
                 .enumerate = enumerate_func, \
                 .valid = valid_func, \
@@ -255,13 +255,13 @@ static const elpa_index_int_entry_t int_entries[] = {
         INT_ENTRY("output_build_config", "Output the build config", 0, ELPA_AUTOTUNE_NOT_TUNABLE, ELPA_AUTOTUNE_NOT_TUNABLE, ELPA_AUTOTUNE_DOMAIN_ANY, ELPA_AUTOTUNE_PART_ANY, \
                         cardinality_bool, enumerate_identity, output_build_config_is_valid, NULL, PRINT_NO),
 #endif
-  INT_ENTRY("matrix_order","Order of the matrix layout", COLUMN_MAJOR_ORDER, ELPA_AUTOTUNE_NOT_TUNABLE, ELPA_AUTOTUNE_NOT_TUNABLE, ELPA_AUTOTUNE_DOMAIN_ANY, ELPA_AUTOTUNE_PART_ANY, \
+	INT_ENTRY("matrix_order","Order of the matrix layout", COLUMN_MAJOR_ORDER, ELPA_AUTOTUNE_NOT_TUNABLE, ELPA_AUTOTUNE_NOT_TUNABLE, ELPA_AUTOTUNE_DOMAIN_ANY, ELPA_AUTOTUNE_PART_ANY, \
                          number_of_matrix_layouts, matrix_layout_enumerate, matrix_layout_is_valid, elpa_matrix_layout_name, PRINT_YES), \
-  // the solver will be autotune -- if not fixed by the user -- in an independent loop, thus here solver is marked as not TUNABLE
+	// the solver will be autotune -- if not fixed by the user -- in an independent loop, thus here solver is marked as not TUNABLE
         INT_ENTRY("solver", "Solver to use", ELPA_SOLVER_1STAGE, ELPA_AUTOTUNE_FAST, ELPA_AUTOTUNE_NOT_TUNABLE, ELPA_AUTOTUNE_DOMAIN_ANY, ELPA_AUTOTUNE_PART_ANY, \
                         number_of_solvers, solver_enumerate, solver_is_valid, elpa_solver_name, PRINT_YES),
-  INT_ENTRY("use_gpu_id", "Calling MPI task will use this gpu id", -99, ELPA_AUTOTUNE_NOT_TUNABLE, ELPA_AUTOTUNE_NOT_TUNABLE, ELPA_AUTOTUNE_DOMAIN_ANY, ELPA_AUTOTUNE_PART_NONE, \
-      use_gpu_id_cardinality, use_gpu_id_enumerate, use_gpu_id_is_valid, NULL, PRINT_YES),
+	INT_ENTRY("use_gpu_id", "Calling MPI task will use this gpu id", -99, ELPA_AUTOTUNE_NOT_TUNABLE, ELPA_AUTOTUNE_NOT_TUNABLE, ELPA_AUTOTUNE_DOMAIN_ANY, ELPA_AUTOTUNE_PART_NONE, \
+		  use_gpu_id_cardinality, use_gpu_id_enumerate, use_gpu_id_is_valid, NULL, PRINT_YES),
         BOOL_ENTRY("timings", "Enable time measurement", 0, ELPA_AUTOTUNE_NOT_TUNABLE, ELPA_AUTOTUNE_NOT_TUNABLE, 0,  ELPA_AUTOTUNE_PART_NONE, PRINT_YES),
         BOOL_ENTRY("debug", "Emit verbose debugging messages", 0, ELPA_AUTOTUNE_NOT_TUNABLE, ELPA_AUTOTUNE_NOT_TUNABLE, 0,  ELPA_AUTOTUNE_PART_NONE, PRINT_YES),
         BOOL_ENTRY("print_flops", "Print FLOP rates on task 0", 0, ELPA_AUTOTUNE_NOT_TUNABLE, ELPA_AUTOTUNE_NOT_TUNABLE, 0, ELPA_AUTOTUNE_PART_NONE, PRINT_YES),
@@ -280,11 +280,11 @@ static const elpa_index_int_entry_t int_entries[] = {
                         cannon_buffer_size_cardinality, cannon_buffer_size_enumerate, cannon_buffer_size_is_valid, NULL, PRINT_YES),
         // tunables
 #if defined(WITH_NVIDIA_NCCL) || defined(WITH_AMD_RCCL) || defined(WITH_ONEAPI_ONECCL)
-        BOOL_ENTRY("use_ccl", "Use NVIDIA's nccl, AMD's rccl or Intel's oneCCL communication libraries", 1, ELPA_AUTOTUNE_GPU, ELPA_AUTOTUNE_GPU, ELPA_AUTOTUNE_DOMAIN_ANY, ELPA_AUTOTUNE_PART_ANY, PRINT_YES),
+        BOOL_ENTRY("use_ccl", "Use NVIDIA's nccl, AMD's rccl or Intel's oneCCL communication libraries", 1, ELPA_AUTOTUNE_GPU, ELPA_AUTOTUNE_GPU, ELPA_AUTOTUNE_DOMAIN_ANY, ELPA_AUTOTUNE_PART_ANY, PRINT_YES), 
 #else
-        BOOL_ENTRY("use_ccl", "Use NVIDIA's nccl, AMD's rccl or Intel's oneCCL communication libraries", 0, ELPA_AUTOTUNE_GPU, ELPA_AUTOTUNE_GPU, ELPA_AUTOTUNE_DOMAIN_ANY, ELPA_AUTOTUNE_PART_ANY, PRINT_YES),
+        BOOL_ENTRY("use_ccl", "Use NVIDIA's nccl, AMD's rccl or Intel's oneCCL communication libraries", 0, ELPA_AUTOTUNE_GPU, ELPA_AUTOTUNE_GPU, ELPA_AUTOTUNE_DOMAIN_ANY, ELPA_AUTOTUNE_PART_ANY, PRINT_YES), 
 #endif
-  // 1. non-blocking MPI
+	// 1. non-blocking MPI
         INT_ENTRY("nbc_row_global_gather", "Use non blocking collectives for rows in global_gather", 0, ELPA_AUTOTUNE_NOT_TUNABLE, ELPA_AUTOTUNE_SOLVE, ELPA_AUTOTUNE_DOMAIN_ANY, ELPA_AUTOTUNE_PART_ANY, \
                         cardinality_bool, enumerate_identity, nbc_is_valid, NULL, PRINT_YES),
         INT_ENTRY("nbc_col_global_gather", "Use non blocking collectives for cols in global_gather", 0, ELPA_AUTOTUNE_NOT_TUNABLE, ELPA_AUTOTUNE_SOLVE, ELPA_AUTOTUNE_DOMAIN_ANY, ELPA_AUTOTUNE_PART_ANY, \
@@ -333,7 +333,7 @@ static const elpa_index_int_entry_t int_entries[] = {
                         cardinality_bool, enumerate_identity, nbc_elpa2_is_valid, NULL, PRINT_YES),
         INT_ENTRY("nbc_all_elpa2_main", "Use non blocking collectives for comm_world in elpa2_main", 0, ELPA_AUTOTUNE_NOT_TUNABLE, ELPA2_AUTOTUNE_MAIN, ELPA_AUTOTUNE_DOMAIN_ANY, ELPA_AUTOTUNE_PART_ELPA2, \
                         cardinality_bool, enumerate_identity, nbc_elpa2_is_valid, NULL, PRINT_YES),
-  // 2. GPU usage
+	// 2. GPU usage
 #if defined(WITH_NVIDIA_GPU_VERSION)
         INT_ENTRY("gpu", "Use Nvidia GPU acceleration", 0, ELPA_AUTOTUNE_NOT_TUNABLE, ELPA_AUTOTUNE_NOT_TUNABLE, ELPA_AUTOTUNE_DOMAIN_ANY, ELPA_AUTOTUNE_PART_ANY, \
                          cardinality_bool, enumerate_identity, nvidia_gpu_is_valid, NULL, PRINT_YES),
@@ -361,8 +361,8 @@ static const elpa_index_int_entry_t int_entries[] = {
 #endif
 
         // For SYCL, currently ELPA ignores non-GPU devices.
-        INT_ENTRY("sycl_show_all_devices", "Utilize ALL SYCL devices, not just level zero GPUs.", 0, ELPA_AUTOTUNE_NOT_TUNABLE, ELPA_AUTOTUNE_NOT_TUNABLE, ELPA_AUTOTUNE_DOMAIN_ANY, ELPA_AUTOTUNE_PART_ANY, \
-                        cardinality_bool, enumerate_identity, expose_all_sycl_devices_is_valid, NULL, PRINT_YES),
+        INT_ENTRY("gpu_sycl_backend", "SYCL Backend to use, 0 = Level Zero, 1 = OpenCL, 2 = all. ALL => Set ONEAPI_DEVICE_SELECTOR!", 0, ELPA_AUTOTUNE_NOT_TUNABLE, ELPA_AUTOTUNE_NOT_TUNABLE, ELPA_AUTOTUNE_DOMAIN_ANY, ELPA_AUTOTUNE_PART_ANY, \
+                        cardinality_bool, enumerate_identity, gpu_sycl_backend_is_valid, NULL, PRINT_YES),
         //default of gpu usage for individual phases is 1. However, it is only evaluated, if GPU is used at all, which first has to be determined
         //by the parameter gpu and presence of the device
         INT_ENTRY("gpu_cannon", "Use GPU acceleration for Cannon's algorithm", 1, ELPA_AUTOTUNE_NOT_TUNABLE, ELPA_AUTOTUNE_GPU, ELPA_AUTOTUNE_DOMAIN_ANY, ELPA_AUTOTUNE_PART_ANY, \
@@ -383,19 +383,19 @@ static const elpa_index_int_entry_t int_entries[] = {
                         cardinality_bool, enumerate_identity, valid_with_gpu_elpa1, NULL, PRINT_YES),
         INT_ENTRY("gpu_bandred", "Use GPU acceleration for ELPA2 band reduction", 1, ELPA_AUTOTUNE_MEDIUM, ELPA_AUTOTUNE_GPU, ELPA_AUTOTUNE_DOMAIN_ANY, ELPA_AUTOTUNE_PART_ELPA2, \
                         cardinality_bool, enumerate_identity, valid_with_gpu_elpa2, NULL, PRINT_YES),
-  //not yet ported to GPU
+	//not yet ported to GPU
         //INT_ENTRY("gpu_tridiag_band", "Use GPU acceleration for ELPA2 tridiagonalization", 1, ELPA_AUTOTUNE_MEDIUM, ELPA_AUTOTUNE_GPU, ELPA_AUTOTUNE_DOMAIN_ANY, ELPA_AUTOTUNE_PART_ELPA2, \
         //                cardinality_bool, enumerate_identity, valid_with_gpu_elpa2, NULL, PRINT_YES),
         INT_ENTRY("gpu_trans_ev_tridi_to_band", "Use GPU acceleration for ELPA2 trans_ev_tridi_to_band", 1, ELPA_AUTOTUNE_MEDIUM, ELPA_AUTOTUNE_GPU, ELPA_AUTOTUNE_DOMAIN_ANY, ELPA_AUTOTUNE_PART_ELPA2, \
                         cardinality_bool, enumerate_identity, valid_with_gpu_elpa2, NULL, PRINT_YES),
         INT_ENTRY("gpu_trans_ev_band_to_full", "Use GPU acceleration for ELPA2 trans_ev_band_to_full", 1, ELPA_AUTOTUNE_MEDIUM, ELPA_AUTOTUNE_GPU, ELPA_AUTOTUNE_DOMAIN_ANY, ELPA_AUTOTUNE_PART_ELPA2, \
                         cardinality_bool, enumerate_identity, valid_with_gpu_elpa2, NULL, PRINT_YES),
-  // 3. kernels
+	// 3. kernels
         INT_ENTRY("real_kernel", "Real kernel to use if 'solver' is set to ELPA_SOLVER_2STAGE", ELPA_2STAGE_REAL_DEFAULT, ELPA_AUTOTUNE_FAST, ELPA2_AUTOTUNE_KERNEL, ELPA_AUTOTUNE_DOMAIN_REAL, ELPA_AUTOTUNE_PART_ELPA2, \
                         number_of_real_kernels, real_kernel_enumerate, real_kernel_is_valid, real_kernel_name, PRINT_YES),
         INT_ENTRY("complex_kernel", "Complex kernel to use if 'solver' is set to ELPA_SOLVER_2STAGE", ELPA_2STAGE_COMPLEX_DEFAULT, ELPA_AUTOTUNE_FAST, ELPA2_AUTOTUNE_KERNEL, ELPA_AUTOTUNE_DOMAIN_COMPLEX, ELPA_AUTOTUNE_PART_ELPA2, \
                         number_of_complex_kernels, complex_kernel_enumerate, complex_kernel_is_valid, complex_kernel_name, PRINT_YES),
-  // openmp
+	// openmp
 #ifdef WITH_OPENMP_TRADITIONAL
         INT_ENTRY("omp_threads", "OpenMP threads used in ELPA, default 1", 1, ELPA_AUTOTUNE_FAST, ELPA_AUTOTUNE_OPENMP, ELPA_AUTOTUNE_DOMAIN_ANY,  ELPA_AUTOTUNE_PART_ANY,\
                         omp_threads_cardinality, omp_threads_enumerate, omp_threads_is_valid, NULL, PRINT_YES),
@@ -403,7 +403,7 @@ static const elpa_index_int_entry_t int_entries[] = {
         INT_ENTRY("omp_threads", "OpenMP threads used in ELPA, default 1", 1, ELPA_AUTOTUNE_NOT_TUNABLE, ELPA_AUTOTUNE_NOT_TUNABLE, ELPA_AUTOTUNE_DOMAIN_ANY,  ELPA_AUTOTUNE_PART_NONE, \
                         omp_threads_cardinality, omp_threads_enumerate, omp_threads_is_valid, NULL, PRINT_YES),
 #endif
-  // redistribute
+	// redistribute
 #ifdef REDISTRIBUTE_MATRIX
         INT_ENTRY("internal_nblk", "Internally used block size of scalapack block-cyclic distribution", 0, ELPA_AUTOTUNE_FAST, ELPA_AUTOTUNE_FAST, ELPA_AUTOTUNE_DOMAIN_ANY, ELPA_AUTOTUNE_PART_ANY, \
                    internal_nblk_cardinality, internal_nblk_enumerate, internal_nblk_is_valid, NULL, PRINT_YES),
@@ -411,25 +411,25 @@ static const elpa_index_int_entry_t int_entries[] = {
         INT_ENTRY("internal_nblk", "Internally used block size of scalapack block-cyclic distribution", 0, ELPA_AUTOTUNE_NOT_TUNABLE, ELPA_AUTOTUNE_NOT_TUNABLE, ELPA_AUTOTUNE_DOMAIN_ANY, ELPA_AUTOTUNE_PART_ANY, \
                    internal_nblk_cardinality, internal_nblk_enumerate, internal_nblk_is_valid, NULL, PRINT_YES),
 #endif
-  // MEDIUM
+	// MEDIUM
         INT_ENTRY("min_tile_size", "Minimal tile size used internally in elpa1_tridiag and elpa2_bandred", 0, ELPA_AUTOTUNE_NOT_TUNABLE, ELPA_AUTOTUNE_MEDIUM, ELPA_AUTOTUNE_DOMAIN_ANY, ELPA_AUTOTUNE_PART_ANY, \
                         min_tile_size_cardinality, min_tile_size_enumerate, min_tile_size_is_valid, NULL, PRINT_YES),
         INT_ENTRY("intermediate_bandwidth", "Specifies the intermediate bandwidth in ELPA2 full->banded step. Must be a multiple of nblk", 0, ELPA_AUTOTUNE_NOT_TUNABLE, ELPA_AUTOTUNE_NOT_TUNABLE, ELPA_AUTOTUNE_DOMAIN_ANY, ELPA_AUTOTUNE_PART_ELPA2, \
                         intermediate_bandwidth_cardinality, intermediate_bandwidth_enumerate, intermediate_bandwidth_is_valid, NULL, PRINT_YES),
-  // EXTENSIVE
-  // 1. BAND_TO_FULL_BLOCKING
+	// EXTENSIVE
+	// 1. BAND_TO_FULL_BLOCKING
         INT_ENTRY("blocking_in_band_to_full", "Loop blocking, default 3", 3, ELPA_AUTOTUNE_EXTENSIVE, ELPA2_AUTOTUNE_BAND_TO_FULL_BLOCKING, ELPA_AUTOTUNE_DOMAIN_ANY, ELPA_AUTOTUNE_PART_ELPA2, \
                         band_to_full_cardinality, band_to_full_enumerate, band_to_full_is_valid, NULL, PRINT_YES),
-  // 2. max_stored_rows
+	// 2. max_stored_rows
         INT_ENTRY("max_stored_rows", "Maximum number of stored rows used in ELPA 1 backtransformation", default_max_stored_rows, ELPA_AUTOTUNE_EXTENSIVE, ELPA1_AUTOTUNE_MAX_STORED_ROWS, ELPA_AUTOTUNE_DOMAIN_ANY,  ELPA_AUTOTUNE_PART_ELPA1, \
                         max_stored_rows_cardinality, max_stored_rows_enumerate, max_stored_rows_is_valid, NULL, PRINT_YES),
-  // 4. BLOCKING in hermitian_multiply
+	// 4. BLOCKING in hermitian_multiply
         INT_ENTRY("blocking_in_multiply", "Blocking used in hermitian multiply, default", 31, ELPA_AUTOTUNE_EXTENSIVE, ELPA2_AUTOTUNE_HERMITIAN_MULTIPLY_BLOCKING, ELPA_AUTOTUNE_DOMAIN_ANY, ELPA_AUTOTUNE_PART_ELPA2, \
                         hermitian_multiply_cardinality, hermitian_multiply_enumerate, hermitian_multiply_is_valid, NULL, PRINT_YES),
-  // 5. BLOCKING in cholesky
+	// 5. BLOCKING in cholesky
         INT_ENTRY("blocking_in_cholesky", "Blocking used in cholesky, default", 128, ELPA_AUTOTUNE_EXTENSIVE, ELPA2_AUTOTUNE_CHOLESKY_BLOCKING, ELPA_AUTOTUNE_DOMAIN_ANY, ELPA_AUTOTUNE_PART_ELPA2, \
                         cholesky_cardinality, cholesky_enumerate, cholesky_is_valid, NULL, PRINT_YES),
-  //6. stripewidth
+	//6. stripewidth
         INT_ENTRY("stripewidth_real", "Stripewidth_real, default 48. Must be a multiple of 4", 48, ELPA_AUTOTUNE_EXTENSIVE, ELPA2_AUTOTUNE_TRIDI_TO_BAND_STRIPEWIDTH, ELPA_AUTOTUNE_DOMAIN_REAL,  ELPA_AUTOTUNE_PART_ELPA2, \
                         stripewidth_real_cardinality, stripewidth_real_enumerate, stripewidth_real_is_valid, NULL, PRINT_YES),
         INT_ENTRY("stripewidth_complex", "Stripewidth_complex, default 96. Must be a multiple of 8", 96, ELPA_AUTOTUNE_EXTENSIVE, ELPA2_AUTOTUNE_TRIDI_TO_BAND_STRIPEWIDTH, ELPA_AUTOTUNE_DOMAIN_COMPLEX, ELPA_AUTOTUNE_PART_ELPA2, \
@@ -514,7 +514,7 @@ FOR_ALL_TYPES(IMPLEMENT_FIND_ENTRY)
                                                   if (elpa_index_int_value_is_set(index, "verbose")) { \
                                                         fprintf(stderr, "ELPA: %s '%s' is set to %s due to environment variable %s\n", \
                                                                       error_string, TYPE##_entries[n].base.name, value_string, env_variable); \
-                    } \
+					          } \
                                                 } \
                                                 index->TYPE##_options.notified[n] |= notify_flag; \
                                         } \
@@ -804,11 +804,11 @@ static int enumerate_identity(elpa_index_t index, int i) {
                 return available && (other_checks(value));
 
 static const char* elpa_matrix_layout_name(int layout) {
-  switch(layout) {
-    ELPA_FOR_ALL_MATRIX_LAYOUTS(NAME_CASE)
-    default:
-      return "(Invalid matrix layout)";
-  }
+	switch(layout) {
+		ELPA_FOR_ALL_MATRIX_LAYOUTS(NAME_CASE)
+		default:
+			return "(Invalid matrix layout)";
+	}
 }
 
 static int number_of_matrix_layouts(elpa_index_t index) {
@@ -944,7 +944,7 @@ static int real_kernel_is_valid(elpa_index_t index, int n, int new_value) {
 #if !defined(WITH_NVIDIA_GPU_VERSION) && !defined(WITH_AMD_GPU_VERSION) && !defined(WITH_OPENMP_OFFLOAD_GPU_VERSION) && !defined(WITH_SYCL_GPU_VERSION)
                 ELPA_FOR_ALL_2STAGE_REAL_KERNELS(VALID_CASE_3, REAL_NVIDIA_GPU_KERNEL_ONLY_WHEN_GPU_IS_ACTIVE)
 #endif
-    // intel missing
+		// intel missing
                 default:
                         return 0;
         }
@@ -1007,7 +1007,7 @@ static int complex_kernel_is_valid(elpa_index_t index, int n, int new_value) {
 #if !defined(WITH_NVIDIA_GPU_VERSION) && !defined(WITH_AMD_GPU_VERSION) && !defined(WITH_OPENMP_OFFLOAD_GPU_VERSION) && !defined(WITH_SYCL_GPU_VERSION)
                 ELPA_FOR_ALL_2STAGE_COMPLEX_KERNELS(VALID_CASE_3, COMPLEX_NVIDIA_GPU_KERNEL_ONLY_WHEN_GPU_IS_ACTIVE)
 #endif
-    // intel missing
+		// intel missing
                 default:
                         return 0;
         }
@@ -1091,9 +1091,9 @@ static int intel_gpu_is_valid(elpa_index_t index, int n, int new_value) {
 #endif
 }
 
-static int expose_all_sycl_devices_is_valid(elpa_index_t index, int n, int new_value) {
+static int gpu_sycl_backend_is_valid(elpa_index_t index, int n, int new_value) {
 #if defined(WITH_OPENMP_OFFLOAD_GPU_VERSION) || defined(WITH_SYCL_GPU_VERSION)
-        return new_value == 0 || new_value == 1;
+        return new_value == 0 || new_value == 1 || new_value == 2;
 #else
         return new_value == 0;
 #endif
@@ -1128,180 +1128,180 @@ static int nbc_elpa2_is_valid(elpa_index_t index, int n, int new_value) {
 }
 
 static int band_to_full_cardinality(elpa_index_t index) {
-  return 10;
+	return 10;
 }
 static int band_to_full_enumerate(elpa_index_t index, int i) {
-  return i+1;
+	return i+1;
 }
 
 static int hermitian_multiply_cardinality(elpa_index_t index) {
-  return 4100;
+	return 4100;
 }
 static int hermitian_multiply_enumerate(elpa_index_t index, int i) {
-  return i+1;
+	return i+1;
 }
 
 static int cholesky_cardinality(elpa_index_t index) {
-  return 4096;
+	return 4096;
 }
 static int cholesky_enumerate(elpa_index_t index, int i) {
-  return i+1;
+	return i+1;
 }
 
 static int internal_nblk_is_valid(elpa_index_t index, int n, int new_value) {
         return (0 <= new_value);
 }
 static int internal_nblk_cardinality(elpa_index_t index) {
-  return 9;
+	return 9;
 }
 
 static int internal_nblk_enumerate(elpa_index_t index, int i) {
-  switch(i) {
-    case 0:
-      return 2;
-    case 1:
-      return 4;
-    case 2:
-      return 8;
-    case 3:
-      return 16;
-    case 4:
-      return 32;
-    case 5:
-      return 64;
-    case 6:
-      return 128;
-    case 7:
-      return 256;
-    case 8:
-      return 1024;
-  }
+	switch(i) {
+	  case 0:
+	    return 2;
+	  case 1:
+	    return 4;
+	  case 2:
+	    return 8;
+	  case 3:
+	    return 16;
+	  case 4:
+	    return 32;
+	  case 5:
+	    return 64;
+	  case 6:
+	    return 128;
+	  case 7:
+	    return 256;
+	  case 8:
+	    return 1024;
+	}
 }
 
 // TODO shouldnt it be only for ELPA2??
 static int band_to_full_is_valid(elpa_index_t index, int n, int new_value) {
-  int max_block=10;
+	int max_block=10;
         return (1 <= new_value) && (new_value <= max_block);
 }
 
 static int hermitian_multiply_is_valid(elpa_index_t index, int n, int new_value) {
-  int max_block=4100;
+	int max_block=4100;
         return (1 <= new_value) && (new_value <= max_block);
 }
 
 static int cholesky_is_valid(elpa_index_t index, int n, int new_value) {
-  int max_block=4096;
+	int max_block=4096;
         return (1 <= new_value) && (new_value <= max_block);
 }
 
 
 static int stripewidth_real_cardinality(elpa_index_t index) {
-  return 17;
+	return 17;
 }
 
 static int stripewidth_complex_cardinality(elpa_index_t index) {
-  return 17;
+	return 17;
 }
 
 static int stripewidth_real_enumerate(elpa_index_t index, int i) {
-  switch(i) {
-    case 0:
-      return 32;
-    case 1:
-      return 36;
-    case 2:
-      return 40;
-    case 3:
-      return 44;
-    case 4:
-      return 48;
-    case 5:
-      return 52;
-    case 6:
-      return 56;
-    case 7:
-      return 60;
-    case 8:
-      return 64;
-    case 9:
-      return 68;
-    case 10:
-      return 72;
-    case 11:
-      return 76;
-    case 12:
-      return 80;
-    case 13:
-      return 84;
-    case 14:
-      return 88;
-    case 15:
-      return 92;
-    case 16:
-      return 96;
-  }
+	switch(i) {
+	  case 0:
+	    return 32;
+	  case 1:
+	    return 36;
+	  case 2:
+	    return 40;
+	  case 3:
+	    return 44;
+	  case 4:
+	    return 48;
+	  case 5:
+	    return 52;
+	  case 6:
+	    return 56;
+	  case 7:
+	    return 60;
+	  case 8:
+	    return 64;
+	  case 9:
+	    return 68;
+	  case 10:
+	    return 72;
+	  case 11:
+	    return 76;
+	  case 12:
+	    return 80;
+	  case 13:
+	    return 84;
+	  case 14:
+	    return 88;
+	  case 15:
+	    return 92;
+	  case 16:
+	    return 96;
+	}
 }
 
 static int stripewidth_complex_enumerate(elpa_index_t index, int i) {
-  switch(i) {
-    case 0:
-      return 48;
-    case 1:
-      return 56;
-    case 2:
-      return 64;
-    case 3:
-      return 72;
-    case 4:
-      return 80;
-    case 5:
-      return 88;
-    case 6:
-      return 96;
-    case 7:
-      return 104;
-    case 8:
-      return 112;
-    case 9:
-      return 120;
-    case 10:
-      return 128;
-    case 11:
-      return 136;
-    case 12:
-      return 144;
-    case 13:
-      return 152;
-    case 14:
-      return 160;
-    case 15:
-      return 168;
-    case 16:
-      return 176;
-  }
+	switch(i) {
+	  case 0:
+	    return 48;
+	  case 1:
+	    return 56;
+	  case 2:
+	    return 64;
+	  case 3:
+	    return 72;
+	  case 4:
+	    return 80;
+	  case 5:
+	    return 88;
+	  case 6:
+	    return 96;
+	  case 7:
+	    return 104;
+	  case 8:
+	    return 112;
+	  case 9:
+	    return 120;
+	  case 10:
+	    return 128;
+	  case 11:
+	    return 136;
+	  case 12:
+	    return 144;
+	  case 13:
+	    return 152;
+	  case 14:
+	    return 160;
+	  case 15:
+	    return 168;
+	  case 16:
+	    return 176;
+	}
 }
 
 static int stripewidth_real_is_valid(elpa_index_t index, int n, int new_value) {
-  return (32 <= new_value) && (new_value <= 96);
+	return (32 <= new_value) && (new_value <= 96);
 }
 
 static int stripewidth_complex_is_valid(elpa_index_t index, int n, int new_value) {
-  return (48 <= new_value) && (new_value <= 176);
+	return (48 <= new_value) && (new_value <= 176);
 }
 
 static int omp_threads_cardinality(elpa_index_t index) {
-  int max_threads;
+	int max_threads;
 #ifdef WITH_OPENMP_TRADITIONAL
-  if (set_max_threads_glob == 0) {
-    max_threads_glob = omp_get_max_threads();
-    set_max_threads_glob = 1;
-  }
+	if (set_max_threads_glob == 0) {
+		max_threads_glob = omp_get_max_threads();
+		set_max_threads_glob = 1;
+	}
 #else
-  max_threads_glob = 1;
-  set_max_threads_glob = 1;
+	max_threads_glob = 1;
+	set_max_threads_glob = 1;
 #endif
-  max_threads = max_threads_glob;
-  return max_threads;
+	max_threads = max_threads_glob;
+	return max_threads;
 }
 
 static int omp_threads_enumerate(elpa_index_t index, int i) {
@@ -1311,15 +1311,15 @@ static int omp_threads_enumerate(elpa_index_t index, int i) {
 static int omp_threads_is_valid(elpa_index_t index, int n, int new_value) {
         int max_threads;
 #ifdef WITH_OPENMP_TRADITIONAL
-  if (set_max_threads_glob_1 == 0) {
-    max_threads_glob_1 = omp_get_max_threads();
-    set_max_threads_glob_1 = 1;
-  }
+	if (set_max_threads_glob_1 == 0) {
+		max_threads_glob_1 = omp_get_max_threads();
+		set_max_threads_glob_1 = 1;
+	}
 #else
-  max_threads_glob_1 = 1;
-  set_max_threads_glob_1 = 1;
+	max_threads_glob_1 = 1;
+	set_max_threads_glob_1 = 1;
 #endif
-  max_threads = max_threads_glob_1;
+	max_threads = max_threads_glob_1;
         return (1 <= new_value) && (new_value <= max_threads);
 }
 
@@ -1357,7 +1357,7 @@ static int valid_with_gpu_elpa2(elpa_index_t index, int n, int new_value) {
 }
 
 static int max_stored_rows_cardinality(elpa_index_t index) {
-  return 4;
+	return 4;
 }
 
 static int max_stored_rows_enumerate(elpa_index_t index, int i) {
@@ -1384,42 +1384,41 @@ static int max_stored_rows_is_valid(elpa_index_t index, int n, int new_value) {
 
 static int use_gpu_id_cardinality(elpa_index_t index) {
 #ifdef WITH_NVIDIA_GPU_VERSION
-  int count;
-  count = nvidia_gpu_count();
+	int count;
+	count = nvidia_gpu_count();
         if (count == -1000) {
           fprintf(stderr, "Querrying GPUs failed! Set GPU count = 0\n");
-  return 0;
+	return 0;
         }
-  return count;
+	return count;
 #elif WITH_AMD_GPU_VERSION
-  int count;
-  count = amd_gpu_count();
+	int count;
+	count = amd_gpu_count();
         if (count == -1000) {
           fprintf(stderr, "Querrying GPUs failed! Set GPU count = 0\n");
-  return 0;
+	return 0;
         }
-  return count;
+	return count;
 //#elif WITH_INTEL_GPU_VERSION
-//  return 0;
+//	return 0;
 #elif WITH_OPENMP_OFFLOAD_GPU_VERSION
-  int count;
-  count = openmp_offload_gpu_count();
+	int count;
+	count = openmp_offload_gpu_count();
         if (count == -1000) {
           fprintf(stderr, "Querrying GPUs failed! Set GPU count = 0\n");
-  return 0;
+	return 0;
         }
-  return count;
+	return count;
 #elif WITH_SYCL_GPU_VERSION
-  int count;
-        int show_all_sycl_devices = elpa_index_get_int_value(index, "sycl_show_all_devices", NULL);
-  count = sycl_gpu_count(show_all_sycl_devices);
+	int count;
+	count = sycl_gpu_count();
         if (count == -1000) {
           fprintf(stderr, "Querrying GPUs failed! Set GPU count = 0\n");
-  return 0;
+	return 0;
         }
-  return count;
+	return count;
 #else
-  return 0;
+	return 0;
 #endif
 }
 
@@ -1430,32 +1429,32 @@ static int use_gpu_id_enumerate(elpa_index_t index, int i) {
 
 static int use_gpu_id_is_valid(elpa_index_t index, int n, int new_value) {
 #ifdef WITH_NVIDIA_GPU_VERSION
-  int count;
-  count = nvidia_gpu_count();
+	int count;
+	count = nvidia_gpu_count();
         if (count == -1000) {
           fprintf(stderr, "Querrying GPUs failed! Return with error\n");
-    return 0 == 1 ;
-  } else {
+	  return 0 == 1 ;
+	} else {
           return (0 <= new_value) && (new_value <= count);
-  }
+	}
 #elif WITH_AMD_GPU_VERSION
-  int count;
-  count = amd_gpu_count();
+	int count;
+	count = amd_gpu_count();
         if (count == -1000) {
           fprintf(stderr, "Querrying GPUs failed! Return with error\n");
-    return 0 == 1 ;
-  } else {
+	  return 0 == 1 ;
+	} else {
           return (0 <= new_value) && (new_value <= count);
-  }
+	}
 
 //#elif WITH_INTEL_GPU_VERSION
-//  return 0 == 0;
+//	return 0 == 0;
 #elif WITH_OPENMP_OFFLOAD_GPU_VERSION
-  return 0 == 0;
+	return 0 == 0;
 #elif WITH_SYCL_GPU_VERSION
-  return 0 == 0;
+	return 0 == 0;
 #else
-  return 0 == 0;
+	return 0 == 0;
 #endif
 
 }
@@ -1630,22 +1629,22 @@ int elpa_index_autotune_cardinality(elpa_index_t index, int autotune_level_old, 
 
 int elpa_index_autotune_cardinality_new_stepping(elpa_index_t index, int autotune_level, int autotune_domain, int autotune_part) {
         int N = 0;
-  int N_level[autotune_level+1];
-  for (int i=0;i<autotune_level+1;i++){
-    N_level[i] = 1;
-  }
+	int N_level[autotune_level+1];
+	for (int i=0;i<autotune_level+1;i++){
+	  N_level[i] = 1;
+	}
 
-  for (int level = 1; level < autotune_level+1; level++) {
+	for (int level = 1; level < autotune_level+1; level++) {
            for (int i = 0; i < nelements(int_entries); i++) { \
                    if (is_tunable_new_stepping(index, i, level, autotune_domain, autotune_part)) {
                         N_level[level] *= int_entries[i].cardinality(index);
                    }
-      }
-       if (N_level[level] == 1) { N_level[level] = 0;}
+	    }
+		   if (N_level[level] == 1) { N_level[level] = 0;}
           }
-  for (int i=1;i<autotune_level+1;i++){
-    N += N_level[i];
-  }
+	for (int i=1;i<autotune_level+1;i++){
+	  N += N_level[i];
+	}
         return N;
 }
 
@@ -1701,7 +1700,7 @@ int elpa_index_set_autotune_parameters_new_stepping(elpa_index_t index, int auto
         for (int i = 0; i < nelements(int_entries); i++) {
            if (is_tunable_new_stepping(index, i, autotune_level, autotune_domain, autotune_part)) {
                int value = int_entries[i].enumerate(index, current_cpy % int_entries[i].cardinality(index));
-         //printf("Trying to set value %d \n",value);
+	       //printf("Trying to set value %d \n",value);
                //if(elpa_index_is_printing_mpi_rank(index)) fprintf(stderr, "  * val[%d] = %d -> %d\n", i, current_cpy % int_entries[i].cardinality(index), value);
                /* Try to set option i to that value */
                if (int_entries[i].valid(index, i, value)) {
@@ -1861,7 +1860,7 @@ int elpa_index_print_autotune_state_new_stepping(elpa_index_t index, int autotun
                         fprintf(f, "\n");
                 fprintf(f, "*** AUTOTUNING STATE ***\n");
                 fprintf(f, "** This is the state of the autotuning object for the current level %s and solver %s\n",elpa_autotune_level_name(autotune_level), elpa_solver_name(solver));
-    fprintf(f, "solver = %d -> %s\n", solver, elpa_solver_name(solver));
+		fprintf(f, "solver = %d -> %s\n", solver, elpa_solver_name(solver));
                 fprintf(f, "autotune_level = %d -> %s\n", autotune_level, elpa_autotune_level_name(autotune_level));
                 fprintf(f, "autotune_domain = %d -> %s\n", autotune_domain, elpa_autotune_domain_name(autotune_domain));
                 fprintf(f, "autotune_cardinality = %d\n", cardinality);

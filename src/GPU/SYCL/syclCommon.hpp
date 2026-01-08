@@ -66,20 +66,20 @@ using cclKvsHandle = ccl::shared_ptr_class<ccl::kvs>;
 struct QueueData {
   friend struct DeviceSelection;
   private:
-  void *oneMklScratchpad;
-
+  void *oneMklScratchpad; 
+  
   public:
   sycl::queue queue;
 #ifdef WITH_ONEAPI_ONECCL
   ccl::stream cclStream;
-#endif
+#endif  
   size_t oneMklScratchpadSize;
 
   QueueData(sycl::device device, sycl::context context);
   ~QueueData();
 
   template <typename T> inline T* getScratchpadFor(size_t numElements);
-
+  
 #ifdef WITH_ONEAPI_ONECCL
   ccl::stream* getCclStreamRef();
 #endif
@@ -94,7 +94,7 @@ struct DeviceSelection {
   ccl::device cclDevice;
   ccl::context cclContext;
   std::vector<ccl::communicator> cclComms;
-#endif
+#endif  
   QueueData defaultQueueHandle;
   std::vector<QueueData> queueHandles;
 
@@ -116,27 +116,26 @@ class SyclState {
 #ifdef WITH_ONEAPI_ONECCL
   std::unordered_map<void *, cclKvsHandle> kvsMap;
 #endif
-  bool isManagingOnlyL0Gpus;
+//  bool isManagingOnlyL0Gpus;
   public:
   bool isDebugEnabled;
   private:
   std::vector<sycl::device> devices;
   std::unordered_map<int, DeviceSelection> deviceData;
   int defaultDevice;
-
-  SyclState(bool onlyL0Gpus = false, bool isDebugEnabled = false);
+  
+  SyclState();
   DeviceSelection& getDeviceHandle(int deviceNum);
-
+  
   public:
-
+  
   void printGpuInfo();
   DeviceSelection& selectGpuDevice(int deviceNum);
   DeviceSelection& getDefaultDeviceHandle();
-
+  
   size_t getNumDevices();
 
   static SyclState& defaultState();
-  static bool initialize(bool onlyL0Gpus = false, bool isDebugEnabled = false);
 
 #ifdef WITH_ONEAPI_ONECCL
   void registerKvs(void *kvsAddr, cclKvsHandle kvs);
@@ -144,7 +143,7 @@ class SyclState {
   void teardownCclStack();
 #endif
 };
-
+  
 
 sycl::queue getQueueOrDefault(QueueData *my_stream);
 QueueData* getQueueDataOrDefault(QueueData *my_stream);
