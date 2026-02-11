@@ -1143,6 +1143,15 @@ program test
 
 ! _________________________________________________________________________________________________________________________________
 
+! !PETERDEBUG111-printmat cleanup
+! block
+! integer :: i
+! print *, "a (initial):"
+! do i = 1, size(a,1)
+!   print '(*(g0,1x))', a(i,:)
+! end do
+! end block
+
 ! The actual solve step
 
 #if defined(TEST_EIGENVECTORS)
@@ -1485,7 +1494,7 @@ program test
 #ifdef TEST_CHOLESKY
     call e%print_times("e%cholesky()")
 #endif
-#if defined(TEST_HERMITIAN_MULTIPLY_FULL) || defined(TEST_HERMITIAN_MULTIPLY_UPPER) || defined(TEST_HERMITIAN_MULTIPLY_LOWER)
+#if defined(TEST_HERMITIAN_MULTIPLY_FULL) || defined(TEST_HERMITIAN_MULTIPLY_UPPER) || defined(TEST_HERMITIAN_MULTIPLY_LOWER) 
     call e%print_times("e%hermitian_multiply()")
 #endif
 #if defined(TEST_PXGEMM_MULTIPLY_NN) || defined(TEST_PXGEMM_MULTIPLY_NT) || defined(TEST_PXGEMM_MULTIPLY_TN) || defined(TEST_PXGEMM_MULTIPLY_TT)
@@ -1498,7 +1507,7 @@ program test
   endif ! (myid .eq. 0)
 
 ! _________________________________________________________________________________________________________________________________
-
+   
 ! TEST_GPU_DEVICE_POINTER_API case: copy for testing from device to host
 
 #if TEST_GPU_DEVICE_POINTER_API == 1
@@ -1579,7 +1588,7 @@ program test
 #endif /* TEST_GPU_DEVICE_POINTER_API */
 
 ! _________________________________________________________________________________________________________________________________
-
+     
 ! Check the results
 
   if (do_test_analytic_eigenvalues) then
